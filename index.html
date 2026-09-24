@@ -57,4 +57,270 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 .overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.4);display:none;align-items:flex-end;justify-content:center}
 .overlay.open{display:flex}
 .sheet{width:100%;max-width:520px;background:#fff;border-radius:20px 20px 0 0;padding:22px 20px calc(22px + var(--safe-b));max-height:88vh;overflow-y:auto}
-.sheet::before{con
+.sheet::before{content:'';display:block;width:40px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 16px}
+.sheet h3{font-size:17px;text-align:center;font-weight:600;margin-bottom:18px}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-size:12.5px;color:#777;margin-bottom:6px;font-weight:500}
+.fld input,.fld textarea,.fld select{width:100%;padding:12px 14px;border:1px solid #e8e8e8;border-radius:10px;background:#fff;font-size:16px;-webkit-appearance:none}
+.fld input:focus,.fld textarea:focus{border-color:#111}
+.fld textarea{min-height:90px;resize:vertical;font-family:inherit}
+.btn{padding:12px 20px;border-radius:22px;font-size:14.5px;font-weight:600;border:1px solid #111;background:#fff;color:#111}
+.btn:active{opacity:.75}
+.btn.primary{background:#111;color:#fff}
+.btn.block{display:block;width:100%}
+.btn.danger{border-color:#d32f2f;color:#d32f2f}
+.tip{font-size:12.5px;color:#d32f2f;text-align:center;min-height:16px;margin-top:6px}
+.agree-row{display:flex;gap:10px;align-items:center;cursor:pointer;padding:8px 0;user-select:none}
+.agree-box{width:22px;height:22px;border:1.5px solid #ccc;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
+.agree-box svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.agree-row.checked .agree-box{background:#111;border-color:#111}
+.agree-row.checked .agree-box svg{opacity:1}
+.agree-text{font-size:12.5px;color:#666;line-height:1.5}
+.agree-text a{color:#1a73e8;text-decoration:underline}
+.drop{border:1.5px dashed #d5d5d5;border-radius:16px;padding:44px 20px;text-align:center;background:#fafafa;cursor:pointer}
+.drop:active{border-color:#111;background:#f0f0f0}
+.drop-title{font-size:15px;font-weight:600;margin-bottom:4px}
+.drop-sub{font-size:12.5px;color:#999}
+.queue{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-top:14px}
+.qitem{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#eee}
+.qitem img{width:100%;height:100%;object-fit:cover;display:block}
+.qrm{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px}
+.thumb{aspect-ratio:1;border-radius:8px;overflow:hidden;background:#eee;cursor:pointer}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.empty{text-align:center;padding:60px 20px;color:#999;font-size:13.5px}
+.chatbox{display:flex;flex-direction:column;height:calc(100vh - 200px);min-height:340px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(0,0,0,.05)}
+.chatlist{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.cmsg{display:flex;gap:10px;align-items:flex-start}
+.cav{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#eee;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#c0c0c0}
+.cav img{width:100%;height:100%;object-fit:cover;display:block}
+.cav svg{width:18px;height:18px}
+.cbody{flex:1;min-width:0}
+.chead{display:flex;gap:8px;align-items:center;margin-bottom:4px;flex-wrap:wrap}
+.cname{font-size:12.5px;font-weight:600}
+.ctime{font-size:11px;color:#aaa}
+.cbubble{font-size:14.5px;line-height:1.5;word-break:break-word;white-space:pre-wrap;background:#f4f4f4;padding:9px 13px;border-radius:13px;display:inline-block;max-width:100%}
+.cmsg.mine{flex-direction:row-reverse}
+.cmsg.mine .cbody{text-align:right}
+.cmsg.mine .chead{justify-content:flex-end}
+.cmsg.mine .cbubble{background:#111;color:#fff}
+.chatbar{display:flex;gap:8px;padding:10px;border-top:1px solid #eee;background:#fff}
+.chatbar input{flex:1;padding:11px 15px;border:1px solid #e8e8e8;border-radius:22px;font-size:16px;outline:none}
+.chatbar input:focus{border-color:#111}
+.dmitem{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid #f2f2f4;cursor:pointer;background:#fff}
+.dmitem:active{background:#fafafa}
+.dmitem .cav{width:42px;height:42px}
+.dinfo{flex:1;min-width:0}
+.dname{font-size:14px;font-weight:600;margin-bottom:2px}
+.dlast{font-size:12px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dunread{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#e53935;color:#fff;font-size:11px;line-height:20px;text-align:center;font-weight:600}
+.tag{padding:2px 7px;border-radius:5px;font-size:11px;background:#f0f0f0;font-weight:500}
+.tag.dev{background:#111;color:#fff}
+.tag.admin{background:#444;color:#fff}
+.tag.planner{background:#1a73e8;color:#fff}
+.tag.pending{background:#ffeb3b;color:#000}
+.lightbox{position:fixed;inset:0;z-index:500;background:#000;display:none;align-items:center;justify-content:center;flex-direction:column}
+.lightbox.open{display:flex}
+.lb-img{max-width:100vw;max-height:82vh;object-fit:contain}
+.lbbar{position:absolute;top:0;left:0;right:0;height:calc(54px + var(--safe-t));padding:var(--safe-t) 12px 0;display:flex;align-items:center;justify-content:space-between;color:#fff;background:linear-gradient(to bottom,rgba(0,0,0,.5),transparent)}
+.lbbar span{font-size:13.5px;padding-left:6px}
+.lbbtn{color:#fff;font-size:13.5px;padding:10px}
+.lbnav{position:absolute;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.6);font-size:40px;padding:14px;background:none;border:0;z-index:1}
+.lbprev{left:0}.lbnext{right:0}
+.toast{position:fixed;left:50%;bottom:calc(110px + var(--safe-b));z-index:900;transform:translate(-50%,12px);background:rgba(0,0,0,.85);color:#fff;font-size:13.5px;padding:10px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:.25s;max-width:86vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (min-width:720px){
+  .overlay{align-items:center;justify-content:center;padding:0}
+  .sheet{max-width:100%;width:100%;height:100vh;max-height:100vh;border-radius:0;padding:48px 24px;display:flex;flex-direction:column;justify-content:center}
+  .sheet::before{display:none}
+  .sheet > *{width:100%;max-width:420px;margin-left:auto;margin-right:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">八一班</div>
+  <div class="topbar-right">
+    <div class="icon-btn" id="btn-bell"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot hide" id="bell-dot">0</span></div>
+    <div class="icon-btn" id="btn-top-avatar"><div class="mini-avatar" id="top-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div></div>
+  </div>
+</header>
+
+<main>
+  <section class="page active" id="page-home">
+    <div class="hello"><h1 id="hi">你好</h1><p id="his">请先登录</p></div>
+    <div id="home-cards"></div>
+  </section>
+  <section class="page" id="page-upload">
+    <div class="drop" id="drop"><div class="drop-title">点击选择照片</div><div class="drop-sub">可一次多张</div></div>
+    <input type="file" id="fileInput" accept="image/*" multiple hidden>
+    <div class="queue" id="queue"></div>
+    <div class="hide" id="upacts" style="margin-top:14px;justify-content:flex-end;gap:8px">
+      <button class="btn" id="clearBtn">清空</button>
+      <button class="btn primary" id="saveBtn">上传（0）</button>
+    </div>
+  </section>
+  <section class="page" id="page-gallery">
+    <div class="gtitle" id="galcount"></div>
+    <div class="grid" id="grid"></div>
+    <div class="empty hide" id="galempty">还没有照片</div>
+  </section>
+  <section class="page" id="page-chat">
+    <div class="chatbox">
+      <div class="chatlist" id="chatlist"></div>
+      <div class="chatbar"><input id="chatinput" placeholder="说点什么..." maxlength="1000"><button class="btn primary" id="chatsend">发送</button></div>
+    </div>
+  </section>
+  <section class="page" id="page-dm">
+    <div id="dmmain">
+      <div class="gtitle">私聊会话</div>
+      <div class="list" id="dmconv"></div>
+      <div class="gtitle">所有同学</div>
+      <div class="list" id="dmusers"></div>
+    </div>
+    <div class="hide" id="dmview">
+      <div class="chatbox">
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #eee">
+          <button class="btn" id="dmback" style="padding:6px 12px;border-radius:18px;font-size:13px">返回</button>
+          <div style="font-size:14.5px;font-weight:600" id="dmwho">-</div>
+        </div>
+        <div class="chatlist" id="dmmessages"></div>
+        <div class="chatbar"><input id="dminput" placeholder="说点什么..." maxlength="1000"><button class="btn primary" id="dmsend">发送</button></div>
+      </div>
+    </div>
+  </section>
+  <section class="page" id="page-admin">
+    <div class="gtitle">待审核</div>
+    <div class="list" id="pendinglist"></div>
+    <div class="gtitle">所有用户</div>
+    <div class="list" id="userlist"></div>
+    <div class="gtitle">发布公告</div>
+    <div class="list" style="padding:14px">
+      <textarea id="anninput" placeholder="公告内容..." style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;min-height:80px;font-family:inherit;font-size:16px"></textarea>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px">
+        <input type="checkbox" id="annforce" style="width:18px;height:18px">
+        <label for="annforce">强制公告（60秒不可关闭）</label>
+      </div>
+      <button class="btn primary block" style="margin-top:10px" id="postAnn">发布</button>
+    </div>
+    <div class="gtitle">添加用户</div>
+    <div class="list" style="padding:14px">
+      <input id="addname" placeholder="姓名（必填）" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:8px;font-size:16px">
+      <input id="addqq" placeholder="QQ号（选填）" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:8px;font-size:16px">
+      <select id="addrole" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:10px;font-size:16px">
+        <option value="user">普通用户</option>
+        <option value="admin">管理员</option>
+        <option value="planner">策划</option>
+      </select>
+      <button class="btn primary block" id="addUserBtn">添加</button>
+      <div class="tip" id="addtip"></div>
+    </div>
+  </section>
+  <section class="page" id="page-me">
+    <div class="me-head">
+      <div class="me-avatar" id="meavatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div>
+      <div class="me-info"><h2 id="mename">未登录</h2><div><span class="role" id="merole">请先登录</span></div></div>
+    </div>
+    <div id="mesettings"></div>
+  </section>
+</main>
+
+<nav class="bottom-nav">
+  <button class="tab active" data-page="home">主页</button>
+  <button class="tab" data-page="gallery">相册</button>
+  <button class="tab" data-page="chat">聊天</button>
+  <button class="tab" data-page="dm">私聊<span class="dot hide" id="dmdot">0</span></button>
+  <button class="tab" data-page="me">我的</button>
+</nav>
+
+<div class="lightbox" id="lightbox">
+  <div class="lbbar"><span id="lbcount"></span><span><button class="lbbtn" id="lbreport">举报</button><button class="lbbtn" id="lbdel">删除</button><button class="lbbtn" id="lbclose">关闭</button></span></div>
+  <button class="lbnav lbprev" id="lbprev">‹</button>
+  <img class="lb-img" id="lbimg" alt="">
+  <button class="lbnav lbnext" id="lbnext">›</button>
+</div>
+
+<div class="overlay" id="ov-login">
+  <div class="sheet">
+    <h3>登录</h3>
+    <div class="fld"><label>QQ 号</label><input id="lg-qq" inputmode="numeric"></div>
+    <div class="fld"><label>密码</label><input id="lg-pwd" type="password"></div>
+    <div class="agree-row" id="lg-row"><span class="agree-box"><svg viewBox="0 0 24 24"><polyline points="4,12 10,18 20,6"/></svg></span><span class="agree-text">我已阅读并同意 <a href="javascript:;" onclick="showTerms(event)">《免责声明》和《使用条款》</a></span></div>
+    <input type="checkbox" id="lg-agree" hidden>
+    <button class="btn primary block" id="lg-btn" disabled>登录</button>
+    <div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#1a73e8" id="lg-reg">没有账号？立即注册</button></div>
+    <div class="tip" id="lg-tip"></div>
+    <div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#666" id="lg-close">关闭</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-register">
+  <div class="sheet">
+    <h3>注册</h3>
+    <div class="fld"><label>姓名（必填）</label><input id="rg-name"></div>
+    <div class="fld"><label>QQ 号（必填）</label><input id="rg-qq" inputmode="numeric"></div>
+    <div class="fld"><label>密码（必填）</label><input id="rg-pwd" type="password"></div>
+    <div class="agree-row" id="rg-row"><span class="agree-box"><svg viewBox="0 0 24 24"><polyline points="4,12 10,18 20,6"/></svg></span><span class="agree-text">我已阅读并同意 <a href="javascript:;" onclick="showTerms(event)">《免责声明》和《使用条款》</a></span></div>
+    <input type="checkbox" id="rg-agree" hidden>
+    <button class="btn primary block" id="rg-btn" disabled>提交注册</button>
+    <div class="tip" id="rg-tip"></div>
+    <div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#666" id="rg-close">返回登录</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-album">
+  <div class="sheet">
+    <h3>请输入相册密码</h3>
+    <div class="fld"><label>相册码</label><input id="alb-pwd" type="password" inputmode="numeric"></div>
+    <button class="btn primary block" id="alb-btn">进入相册</button>
+    <div class="tip" id="alb-tip"></div>
+    <div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#666" id="alb-close">取消</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-profile">
+  <div class="sheet">
+    <h3>编辑资料</h3>
+    <div style="display:flex;justify-content:center;margin-bottom:10px"><div class="me-avatar" id="pfa" style="cursor:pointer;width:72px;height:72px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div></div>
+    <div style="text-align:center;font-size:12px;color:#888;margin-bottom:12px">点击头像更换</div>
+    <input type="file" id="pf-input" accept="image/*" hidden>
+    <div class="fld"><label>姓名</label><input id="pf-name" disabled></div>
+    <div class="fld"><label>新口令码</label><input id="pf-token" placeholder="留空自动生成"><button class="btn primary block" style="margin-top:8px" id="pf-save-token">保存口令</button></div>
+    <div class="fld" style="border-top:1px solid #eee;padding-top:12px"><label>修改密码</label><input id="pf-old" type="password" placeholder="原密码"><input id="pf-new" type="password" placeholder="新密码" style="margin-top:8px"><button class="btn primary block" style="margin-top:8px" id="pf-save-pwd">保存密码</button></div>
+    <div class="tip" id="pf-tip"></div>
+    <div style="display:flex;gap:8px;margin-top:16px"><button class="btn block" id="pf-close">关闭</button><button class="btn danger block" id="pf-out">退出</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-fb">
+  <div class="sheet">
+    <h3>BUG 反馈</h3>
+    <div class="fld"><label>问题描述</label><textarea id="fb-text"></textarea></div>
+    <button class="btn primary block" id="fb-btn">提交</button>
+    <div class="tip" id="fb-tip"></div>
+    <div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#666" id="fb-close">取消</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-terms">
+  <div class="sheet">
+    <h3>免责声明与使用条款</h3>
+    <div style="font-size:13px;line-height:1.7;color:#333;text-align:left;max-height:60vh;overflow-y:auto">
+      <p style="font-weight:600;margin-bottom:6px">【免责声明】</p>
+      <p>本网站是八一班内部照片共享平台，纯属个人业余维护，非商业网站。</p>
+      <p style="margin-top:6px">你上传的所有内容均由你本人主动上传，相关版权、肖像权、隐私权等一切责任由上传者本人承担。</p>
+      <p style="margin-top:6px">本网站仅提供存储和展示服务，不对上传内容进行审核，不承担由此引发的任何纠纷或法律责任。上传他人照片前请自行确认是否已获同意。</p>
+      <p style="margin-top:6px">本网站不保证数据永久保存，也不保证服务永不中断。</p>
+      <p style="font-weight:600;margin-top:14px;margin-bottom:6px">【使用条款】</p>
+      <p>1. 仅限八一班内部同学使用。</p>
+      <p style="margin-top:4px">2. 严禁上传违法违规、涉黄涉暴、恶意丑化他人或侵犯他人权利的内容。</p>
+      <p style="margin-top:4px">3. 普通用户可上传、删除自己作品；管理员可删他人作品；策划可改代码；开发者有全部权限。</p>
+      <p style="margin-top:4px">4. 聊天区请文明交流。</p>
+      <p style="margin-top:4px">5. 本网站可能随时停止服务。</p>
+    </div>
+    <div style="margin-top:14px"><button class="btn primary block" id="terms-close">我已阅读</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
