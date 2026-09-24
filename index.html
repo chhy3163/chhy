@@ -323,4 +323,585 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<script>
+const SB='https://xodzjtzrfeecikirolwl.supabase.co';
+const KEY='sb_publishable_k0TN3WX_ztQClBiFniXhtg_a2vGX8VG';
+const MASTER='81classphotos';
+const DEF_ALBUM='81classphotos'; /* 已修改 */
+
+let me=null,albumOK=false,photos=[],queue=[],qurls=[];
+let chatLast=0,chatTimer=null,dmWith=null,dmTimer=null;
+let notifTimer=null,lbIdx=-1,users=[];
+const $=id=>document.getElementById(id);
+const SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>';
+
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const roleName=r=>({dev:'开发者',admin:'管理员',planner:'策划'}[r]||'普通用户');
+const isAdmin=()=>me&&(me.role==='dev'||me.role==='admin');
+const isReview=()=>me&&['dev','admin','planner'].includes(me.role);
+
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2000)}
+function open(id){$(id).classList.add('open')}
+function close(id){$(id).classList.remove('open')}
+window.toast=toast;window.open=open;window.close=close;
+
+async function sb(path,opt={}){
+  const r=await fetch(SB+'/rest/v1/'+path,{...opt,headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',...(opt.headers||{})}});
+  const t=await r.text();
+  if(!r.ok)throw new Error(t||r.status);
+  return t?JSON.parse(t):null;
+}
+async function up(bucket,file,name){
+  const r=await fetch(SB+'/storage/v1/object/'+bucket+'/'+name,{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},body:file});
+  if(!r.ok)throw new Error('上传失败');
+  return SB+'/storage/v1/object/public/'+bucket+'/'+name;
+}
+function salt(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a).map(b=>b.toString(16).padStart(2,'0')).join('')}
+function tok(){const a=new Uint8Array(8);crypto.getRandomValues(a);return Array.from(a).map(b=>b.toString(16).padStart(2,'0')).join('')}
+async function hash(p,s){const d=new TextEncoder().encode(s+':'+p);const b=await crypto.subtle.digest('SHA-256',d);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+
+/* 勾选 */
+function bindAgree(rowId,cbId,btnId){
+  const row=$(rowId),cb=$(cbId),btn=$(btnId);
+  row.onclick=e=>{
+    if(e.target.tagName==='A')return;
+    cb.checked=!cb.checked;
+    row.classList.toggle('checked',cb.checked);
+    btn.disabled=!cb.checked;
+  };
+}
+bindAgree('lg-row','lg-agree','lg-btn');
+bindAgree('rg-row','rg-agree','rg-btn');
+
+function showTerms(e){if(e)e.stopPropagation();open('ov-terms')}
+window.showTerms=showTerms;
+$('terms-close').onclick=()=>close('ov-terms');
+
+/* 登录 */
+$('lg-reg').onclick=()=>{close('ov-login');open('ov-register')};
+$('lg-close').onclick=()=>close('ov-login');
+$('rg-close').onclick=()=>{close('ov-register');open('ov-login')};
+
+$('lg-btn').onclick=async()=>{
+  const qq=$('lg-qq').value.trim(),pwd=$('lg-pwd').value;
+  if(!qq)return $('lg-tip').textContent='请输入QQ号';
+  if(!pwd)return $('lg-tip').textContent='请输入密码';
+  $('lg-tip').textContent='登录中...';
+  try{
+    const us=await sb('users?qq=eq.'+encodeURIComponent(qq)+'&limit=1');
+    if(!us.length)return $('lg-tip').textContent='QQ号未注册';
+    const u=us[0];
+    if(u.status==='pending')return $('lg-tip').textContent='账号待审核';
+    if(u.status==='rejected')return $('lg-tip').textContent='审核未通过';
+    if(u.status==='banned')return $('lg-tip').textContent='账号已被禁用';
+    if(pwd!==MASTER){
+      const h=await hash(pwd,u.salt);
+      if(h!==u.hash)return $('lg-tip').textContent='密码错误';
+    }
+    const tk=u.token||tok();
+    if(tk!==u.token)await sb('users?id=eq.'+encodeURIComponent(u.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({token:tk})});
+    u.token=tk;
+    $('lg-tip').textContent='';$('lg-qq').value='';
+    doLogin(u);
+  }catch(e){$('lg-tip').textContent='登录失败：'+e.message}
+};
+
+$('rg-btn').onclick=async()=>{
+  const name=$('rg-name').value.trim(),qq=$('rg-qq').value.trim();
+  if(!name)return $('rg-tip').textContent='请输入姓名';
+  if(!qq)return $('rg-tip').textContent='请输入QQ号';
+  $('rg-tip').textContent='提交中...';
+  try{
+    const e1=await sb('users?name=eq.'+encodeURIComponent(name)+'&limit=1');
+    if(e1.length)return $('rg-tip').textContent='姓名已被使用';
+    const e2=await sb('users?qq=eq.'+encodeURIComponent(qq)+'&limit=1');
+    if(e2.length)return $('rg-tip').textContent='QQ号已被使用';
+    const s=salt();
+    const id='u_'+Date.now();
+    await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id,name,qq,email:'',role:'user',status:'pending',token:'',salt:s,hash:'',avatar:'',welcomed:true,read_ids:[]}])});
+    $('rg-tip').textContent='注册成功，等待审核';
+    $('rg-name').value='';$('rg-qq').value='';
+    setTimeout(()=>{close('ov-register');open('ov-login')},1500);
+  }catch(e){$('rg-tip').textContent='注册失败：'+e.message}
+};
+
+function doLogin(u){
+  me=u;
+  sessionStorage.setItem('bayan',JSON.stringify(u));
+  close('ov-login');close('ov-register');
+  renderMe();renderHome();startNotif();toast('欢迎，'+u.name);
+}
+function logout(){
+  if(!confirm('退出登录？'))return;
+  me=null;albumOK=false;sessionStorage.removeItem('bayan');
+  if(notifTimer){clearInterval(notifTimer);notifTimer=null}
+  renderMe();renderHome();go('home');
+}
+window.logout=logout;
+
+/* 页面切换 */
+function go(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));
+  document.querySelectorAll('.bottom-nav .tab').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
+  if(name==='gallery')renderGallery();
+  if(name==='chat')startChat();else stopChat();
+  if(name==='dm'){renderDMConv();renderDMUsers()}
+  if(name==='admin')renderAdmin();
+  window.scrollTo({top:0});
+}
+window.go=go;
+
+document.querySelectorAll('.bottom-nav .tab').forEach(b=>{
+  b.onclick=()=>{
+    const p=b.dataset.page;
+    if(p==='home'||p==='me'){go(p);return}
+    if(!me){toast('请先登录');open('ov-login');return}
+    if(p==='gallery'&&!albumOK){openAlbum();return}
+    go(p);
+  };
+});
+
+/* 主页 */
+function renderHome(){
+  const box=$('home-cards');
+  if(me){
+    $('hi').textContent='你好，'+me.name;
+    $('his').textContent='身份：'+roleName(me.role);
+  }else{
+    $('hi').textContent='你好';
+    $('his').textContent='请先登录';
+  }
+  const list=[
+    {k:'upload',i:'↑',t:'上传照片',s:'从本地选择照片上传'},
+    {k:'gallery',i:'▦',t:'相册',s:albumOK?'查看全部照片':'需要相册密码'},
+    {k:'chat',i:'◐',t:'聊天室',s:'和全班一起聊'},
+    {k:'dm',i:'✉',t:'私聊',s:'和指定同学一对一聊天'},
+    {k:'fb',i:'!',t:'BUG 反馈',s:'报告遇到的问题'}
+  ];
+  if(isAdmin())list.push({k:'admin',i:'⚙',t:'用户管理',s:'审核 / 添加 / 删除用户'});
+  box.innerHTML=list.map(x=>'<div class="card" data-k="'+x.k+'"><div class="ci">'+x.i+'</div><div class="ct"><div class="ctt">'+x.t+'</div><div class="cts">'+x.s+'</div></div><div class="ca">›</div></div>').join('');
+  box.querySelectorAll('.card').forEach(el=>{
+    el.onclick=()=>{
+      const k=el.dataset.k;
+      if(k==='fb'){openFB();return}
+      if(k==='gallery'){if(!me){toast('请先登录');open('ov-login');return}if(!albumOK){openAlbum();return}go('gallery');return}
+      if(!me){toast('请先登录');open('ov-login');return}
+      if(k==='admin'){go('admin');return}
+      go(k);
+    };
+  });
+}
+
+/* 我的 */
+function renderMe(){
+  if(me){
+    $('mename').textContent=me.name;
+    $('merole').textContent=roleName(me.role);
+    const a=$('meavatar');
+    a.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;
+    const t=$('top-avatar');
+    t.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;
+  }else{
+    $('mename').textContent='未登录';
+    $('merole').textContent='请先登录';
+    $('meavatar').innerHTML=SVG;
+    $('top-avatar').innerHTML=SVG;
+  }
+  const s=$('mesettings');
+  if(!me){
+    s.innerHTML='<div class="list"><div class="item" onclick="open(\'ov-login\')"><span class="lbl">登录</span><span class="iv">›</span></div><div class="item" onclick="open(\'ov-register\')"><span class="lbl">注册新账号</span><span class="iv">›</span></div></div>';
+    $('advtitle').classList.add('hide');$('advbox').classList.add('hide');
+    return;
+  }
+  s.innerHTML='<div class="list"><div class="item" onclick="editProfile()"><span class="lbl">编辑资料</span><span class="iv">头像 / 密码 / 口令</span></div><div class="item" onclick="openFB()"><span class="lbl">BUG 反馈</span><span class="iv">›</span></div><div class="item danger" onclick="logout()"><span class="lbl">退出登录</span></div></div>';
+  $('advtitle').classList.remove('hide');
+  $('advtitle').textContent='高级（点击展开）';
+}
+function toggleAdv(){
+  const b=$('advbox');
+  if(b.classList.contains('hide')){renderAdv();b.classList.remove('hide')}
+  else b.classList.add('hide');
+}
+window.toggleAdv=toggleAdv;
+$('advtitle').onclick=toggleAdv;
+
+function renderAdv(){
+  if(!isAdmin()){$('advbox').innerHTML='<div style="padding:14px;color:#888;font-size:13px">当前账号无高级功能</div>';return}
+  $('advbox').innerHTML='<div class="item" onclick="go(\'admin\')"><span class="lbl">用户管理</span><span class="iv">›</span></div><div class="item" onclick="openAlbum()"><span class="lbl">修改相册密码</span><span class="iv">›</span></div>';
+}
+
+/* 编辑资料 */
+function editProfile(){
+  if(!me)return;
+  $('pf-name').value=me.name;
+  $('pf-token').value='';$('pf-old').value='';$('pf-new').value='';$('pf-tip').textContent='';
+  $('pfa').innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;
+  open('ov-profile');
+}
+window.editProfile=editProfile;
+$('pf-close').onclick=()=>close('ov-profile');
+$('pf-out').onclick=()=>{close('ov-profile');logout()};
+$('pfa').onclick=()=>$('pf-input').click();
+
+$('pf-input').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=ev=>{
+    const im=new Image();
+    im.onload=async()=>{
+      const c=document.createElement('canvas');c.width=200;c.height=200;
+      const x=c.getContext('2d');const m=Math.min(im.width,im.height);
+      x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,200,200);
+      const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',0.85));
+      const name=me.id+'_'+Date.now()+'.jpg';
+      try{
+        const url=await up('avatars',blob,name);
+        await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({avatar:url})});
+        me.avatar=url;sessionStorage.setItem('bayan',JSON.stringify(me));
+        $('pfa').innerHTML='<img src="'+esc(url)+'">';
+        renderMe();toast('头像已更新');
+      }catch(err){toast('上传失败')}
+    };
+    im.src=ev.target.result;
+  };
+  rd.readAsDataURL(f);e.target.value='';
+};
+
+$('pf-save-token').onclick=async()=>{
+  const v=$('pf-token').value.trim()||tok();
+  try{
+    await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({token:v})});
+    me.token=v;sessionStorage.setItem('bayan',JSON.stringify(me));
+    $('pf-tip').textContent='新口令：'+v;
+  }catch(e){$('pf-tip').textContent='保存失败'}
+};
+$('pf-save-pwd').onclick=async()=>{
+  const o=$('pf-old').value,n=$('pf-new').value;
+  if(!o||!n)return $('pf-tip').textContent='请填完整';
+  try{
+    const h=await hash(o,me.salt);
+    if(h!==me.hash&&o!==MASTER)return $('pf-tip').textContent='原密码错误';
+    const s=salt();
+    const nh=await hash(n,s);
+    await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({salt:s,hash:nh})});
+    me.salt=s;me.hash=nh;sessionStorage.setItem('bayan',JSON.stringify(me));
+    $('pf-tip').textContent='密码已更新';$('pf-old').value='';$('pf-new').value='';
+  }catch(e){$('pf-tip').textContent='保存失败'}
+};
+
+/* 相册密码 */
+function openAlbum(){
+  $('alb-pwd').value='';$('alb-tip').textContent='';
+  open('ov-album');
+}
+window.openAlbum=openAlbum;
+$('alb-close').onclick=()=>close('ov-album');
+$('alb-btn').onclick=async()=>{
+  const v=$('alb-pwd').value.trim();
+  if(!v)return $('alb-tip').textContent='请输入';
+  try{
+    const r=await sb('settings?key=eq.album_pwd&limit=1');
+    const real=r.length?r[0].value:DEF_ALBUM;
+    if(v!==real)return $('alb-tip').textContent='密码错误';
+    albumOK=true;close('ov-album');renderHome();go('gallery');
+  }catch(e){$('alb-tip').textContent='验证失败'}
+};
+
+/* 上传 */
+const drop=$('drop'),fi=$('fileInput');
+drop.onclick=()=>{if(!me){toast('请先登录');open('ov-login');return}fi.click()};
+fi.onchange=()=>{addQ(fi.files);fi.value=''};
+drop.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer)addQ(e.dataTransfer.files)});
+['dragover','drop'].forEach(ev=>window.addEventListener(ev,e=>e.preventDefault()));
+function addQ(l){queue=queue.concat(Array.from(l).filter(f=>f.type.startsWith('image/')));renderQ()}
+function renderQ(){
+  qurls.forEach(u=>URL.revokeObjectURL(u));qurls=[];
+  const el=$('queue');el.innerHTML='';
+  queue.forEach((f,i)=>{
+    const u=URL.createObjectURL(f);qurls.push(u);
+    const d=document.createElement('div');d.className='qitem';
+    d.innerHTML='<img src="'+u+'"><button class="qrm">×</button>';
+    d.querySelector('.qrm').onclick=e=>{e.stopPropagation();queue.splice(i,1);renderQ()};
+    el.appendChild(d);
+  });
+  $('upacts').classList.toggle('hide',!queue.length);
+  if(queue.length)$('upacts').style.display='flex';
+  $('saveBtn').disabled=!queue.length;
+  $('saveBtn').textContent='上传（'+queue.length+'）';
+}
+$('clearBtn').onclick=()=>{queue=[];renderQ()};
+$('saveBtn').onclick=async()=>{
+  if(!me||!queue.length)return;
+  $('saveBtn').disabled=true;
+  const total=queue.length;let done=0;
+  try{
+    for(const f of queue){
+      const ext=(f.name.split('.').pop()||'jpg').toLowerCase();
+      const id=Date.now()+'_'+Math.random().toString(36).slice(2,6);
+      const fn=id+'.'+ext;
+      await up('photos',f,fn);
+      await sb('photos',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id,filename:fn,name:f.name,uploader:me.name,uploader_id:me.id,time:Date.now()}])});
+      done++;$('saveBtn').textContent='上传中 '+done+'/'+total;
+    }
+    queue=[];renderQ();toast('已上传 '+done+' 张');go('gallery');
+  }catch(e){toast('上传失败：'+e.message);$('saveBtn').disabled=false;$('saveBtn').textContent='上传（'+queue.length+'）'}
+};
+
+/* 相册 */
+async function renderGallery(){
+  try{
+    const list=await sb('photos?order=time.desc&limit=200');
+    photos=list.map(p=>({...p,url:SB+'/storage/v1/object/public/photos/'+p.filename}));
+  }catch(e){photos=[]}
+  const g=$('grid');
+  g.innerHTML=photos.map((p,i)=>'<div class="thumb" data-i="'+i+'"><img src="'+esc(p.url)+'" loading="lazy"></div>').join('');
+  g.querySelectorAll('.thumb').forEach(t=>{t.onclick=()=>openLB(+t.dataset.i)});
+  $('galcount').textContent=photos.length?photos.length+' 张照片':'';
+  $('galempty').classList.toggle('hide',photos.length>0);
+}
+const lb=$('lightbox'),lbi=$('lbimg');
+function openLB(i){if(!photos.length||i<0||i>=photos.length)return;lbIdx=i;lbi.src=photos[i].url;$('lbcount').textContent=(i+1)+' / '+photos.length+' · '+(photos[i].uploader||'');$('lbprev').style.display=$('lbnext').style.display=photos.length<2?'none':'';lb.classList.add('open');document.body.style.overflow='hidden'}
+function closeLB(){lb.classList.remove('open');lbi.removeAttribute('src');lbIdx=-1;document.body.style.overflow=''}
+function step(d){if(photos.length<2||lbIdx<0)return;openLB((lbIdx+d+photos.length)%photos.length)}
+$('lbprev').onclick=e=>{e.stopPropagation();step(-1)};
+$('lbnext').onclick=e=>{e.stopPropagation();step(1)};
+lb.onclick=e=>{if(e.target===lb)closeLB()};
+$('lbclose').onclick=closeLB;
+$('lbdel').onclick=async()=>{
+  if(!me||lbIdx<0)return toast('请先登录');
+  const p=photos[lbIdx];
+  if(p.uploader_id!==me.id&&!isAdmin())return toast('只能删自己的');
+  if(!confirm('删除这张？'))return;
+  try{
+    await fetch(SB+'/storage/v1/object/photos/'+p.filename,{method:'DELETE',headers:{apikey:KEY,Authorization:'Bearer '+KEY}});
+    await sb('photos?id=eq.'+encodeURIComponent(p.id),{method:'DELETE'});
+    closeLB();renderGallery();toast('已删除');
+  }catch(e){toast('删除失败')}
+};
+$('lbreport').onclick=async()=>{
+  if(!me||lbIdx<0)return toast('请先登录');
+  const p=photos[lbIdx];
+  const r=prompt('举报原因：');if(r===null)return;
+  try{
+    await sb('reports',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),photo_id:p.id,photo_name:p.name||'',photo_uploader:p.uploader||'',reporter_id:me.id,reporter:me.name,reason:r.trim()||'未填写',time:Date.now(),status:'pending'}])});
+    toast('已提交');
+  }catch(e){toast('提交失败')}
+};
+
+/* 聊天 */
+async function getUser(id){
+  const c=window._uc||(window._uc={});
+  if(c[id])return c[id];
+  try{const r=await sb('users?id=eq.'+encodeURIComponent(id)+'&limit=1');if(r.length){c[id]=r[0];return r[0]}}catch(e){}
+  return {id,name:'已注销',role:'user',avatar:''};
+}
+function bubble(text,name,role,avatar,time,mine){
+  const d=document.createElement('div');d.className='cmsg'+(mine?' mine':'');
+  const rt=roleName(role);const cls=role==='dev'?'dev':role==='admin'?'admin':role==='planner'?'planner':'';
+  const av=avatar?'<img src="'+esc(avatar)+'">':SVG;
+  const t=new Date(time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+  d.innerHTML='<div class="cav">'+av+'</div><div class="cbody"><div class="chead"><span class="cname">'+esc(name)+'</span>'+(role!=='user'&&role?'<span class="tag '+cls+'">'+rt+'</span>':'')+'<span class="ctime">'+t+'</span></div><div class="cbubble">'+esc(text)+'</div></div>';
+  return d;
+}
+async function loadChat(){
+  try{
+    const list=await sb('chat?id=gt.'+chatLast+'&order=id.asc&limit=100');
+    const box=$('chatlist');let add=false;
+    for(const m of list){chatLast=Math.max(chatLast,+m.id);const u=await getUser(m.user_id);box.appendChild(bubble(m.text,u.name,u.role,u.avatar,m.time,m.user_id===(me&&me.id)));add=true}
+    if(add)box.scrollTop=box.scrollHeight;
+  }catch(e){}
+}
+function startChat(){chatLast=0;$('chatlist').innerHTML='';loadChat();chatTimer=setInterval(loadChat,3000)}
+function stopChat(){if(chatTimer){clearInterval(chatTimer);chatTimer=null}}
+let sending=false;
+$('chatsend').onclick=async()=>{
+  if(!me){toast('请先登录');return}
+  if(sending)return;
+  const v=$('chatinput').value.trim();if(!v)return;
+  sending=true;$('chatinput').value='';
+  try{await sb('chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),user_id:me.id,text:v,time:Date.now()}])});loadChat()}catch(e){toast('发送失败')}
+  setTimeout(()=>{sending=false},500);
+};
+$('chatinput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatsend').click()}};
+
+/* 私聊 */
+async function renderDMConv(){
+  if(!me)return;
+  try{
+    const list=await sb('dm?or=(from_id.eq.'+encodeURIComponent(me.id)+',to_id.eq.'+encodeURIComponent(me.id)+')&order=time.desc&limit=500');
+    const map={};
+    for(const m of list){
+      const other=m.from_id===me.id?m.to_id:m.from_id;
+      if(!map[other]){const u=await getUser(other);map[other]={id:other,name:u.name,role:u.role,avatar:u.avatar,last:m.text,time:m.time,unread:0}}
+      if(m.to_id===me.id&&!m.read)map[other].unread++;
+    }
+    const arr=Object.values(map).sort((a,b)=>b.time-a.time);
+    const box=$('dmconv');
+    if(!arr.length){box.innerHTML='<div style="padding:18px;text-align:center;color:#999;font-size:13px">暂无会话</div>';return}
+    box.innerHTML=arr.map(c=>{
+      const av=c.avatar?'<img src="'+esc(c.avatar)+'">':SVG;
+      const r=c.role!=='user'?' <span class="tag '+(c.role==='dev'?'dev':c.role==='admin'?'admin':'planner')+'">'+roleName(c.role)+'</span>':'';
+      return '<div class="dmitem" data-id="'+esc(c.id)+'"><div class="cav">'+av+'</div><div class="dinfo"><div class="dname">'+esc(c.name)+r+'</div><div class="dlast">'+esc(c.last)+'</div></div>'+(c.unread>0?'<div class="dunread">'+c.unread+'</div>':'')+'</div>';
+    }).join('');
+    box.querySelectorAll('.dmitem').forEach(el=>{el.onclick=()=>openDM(el.dataset.id)});
+  }catch(e){}
+}
+async function renderDMUsers(){
+  if(!me)return;
+  try{
+    const list=await sb('users?status=eq.active&id=neq.'+encodeURIComponent(me.id));
+    const box=$('dmusers');
+    if(!list.length){box.innerHTML='<div style="padding:18px;text-align:center;color:#999;font-size:13px">暂无其他用户</div>';return}
+    box.innerHTML=list.map(u=>{
+      const av=u.avatar?'<img src="'+esc(u.avatar)+'">':SVG;
+      const r=u.role!=='user'?' <span class="tag '+(u.role==='dev'?'dev':u.role==='admin'?'admin':'planner')+'">'+roleName(u.role)+'</span>':'';
+      return '<div class="dmitem" data-id="'+esc(u.id)+'"><div class="cav">'+av+'</div><div class="dinfo"><div class="dname">'+esc(u.name)+r+'</div><div class="dlast">点击开始私聊</div></div></div>';
+    }).join('');
+    box.querySelectorAll('.dmitem').forEach(el=>{el.onclick=()=>openDM(el.dataset.id)});
+  }catch(e){}
+}
+window.openDM=async id=>{
+  if(!me)return;
+  dmWith=id;$('dmmain').classList.add('hide');$('dmview').classList.remove('hide');
+  const u=await getUser(id);
+  $('dmwho').textContent=u.name+(u.role!=='user'?' · '+roleName(u.role):'');
+  await loadDM();
+  if(dmTimer)clearInterval(dmTimer);
+  dmTimer=setInterval(loadDM,3000);
+};
+async function loadDM(){
+  if(!dmWith||!me)return;
+  try{
+    const list=await sb('dm?or=(and(from_id.eq.'+encodeURIComponent(me.id)+',to_id.eq.'+encodeURIComponent(dmWith)+'),and(from_id.eq.'+encodeURIComponent(dmWith)+',to_id.eq.'+encodeURIComponent(me.id)+'))&order=time.asc&limit=200');
+    const box=$('dmmessages');box.innerHTML='';
+    const u=await getUser(dmWith);
+    for(const m of list){
+      const mine=m.from_id===me.id;
+      box.appendChild(bubble(m.text,mine?me.name:u.name,mine?me.role:u.role,mine?(me.avatar||''):(u.avatar||''),m.time,mine));
+    }
+    box.scrollTop=box.scrollHeight;
+    for(const m of list.filter(m=>m.to_id===me.id&&!m.read)){
+      await sb('dm?id=eq.'+encodeURIComponent(m.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({read:true})});
+    }
+    notif();
+  }catch(e){}
+}
+$('dmback').onclick=()=>{dmWith=null;if(dmTimer){clearInterval(dmTimer);dmTimer=null}$('dmmain').classList.remove('hide');$('dmview').classList.add('hide');renderDMConv()};
+let dmsend=false;
+$('dmsend').onclick=async()=>{
+  if(dmsend||!dmWith||!me)return;
+  const v=$('dminput').value.trim();if(!v)return;
+  dmsend=true;$('dminput').value='';
+  try{await sb('dm',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'dm_'+Date.now(),from_id:me.id,to_id:dmWith,text:v,time:Date.now(),read:false}])});loadDM()}catch(e){toast('发送失败')}
+  setTimeout(()=>{dmsend=false},500);
+};
+$('dminput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('dmsend').click()}};
+
+/* 用户管理 */
+async function renderAdmin(){
+  if(!isAdmin())return;
+  try{
+    const list=await sb('users?order=created_at.desc&limit=500');
+    users=list;
+    const pend=list.filter(u=>u.status==='pending');
+    const pbox=$('pendinglist');
+    if(!pend.length)pbox.innerHTML='<div style="padding:16px;text-align:center;color:#999;font-size:13px">暂无待审核</div>';
+    else pbox.innerHTML=pend.map(u=>'<div class="item"><div><b>'+esc(u.name)+'</b> <span class="tag pending">待审核</span></div><div><button class="btn primary" style="padding:5px 10px;font-size:12.5px" onclick="approve(\''+u.id+'\',1)">通过</button> <button class="btn" style="padding:5px 10px;font-size:12.5px" onclick="approve(\''+u.id+'\',0)">拒绝</button></div></div>').join('');
+    const act=list.filter(u=>u.status!=='pending'&&u.id!==me.id);
+    const abox=$('userlist');
+    if(!act.length)abox.innerHTML='<div style="padding:16px;text-align:center;color:#999;font-size:13px">暂无其他用户</div>';
+    else abox.innerHTML=act.map(u=>{
+      const cls=u.role==='dev'?'dev':u.role==='admin'?'admin':u.role==='planner'?'planner':'';
+      const r=u.role!=='user'?'<span class="tag '+cls+'">'+roleName(u.role)+'</span>':'';
+      return '<div class="item"><div><b>'+esc(u.name)+'</b> '+r+' <span style="color:#999;font-size:12px">QQ:'+esc(u.qq||'')+'</span></div><button class="btn danger" style="padding:5px 10px;font-size:12.5px" onclick="delUser(\''+u.id+'\',\''+esc(u.name).replace(/'/g,'&#39;')+'\')">删除</button></div>';
+    }).join('');
+  }catch(e){}
+}
+window.approve=async(id,ok)=>{
+  await sb('users?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status:ok?'active':'rejected'})});
+  renderAdmin();toast(ok?'已通过':'已拒绝');
+};
+window.delUser=async(id,name)=>{
+  if(!confirm('删除用户「'+name+'」？'))return;
+  await sb('users?id=eq.'+encodeURIComponent(id),{method:'DELETE'});
+  renderAdmin();toast('已删除');
+};
+
+$('postAnn').onclick=async()=>{
+  const v=$('anninput').value.trim();if(!v)return toast('内容不能为空');
+  try{
+    await sb('announcements',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),text:v,time:Date.now(),author:me.name,force:$('annforce').checked}])});
+    $('anninput').value='';$('annforce').checked=false;toast('已发布');
+  }catch(e){toast('发布失败')}
+};
+$('addUserBtn').onclick=async()=>{
+  const name=$('addname').value.trim(),qq=$('addqq').value.trim(),role=$('addrole').value;
+  if(!name)return $('addtip').textContent='姓名必填';
+  try{
+    const ex=await sb('users?name=eq.'+encodeURIComponent(name)+'&limit=1');
+    if(ex.length)return $('addtip').textContent='名字已存在';
+    const s=salt();
+    const tk=tok();
+    await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'u_'+Date.now(),name,qq:qq||'',email:'',role,status:'active',token:tk,salt:s,hash:'',avatar:'',welcomed:true,read_ids:[]}])});
+    $('addtip').textContent='添加成功！口令：'+tk;$('addtip').style.color='#2e7d32';
+    $('addname').value='';$('addqq').value='';
+    renderAdmin();
+  }catch(e){$('addtip').textContent='失败：'+e.message}
+};
+
+/* 反馈 */
+function openFB(){
+  if(!me){toast('请先登录');open('ov-login');return}
+  $('fb-text').value='';$('fb-tip').textContent='';
+  open('ov-fb');
+}
+window.openFB=openFB;
+$('fb-close').onclick=()=>close('ov-fb');
+$('fb-btn').onclick=async()=>{
+  const v=$('fb-text').value.trim();if(!v)return $('fb-tip').textContent='请描述问题';
+  $('fb-tip').textContent='提交中...';
+  try{
+    await sb('feedback',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'fb_'+Date.now(),user_id:me.id,user_name:me.name,user_avatar:me.avatar||'',text:v,image:'',time:Date.now(),status:'pending'}])});
+    close('ov-fb');toast('已提交');notif();
+  }catch(e){$('fb-tip').textContent='提交失败'}
+};
+
+/* 通知 */
+async function notif(){
+  if(!me)return;
+  let n=0;
+  try{
+    const msgs=await sb('messages?or=(to_user.eq.'+encodeURIComponent(me.id)+',to_user.eq.all)');
+    const rd=me.read_ids||[];
+    n+=msgs.filter(m=>!rd.includes(m.id)).length;
+    const dms=await sb('dm?to_id=eq.'+encodeURIComponent(me.id)+'&read=eq.false');
+    n+=dms.length;
+    if(isAdmin()){const p=await sb('users?status=eq.pending');n+=p.length}
+    if(isReview()){const r=await sb('reports?status=eq.pending');n+=r.length;const f=await sb('feedback?status=eq.pending');n+=f.length}
+  }catch(e){}
+  const d=$('bell-dot'),dd=$('dmdot');
+  if(n>0){d.textContent=n>99?'99+':n;d.classList.remove('hide');if(dd){dd.textContent=n>99?'99+':n;dd.classList.remove('hide')}}
+  else{d.classList.add('hide');if(dd)dd.classList.add('hide')}
+}
+function startNotif(){if(notifTimer)return;notif();notifTimer=setInterval(notif,8000)}
+$('btn-bell').onclick=()=>{if(!me){open('ov-login');return}toast('暂无新通知')};
+$('btn-top-avatar').onclick=()=>{if(me)editProfile();else open('ov-login')};
+
+/* 启动 */
+(async function(){
+  const s=sessionStorage.getItem('bayan');
+  if(s){
+    try{
+      const u=JSON.parse(s);
+      const r=await sb('users?id=eq.'+encodeURIComponent(u.id)+'&limit=1');
+      if(r.length&&r[0].status==='active'){me=r[0];sessionStorage.setItem('bayan',JSON.stringify(me))}
+      else sessionStorage.removeItem('bayan');
+    }catch(e){}
+  }
+  renderMe();renderHome();
+  if(me)startNotif();
+  else setTimeout(()=>open('ov-login'),500);
+})();
+</script>
+</body>
+</html>
