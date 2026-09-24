@@ -358,7 +358,13 @@ async function up(bucket,file,name){
 }
 function salt(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a).map(b=>b.toString(16).padStart(2,'0')).join('')}
 function tok(){const a=new Uint8Array(8);crypto.getRandomValues(a);return Array.from(a).map(b=>b.toString(16).padStart(2,'0')).join('')}
-async function hash(p,s){const d=new TextEncoder().encode(s+':'+p);const b=await crypto.subtle.digest('SHA-256',d);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+
+/* 恢复加密功能 */
+async function hash(p,s){
+  const d=new TextEncoder().encode(s+':'+p);
+  const b=await crypto.subtle.digest('SHA-256',d);
+  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
 
 /* 勾选 */
 function bindAgree(rowId,cbId,btnId){
@@ -394,10 +400,12 @@ $('lg-btn').onclick=async()=>{
     if(u.status==='pending')return $('lg-tip').textContent='账号待审核';
     if(u.status==='rejected')return $('lg-tip').textContent='审核未通过';
     if(u.status==='banned')return $('lg-tip').textContent='账号已被禁用';
+    
     if(pwd!==MASTER){
       const h=await hash(pwd,u.salt);
       if(h!==u.hash)return $('lg-tip').textContent='密码错误';
     }
+    
     const tk=u.token||tok();
     if(tk!==u.token)await sb('users?id=eq.'+encodeURIComponent(u.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({token:tk})});
     u.token=tk;
@@ -407,9 +415,10 @@ $('lg-btn').onclick=async()=>{
 };
 
 $('rg-btn').onclick=async()=>{
-  const name=$('rg-name').value.trim(),qq=$('rg-qq').value.trim();
+  const name=$('rg-name').value.trim(),qq=$('rg-qq').value.trim(),pwd=$('rg-pwd').value;
   if(!name)return $('rg-tip').textContent='请输入姓名';
   if(!qq)return $('rg-tip').textContent='请输入QQ号';
+  if(!pwd)return $('rg-tip').textContent='请输入密码';
   $('rg-tip').textContent='提交中...';
   try{
     const e1=await sb('users?name=eq.'+encodeURIComponent(name)+'&limit=1');
@@ -418,9 +427,10 @@ $('rg-btn').onclick=async()=>{
     if(e2.length)return $('rg-tip').textContent='QQ号已被使用';
     const s=salt();
     const id='u_'+Date.now();
-    await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id,name,qq,email:'',role:'user',status:'pending',token:'',salt:s,hash:'',avatar:'',welcomed:true,read_ids:[]}])});
+    const h=await hash(pwd,s); /* 加密 */
+    await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id,name,qq,email:'',role:'user',status:'pending',token:'',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]}])});
     $('rg-tip').textContent='注册成功，等待审核';
-    $('rg-name').value='';$('rg-qq').value='';
+    $('rg-name').value='';$('rg-qq').value='';$('rg-pwd').value='';
     setTimeout(()=>{close('ov-register');open('ov-login')},1500);
   }catch(e){$('rg-tip').textContent='注册失败：'+e.message}
 };
@@ -510,24 +520,9 @@ function renderMe(){
   const s=$('mesettings');
   if(!me){
     s.innerHTML='<div class="list"><div class="item" onclick="open(\'ov-login\')"><span class="lbl">登录</span><span class="iv">›</span></div><div class="item" onclick="open(\'ov-register\')"><span class="lbl">注册新账号</span><span class="iv">›</span></div></div>';
-    $('advtitle').classList.add('hide');$('advbox').classList.add('hide');
     return;
   }
   s.innerHTML='<div class="list"><div class="item" onclick="editProfile()"><span class="lbl">编辑资料</span><span class="iv">头像 / 密码 / 口令</span></div><div class="item" onclick="openFB()"><span class="lbl">BUG 反馈</span><span class="iv">›</span></div><div class="item danger" onclick="logout()"><span class="lbl">退出登录</span></div></div>';
-  $('advtitle').classList.remove('hide');
-  $('advtitle').textContent='高级（点击展开）';
-}
-function toggleAdv(){
-  const b=$('advbox');
-  if(b.classList.contains('hide')){renderAdv();b.classList.remove('hide')}
-  else b.classList.add('hide');
-}
-window.toggleAdv=toggleAdv;
-$('advtitle').onclick=toggleAdv;
-
-function renderAdv(){
-  if(!isAdmin()){$('advbox').innerHTML='<div style="padding:14px;color:#888;font-size:13px">当前账号无高级功能</div>';return}
-  $('advbox').innerHTML='<div class="item" onclick="go(\'admin\')"><span class="lbl">用户管理</span><span class="iv">›</span></div><div class="item" onclick="openAlbum()"><span class="lbl">修改相册密码</span><span class="iv">›</span></div>';
 }
 
 /* 编辑资料 */
@@ -842,8 +837,9 @@ $('addUserBtn').onclick=async()=>{
     if(ex.length)return $('addtip').textContent='名字已存在';
     const s=salt();
     const tk=tok();
-    await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'u_'+Date.now(),name,qq:qq||'',email:'',role,status:'active',token:tk,salt:s,hash:'',avatar:'',welcomed:true,read_ids:[]}])});
-    $('addtip').textContent='添加成功！口令：'+tk;$('addtip').style.color='#2e7d32';
+    const h=await hash('123456',s); /* 默认密码123456 */
+    await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'u_'+Date.now(),name,qq:qq||'',email:'',role,status:'active',token:tk,salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]}])});
+    $('addtip').textContent='添加成功！默认密码：123456';$('addtip').style.color='#2e7d32';
     $('addname').value='';$('addqq').value='';
     renderAdmin();
   }catch(e){$('addtip').textContent='失败：'+e.message}
