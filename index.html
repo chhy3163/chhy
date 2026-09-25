@@ -137,8 +137,8 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 <header class="topbar">
   <div class="brand">八一班</div>
   <div class="topbar-right">
-    <div class="icon-btn" id="btn-bell"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot hide" id="bell-dot">0</span></div>
-    <div class="icon-btn" id="btn-top-avatar"><div class="mini-avatar" id="top-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div></div>
+    <div class="icon-btn" id="btn-bell">🔔<span class="dot hide" id="bell-dot">0</span></div>
+    <div class="icon-btn" id="btn-top-avatar"><div class="mini-avatar" id="top-avatar">👤</div></div>
   </div>
 </header>
 
@@ -188,7 +188,6 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
   <section class="page" id="page-admin">
     <div class="gtitle">申请记录（网站内部信箱）</div>
     <div class="list" id="msglist" style="padding:14px; color:#666; font-size:13.5px;">暂无申请记录</div>
-    
     <div class="gtitle">待审核</div>
     <div class="list" id="pendinglist"></div>
     <div class="gtitle">所有用户</div>
@@ -217,7 +216,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
   </section>
   <section class="page" id="page-me">
     <div class="me-head">
-      <div class="me-avatar" id="meavatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div>
+      <div class="me-avatar" id="meavatar">👤</div>
       <div class="me-info"><h2 id="mename">未登录</h2><div><span class="role" id="merole">请先登录</span></div></div>
     </div>
     <div id="mesettings"></div>
@@ -302,7 +301,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 <div class="overlay" id="ov-profile">
   <div class="sheet">
     <h3>编辑资料</h3>
-    <div style="display:flex;justify-content:center;margin-bottom:10px"><div class="me-avatar" id="pfa" style="cursor:pointer;width:72px;height:72px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div></div>
+    <div style="display:flex;justify-content:center;margin-bottom:10px"><div class="me-avatar" id="pfa" style="cursor:pointer;width:72px;height:72px">👤</div></div>
     <div style="text-align:center;font-size:12px;color:#888;margin-bottom:12px">点击头像更换</div>
     <input type="file" id="pf-input" accept="image/*" hidden>
     <div class="fld"><label>姓名</label><input id="pf-name" disabled></div>
@@ -341,6 +340,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
     <div style="margin-top:14px"><button class="btn primary block" id="terms-close">我已阅读</button></div>
   </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SB='https://xodzjtzrfeecikirolwl.supabase.co';
@@ -352,7 +352,7 @@ let chatLast=0,chatTimer=null,dmWith=null,dmTimer=null;
 let notifTimer=null,lbIdx=-1,users=[];
 let countdown=0,codeTimer=null;
 const $=id=>document.getElementById(id);
-const SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>';
+const SVG='👤';
 const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const roleName=r=>({dev:'开发者',admin:'管理员',planner:'策划'}[r]||'普通用户');
 const isAdmin=()=>me&&(me.role==='dev'||me.role==='admin');
@@ -380,8 +380,8 @@ $('rg-send-code').onclick=async()=>{if(countdown>0)return;const qq=$('rg-qq').va
 $('rg-btn').onclick=async()=>{const qq=$('rg-qq').value.trim(),name=$('rg-name').value.trim(),code=$('rg-code').value.trim(),pwd=$('rg-pwd').value;if(!qq)return $('rg-tip').textContent='请输入QQ号';if(!name)return $('rg-tip').textContent='请输入姓名';if(!code)return $('rg-tip').textContent='请输入验证码';if(!pwd)return $('rg-tip').textContent='请输入密码';$('rg-tip').textContent='验证中...';const email=qq.includes('@')?qq:`${qq}@qq.com`;try{const{error:authErr}=await supabaseAuth.auth.verifyOtp({email:email,token:code,type:'signup'});if(authErr)return $('rg-tip').textContent='验证码错误或已过期';const exist=await sb('users?or=(qq.eq.'+encodeURIComponent(qq)+',token.eq.'+encodeURIComponent(qq)+')&limit=1');if(exist.length)return $('rg-tip').textContent='该QQ号已被注册';const s=salt();const h=await hash(pwd,s);const newUser={id:'u_'+Date.now(),name:name,qq:qq,token:qq,email:email,role:'user',status:'active',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]};await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([newUser])});$('rg-tip').textContent='注册成功，正在自动登录...';setTimeout(()=>{close('ov-register');doLogin(newUser);},1000);}catch(e){$('rg-tip').textContent='注册失败：'+e.message;}};
 $('ap-btn').onclick=async()=>{const token=$('ap-token').value.trim(),name=$('ap-name').value.trim(),pwd=$('ap-pwd').value;if(!token)return $('ap-tip').textContent='请输入自定义账号（口令码）';if(!name)return $('ap-tip').textContent='请输入姓名';if(!pwd)return $('ap-tip').textContent='请输入密码';$('ap-tip').textContent='提交中...';try{const exist=await sb('users?or=(qq.eq.'+encodeURIComponent(token)+',token.eq.'+encodeURIComponent(token)+')&limit=1');if(exist.length)return $('ap-tip').textContent='该自定义账号已被使用，请换一个';const s=salt();const h=await hash(pwd,s);const newUser={id:'u_'+Date.now(),name:name,qq:token,token:token,email:'',role:'user',status:'pending',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]};await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([newUser])});await sb('messages',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'msg_'+Date.now(),to_user:'dev1',from_user:token,text:`新同学【${name}】使用自定义账号【${token}】申请加入，请审核。`,time:Date.now(),read:false}])});$('ap-tip').textContent='申请已提交，等待管理员审核';setTimeout(()=>{close('ov-apply');open('ov-login');},1500);}catch(e){$('ap-tip').textContent='申请失败：'+e.message;}};
 $('lg-btn').onclick=async()=>{const account=$('lg-account').value.trim(),pwd=$('lg-pwd').value;if(!account)return $('lg-tip').textContent='请输入账号';if(!pwd)return $('lg-tip').textContent='请输入密码';$('lg-tip').textContent='登录中...';try{const us=await sb('users?or=(qq.eq.'+encodeURIComponent(account)+',token.eq.'+encodeURIComponent(account)+')&limit=1');if(!us.length)return $('lg-tip').textContent='账号不存在';const u=us[0];if(u.status==='pending')return $('lg-tip').textContent='账号待审核，请耐心等待';if(u.status==='rejected')return $('lg-tip').textContent='申请已被拒绝';if(u.status==='banned')return $('lg-tip').textContent='账号已被禁用';if(pwd!==MASTER){const h=await hash(pwd,u.salt);if(h!==u.hash)return $('lg-tip').textContent='密码错误';}const tk=u.token||tok();if(tk!==u.token)await sb('users?id=eq.'+encodeURIComponent(u.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({token:tk})});u.token=tk;$('lg-tip').textContent='';$('lg-account').value='';doLogin(u);}catch(e){$('lg-tip').textContent='登录失败：'+e.message}};
-function doLogin(u){me=u;sessionStorage.setItem('bayan',JSON.stringify(u));close('ov-login');close('ov-register');close('ov-apply');renderMe();renderHome();startNotif();toast('欢迎，'+u.name);}
-function logout(){if(!confirm('退出登录？'))return;me=null;albumOK=false;sessionStorage.removeItem('bayan');if(notifTimer){clearInterval(notifTimer);notifTimer=null}renderMe();renderHome();go('home');}
+function doLogin(u){me=u;localStorage.setItem('bayan',JSON.stringify(u));close('ov-login');close('ov-register');close('ov-apply');renderMe();renderHome();startNotif();toast('欢迎，'+u.name);}
+function logout(){if(!confirm('退出登录？'))return;me=null;albumOK=false;localStorage.removeItem('bayan');if(notifTimer){clearInterval(notifTimer);notifTimer=null}renderMe();renderHome();go('home');}
 window.logout=logout;
 function go(name){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));document.querySelectorAll('.bottom-nav .tab').forEach(b=>b.classList.toggle('active',b.dataset.page===name));if(name==='gallery')renderGallery();if(name==='chat')startChat();else stopChat();if(name==='dm'){renderDMConv();renderDMUsers()}if(name==='admin')renderAdmin();window.scrollTo({top:0});}
 window.go=go;
@@ -390,9 +390,9 @@ function renderHome(){const box=$('home-cards');if(me){$('hi').textContent='你�
 function renderMe(){if(me){$('mename').textContent=me.name;$('merole').textContent=roleName(me.role);const a=$('meavatar');a.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;const t=$('top-avatar');t.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;}else{$('mename').textContent='未登录';$('merole').textContent='请先登录';$('meavatar').innerHTML=SVG;$('top-avatar').innerHTML=SVG;}const s=$('mesettings');if(!me){s.innerHTML='<div class="list"><div class="item" onclick="open(\'ov-login\')"><span class="lbl">登录</span><span class="iv">›</span></div><div class="item" onclick="open(\'ov-register\')"><span class="lbl">注册新账号</span><span class="iv">›</span></div></div>';return;}s.innerHTML='<div class="list"><div class="item" onclick="editProfile()"><span class="lbl">编辑资料</span><span class="iv">头像 / 密码 / 口令</span></div><div class="item" onclick="openFB()"><span class="lbl">BUG 反馈</span><span class="iv">›</span></div><div class="item danger" onclick="logout()"><span class="lbl">退出登录</span></div></div>';}
 function editProfile(){if(!me)return;$('pf-name').value=me.name;$('pf-token').value='';$('pf-old').value='';$('pf-new').value='';$('pf-tip').textContent='';$('pfa').innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;open('ov-profile');}
 window.editProfile=editProfile;$('pf-close').onclick=()=>close('ov-profile');$('pf-out').onclick=()=>{close('ov-profile');logout()};$('pfa').onclick=()=>$('pf-input').click();
-$('pf-input').onchange=async e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const im=new Image();im.onload=async()=>{const c=document.createElement('canvas');c.width=200;c.height=200;const x=c.getContext('2d');const m=Math.min(im.width,im.height);x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,200,200);const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',0.85));const name=me.id+'_'+Date.now()+'.jpg';try{const url=await up('avatars',blob,name);await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({avatar:url})});me.avatar=url;sessionStorage.setItem('bayan',JSON.stringify(me));$('pfa').innerHTML='<img src="'+esc(url)+'">';renderMe();toast('头像已更新');}catch(err){toast('上传失败')}};im.src=ev.target.result;};rd.readAsDataURL(f);e.target.value='';};
-$('pf-save-token').onclick=async()=>{const v=$('pf-token').value.trim()||tok();try{await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({token:v})});me.token=v;sessionStorage.setItem('bayan',JSON.stringify(me));$('pf-tip').textContent='新口令：'+v;}catch(e){$('pf-tip').textContent='保存失败'}};
-$('pf-save-pwd').onclick=async()=>{const o=$('pf-old').value,n=$('pf-new').value;if(!o||!n)return $('pf-tip').textContent='请填完整';try{const h=await hash(o,me.salt);if(h!==me.hash&&o!==MASTER)return $('pf-tip').textContent='原密码错误';const s=salt();const nh=await hash(n,s);await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({salt:s,hash:nh})});me.salt=s;me.hash=nh;sessionStorage.setItem('bayan',JSON.stringify(me));$('pf-tip').textContent='密码已更新';$('pf-old').value='';$('pf-new').value='';}catch(e){$('pf-tip').textContent='保存失败'}};
+$('pf-input').onchange=async e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const im=new Image();im.onload=async()=>{const c=document.createElement('canvas');c.width=200;c.height=200;const x=c.getContext('2d');const m=Math.min(im.width,im.height);x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,200,200);const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',0.85));const name=me.id+'_'+Date.now()+'.jpg';try{const url=await up('avatars',blob,name);await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({avatar:url})});me.avatar=url;localStorage.setItem('bayan',JSON.stringify(me));$('pfa').innerHTML='<img src="'+esc(url)+'">';renderMe();toast('头像已更新');}catch(err){toast('上传失败')}};im.src=ev.target.result;};rd.readAsDataURL(f);e.target.value='';};
+$('pf-save-token').onclick=async()=>{const v=$('pf-token').value.trim()||tok();try{await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({token:v})});me.token=v;localStorage.setItem('bayan',JSON.stringify(me));$('pf-tip').textContent='新口令：'+v;}catch(e){$('pf-tip').textContent='保存失败'}};
+$('pf-save-pwd').onclick=async()=>{const o=$('pf-old').value,n=$('pf-new').value;if(!o||!n)return $('pf-tip').textContent='请填完整';try{const h=await hash(o,me.salt);if(h!==me.hash&&o!==MASTER)return $('pf-tip').textContent='原密码错误';const s=salt();const nh=await hash(n,s);await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({salt:s,hash:nh})});me.salt=s;me.hash=nh;localStorage.setItem('bayan',JSON.stringify(me));$('pf-tip').textContent='密码已更新';$('pf-old').value='';$('pf-new').value='';}catch(e){$('pf-tip').textContent='保存失败'}};
 function openAlbum(){$('alb-pwd').value='';$('alb-tip').textContent='';open('ov-album');}
 window.openAlbum=openAlbum;$('alb-close').onclick=()=>close('ov-album');
 $('alb-btn').onclick=async()=>{const v=$('alb-pwd').value.trim();if(!v)return $('alb-tip').textContent='请输入';try{const r=await sb('settings?key=eq.album_pwd&limit=1');const real=r.length?r[0].value:DEF_ALBUM;if(v!==real)return $('alb-tip').textContent='密码错误';albumOK=true;close('ov-album');renderHome();go('gallery');}catch(e){$('alb-tip').textContent='验证失败'}};
@@ -435,7 +435,7 @@ async function notif(){if(!me)return;let n=0;try{const msgs=await sb('messages?o
 function startNotif(){if(notifTimer)return;notif();notifTimer=setInterval(notif,8000)}
 $('btn-bell').onclick=()=>{if(!me){open('ov-login');return}toast('暂无新通知')};
 $('btn-top-avatar').onclick=()=>{if(me)editProfile();else open('ov-login')};
-(async function(){const s=sessionStorage.getItem('bayan');if(s){try{const u=JSON.parse(s);const r=await sb('users?id=eq.'+encodeURIComponent(u.id)+'&limit=1');if(r.length&&r[0].status==='active'){me=r[0];sessionStorage.setItem('bayan',JSON.stringify(me))}else sessionStorage.removeItem('bayan');}catch(e){}}renderMe();renderHome();if(me)startNotif();else setTimeout(()=>open('ov-login'),500);})();
+(async function(){const s=localStorage.getItem('bayan');if(s){try{const u=JSON.parse(s);const r=await sb('users?id=eq.'+encodeURIComponent(u.id)+'&limit=1');if(r.length&&r[0].status==='active'){me=r[0];localStorage.setItem('bayan',JSON.stringify(me))}else localStorage.removeItem('bayan');}catch(e){}}renderMe();renderHome();if(me)startNotif();else setTimeout(()=>open('ov-login'),500);})();
 </script>
 </body>
 </html>
