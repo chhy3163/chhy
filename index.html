@@ -242,7 +242,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
   <div class="sheet">
     <h3>登录</h3>
     <div class="fld"><label>账号（QQ 或 口令码）</label><input id="lg-account" placeholder="请输入QQ号或口令码"></div>
-    <div class="fld"><label>密码</label><input id="lg-pwd" type="password" inputmode="numeric"></div>
+    <div class="fld"><label>密码</label><input id="lg-pwd" type="text" inputmode="numeric" autocomplete="off"></div>
     <div class="agree-row" id="lg-row"><span class="agree-box"><svg viewBox="0 0 24 24"><polyline points="4,12 10,18 20,6"/></svg></span><span class="agree-text">我已阅读并同意 <a href="javascript:;" onclick="showTerms(event)">《免责声明》和《使用条款》</a></span></div>
     <input type="checkbox" id="lg-agree" hidden>
     <button class="btn primary block" id="lg-btn" disabled>登录</button>
@@ -264,7 +264,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
         <button class="btn" id="rg-send-code" style="padding:0 12px;border-radius:10px;font-size:13px">获取验证码</button>
       </div>
     </div>
-    <div class="fld"><label>密码（必填）</label><input id="rg-pwd" type="password" inputmode="numeric"></div>
+    <div class="fld"><label>密码（必填）</label><input id="rg-pwd" type="text" inputmode="numeric" autocomplete="off"></div>
     <div class="agree-row" id="rg-row"><span class="agree-box"><svg viewBox="0 0 24 24"><polyline points="4,12 10,18 20,6"/></svg></span><span class="agree-text">我已阅读并同意 <a href="javascript:;" onclick="showTerms(event)">《免责声明》和《使用条款》</a></span></div>
     <input type="checkbox" id="rg-agree" hidden>
     <button class="btn primary block" id="rg-btn" disabled>提交注册</button>
@@ -279,7 +279,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
     <h3>申请加入</h3>
     <div class="fld"><label>自定义账号（口令码）</label><input id="ap-token" placeholder="随便写一个你记得住的账号，如：bayan888"></div>
     <div class="fld"><label>姓名</label><input id="ap-name" placeholder="你的真实姓名"></div>
-    <div class="fld"><label>密码</label><input id="ap-pwd" type="password" inputmode="numeric"></div>
+    <div class="fld"><label>密码</label><input id="ap-pwd" type="text" inputmode="numeric" autocomplete="off"></div>
     <div class="agree-row" id="ap-row"><span class="agree-box"><svg viewBox="0 0 24 24"><polyline points="4,12 10,18 20,6"/></svg></span><span class="agree-text">我已阅读并同意 <a href="javascript:;" onclick="showTerms(event)">《免责声明》和《使用条款》</a></span></div>
     <input type="checkbox" id="ap-agree" hidden>
     <button class="btn primary block" id="ap-btn" disabled>提交申请（需管理员同意）</button>
@@ -291,7 +291,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 <div class="overlay" id="ov-album">
   <div class="sheet">
     <h3>请输入相册密码</h3>
-    <div class="fld"><label>相册码</label><input id="alb-pwd" type="password" inputmode="numeric"></div>
+    <div class="fld"><label>相册码</label><input id="alb-pwd" type="text" inputmode="numeric" autocomplete="off"></div>
     <button class="btn primary block" id="alb-btn">进入相册</button>
     <div class="tip" id="alb-tip"></div>
     <div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#666" id="alb-close">取消</button></div>
@@ -306,7 +306,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
     <input type="file" id="pf-input" accept="image/*" hidden>
     <div class="fld"><label>姓名</label><input id="pf-name" disabled></div>
     <div class="fld"><label>新口令码</label><input id="pf-token" placeholder="留空自动生成"><button class="btn primary block" style="margin-top:8px" id="pf-save-token">保存口令</button></div>
-    <div class="fld" style="border-top:1px solid #eee;padding-top:12px"><label>修改密码</label><input id="pf-old" type="password" placeholder="原密码"><input id="pf-new" type="password" placeholder="新密码" style="margin-top:8px"><button class="btn primary block" style="margin-top:8px" id="pf-save-pwd">保存密码</button></div>
+    <div class="fld" style="border-top:1px solid #eee;padding-top:12px"><label>修改密码</label><input id="pf-old" type="text" autocomplete="off" placeholder="原密码"><input id="pf-new" type="text" autocomplete="off" placeholder="新密码" style="margin-top:8px"><button class="btn primary block" style="margin-top:8px" id="pf-save-pwd">保存密码</button></div>
     <div class="tip" id="pf-tip"></div>
     <div style="display:flex;gap:8px;margin-top:16px"><button class="btn block" id="pf-close">关闭</button><button class="btn danger block" id="pf-out">退出</button></div>
   </div>
