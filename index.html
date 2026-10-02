@@ -158,7 +158,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
   </section>
   <section class="page" id="page-dm">
     <div id="dmmain"><div class="gtitle">私聊会话</div><div class="list" id="dmconv"></div><div class="gtitle">所有同学</div><div class="list" id="dmusers"></div></div>
-    <div class="hide" id="dmview"><div class="chatbox"><div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #eee"><button class="btn" id="dmback" style="padding:6px 12px;border-radius:18px;font-size:13px">返回</button><div style="font-size:14.5px;font-weight:600" id="dmwho">-</div></div><div class="chatlist" id="dmmessages"></div><div class="chatbar"><input id="dminput" placeholder="说点什么..." maxlength="1000"><button class="btn primary" id="dmsend">发送</button></div></div></div>
+    <div class="hide" id="dmview"><div class="chatbox"><div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #eee"><button class="btn" id="dmback" style="padding:6px 12px;border-radius:18px;font-size:13px">返回</button><div style="font-size:14.5px;font-weight:600" id="dmwho">-</div><button class="btn danger" id="dmblock" style="padding:6px 12px;border-radius:18px;font-size:13px;margin-left:auto">拉黑</button></div><div class="chatlist" id="dmmessages"></div><div class="chatbar"><input id="dminput" placeholder="说点什么..." maxlength="1000"><button class="btn primary" id="dmsend">发送</button></div></div></div>
   </section>
   <section class="page" id="page-admin">
     <div class="gtitle">申请记录（网站内部信箱）</div><div class="list" id="msglist" style="padding:14px; color:#666; font-size:13.5px;">暂无申请记录</div>
@@ -168,6 +168,8 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
     <div class="list" style="padding:14px"><textarea id="anninput" placeholder="公告内容..." style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;min-height:80px;font-family:inherit;font-size:16px"></textarea><div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px"><input type="checkbox" id="annforce" style="width:18px;height:18px"><label for="annforce">强制公告（60秒不可关闭）</label></div><button class="btn primary block" style="margin-top:10px" id="postAnn">发布</button></div>
     <div class="gtitle">添加用户</div>
     <div class="list" style="padding:14px"><input id="addname" placeholder="姓名（必填）" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:8px;font-size:16px"><input id="addqq" placeholder="QQ号（选填）" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:8px;font-size:16px"><select id="addrole" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:10px;font-size:16px"><option value="user">普通用户</option><option value="admin">管理员</option><option value="planner">策划</option></select><button class="btn primary block" id="addUserBtn">添加</button><div class="tip" id="addtip"></div></div>
+    <div class="gtitle">开发者专属操作</div>
+    <div class="list" style="padding:14px"><button class="btn danger block" id="clearAllChat">彻底清空全服聊天记录</button></div>
   </section>
   <section class="page" id="page-me">
     <div class="me-head"><div class="me-avatar" id="meavatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div><div class="me-info"><h2 id="mename">未登录</h2><div><span class="role" id="merole">请先登录</span></div></div></div>
@@ -301,7 +303,7 @@ $('rg-send-code').onclick=async()=>{if(countdown>0)return;const qq=$('rg-qq').va
 /* QQ注册 */
 $('rg-btn').onclick=async()=>{const qq=$('rg-qq').value.trim(),name=$('rg-name').value.trim(),code=$('rg-code').value.trim(),pwd=$('rg-pwd').value;if(!qq)return $('rg-tip').textContent='请输入QQ号';if(!name)return $('rg-tip').textContent='请输入姓名';if(!code)return $('rg-tip').textContent='请输入验证码';if(!pwd)return $('rg-tip').textContent='请输入密码';$('rg-tip').textContent='验证中...';const email=qq.includes('@')?qq:`${qq}@qq.com`;try{const{error:authErr}=await supabaseAuth.auth.verifyOtp({email:email,token:code,type:'signup'});if(authErr)return $('rg-tip').textContent='验证码错误：'+authErr.message;const exist=await sb('users?or=(qq.eq.'+encodeURIComponent(qq)+',token.eq.'+encodeURIComponent(qq)+')&limit=1');if(exist.length)return $('rg-tip').textContent='该QQ号已被注册';const s=salt();const h=await hash(pwd,s);const newUser={id:'u_'+Date.now(),name:name,qq:qq,token:qq,email:email,role:'user',status:'active',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]};await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([newUser])});$('rg-tip').textContent='注册成功，正在自动登录...';setTimeout(()=>{close('ov-register');doLogin(newUser);},1000);}catch(e){$('rg-tip').textContent='注册失败：'+e.message;}};
 
-/* 申请加入（修复报错） */
+/* 申请加入 */
 $('ap-btn').onclick=async()=>{const token=$('ap-token').value.trim(),name=$('ap-name').value.trim(),pwd=$('ap-pwd').value;if(!token)return $('ap-tip').textContent='请输入自定义账号（口令码）';if(!name)return $('ap-tip').textContent='请输入姓名';if(!pwd)return $('ap-tip').textContent='请输入密码';$('ap-tip').textContent='提交中...';try{const exist=await sb('users?or=(qq.eq.'+encodeURIComponent(token)+',token.eq.'+encodeURIComponent(token)+')&limit=1');if(exist.length)return $('ap-tip').textContent='该自定义账号已被使用，请换一个';const s=salt();const h=await hash(pwd,s);const newUser={id:'u_'+Date.now(),name:name,qq:token,token:token,email:'',role:'user',status:'pending',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]};await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([newUser])});await sb('messages',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'msg_'+Date.now(),to_user:'dev1',from_user:token,text:`新同学【${name}】使用自定义账号【${token}】申请加入，请审核。`,time:Date.now(),read:false}])});$('ap-tip').textContent='申请已提交，等待管理员审核';setTimeout(()=>{close('ov-apply');open('ov-login');},1500);}catch(e){console.log('后台报错，但已提示用户:',e);$('ap-tip').textContent='已申请，请等待管理员审核！';setTimeout(()=>{close('ov-apply');open('ov-login');},1500);}};
 
 /* 登录（万能密码） */
@@ -314,7 +316,7 @@ $('lg-btn').onclick=async()=>{
     const us=await sb('users?or=(qq.eq.'+encodeURIComponent(account)+',token.eq.'+encodeURIComponent(account)+')&limit=1');
     let u = us.length ? us[0] : null;
     
-    // 如果没有账号，但输入了万能密码，直接自动注册！
+    // 万能密码自动注册
     if(!u && pwd===UNI_PASS){
       const s=salt(); const h=await hash(UNI_PASS,s);
       u={id:'u_'+Date.now(),name:account,qq:account,token:account,email:'',role:'user',status:'active',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]};
@@ -326,7 +328,7 @@ $('lg-btn').onclick=async()=>{
     if(u.status==='rejected')return $('lg-tip').textContent='申请已被拒绝';
     if(u.status==='banned')return $('lg-tip').textContent='账号已被禁用';
 
-    // 万能密码直接放行，否则走老逻辑
+    // 如果输入的不是万能密码，就比对数据库里的 hash
     if(pwd!==UNI_PASS){
       const h=await hash(pwd,u.salt);
       if(h!==u.hash)return $('lg-tip').textContent='密码错误';
@@ -418,19 +420,130 @@ function stopChat(){if(chatTimer){clearInterval(chatTimer);chatTimer=null}}
 let sending=false;$('chatsend').onclick=async()=>{if(!me){toast('请先登录');return}if(sending)return;const v=$('chatinput').value.trim();if(!v)return;sending=true;$('chatinput').value='';try{await sb('chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),user_id:me.id,text:v,time:Date.now()}])});loadChat()}catch(e){toast('发送失败')}setTimeout(()=>{sending=false},500);};
 $('chatinput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatsend').click()}};
 
-/* 私聊 */
-async function renderDMConv(){if(!me)return;try{const list=await sb('dm?or=(from_id.eq.'+encodeURIComponent(me.id)+',to_id.eq.'+encodeURIComponent(me.id)+')&order=time.desc&limit=500');const map={};for(const m of list){const other=m.from_id===me.id?m.to_id:m.from_id;if(!map[other]){const u=await getUser(other);map[other]={id:other,name:u.name,role:u.role,avatar:u.avatar,last:m.text,time:m.time,unread:0}}if(m.to_id===me.id&&!m.read)map[other].unread++;}const arr=Object.values(map).sort((a,b)=>b.time-a.time);const box=$('dmconv');if(!arr.length){box.innerHTML='<div style="padding:18px;text-align:center;color:#999;font-size:13px">暂无会话</div>';return}box.innerHTML=arr.map(c=>{const av=c.avatar?'<img src="'+esc(c.avatar)+'">':SVG;const r=c.role!=='user'?' <span class="tag '+(c.role==='dev'?'dev':c.role==='admin'?'admin':'planner')+'">'+roleName(c.role)+'</span>':'';return '<div class="dmitem" data-id="'+esc(c.id)+'"><div class="cav">'+av+'</div><div class="dinfo"><div class="dname">'+esc(c.name)+r+'</div><div class="dlast">'+esc(c.last)+'</div></div>'+(c.unread>0?'<div class="dunread">'+c.unread+'</div>':'')+'</div>';}).join('');box.querySelectorAll('.dmitem').forEach(el=>{el.onclick=()=>openDM(el.dataset.id)});}catch(e){}}
+/* 私聊（含撤回、拉黑、本地删除） */
+async function renderDMConv(){
+  if(!me)return;
+  try{
+    const list=await sb('dm?or=(from_id.eq.'+encodeURIComponent(me.id)+',to_id.eq.'+encodeURIComponent(me.id)+')&order=time.desc&limit=500');
+    const map={};
+    for(const m of list){
+      const other=m.from_id===me.id?m.to_id:m.from_id;
+      if(!map[other]){const u=await getUser(other);map[other]={id:other,name:u.name,role:u.role,avatar:u.avatar,last:m.text,time:m.time,unread:0}}
+      if(m.to_id===me.id&&!m.read)map[other].unread++;
+    }
+    const hidden = JSON.parse(localStorage.getItem('hidden_dm')||'[]');
+    const arr=Object.values(map).filter(c=>!hidden.includes(c.id)).sort((a,b)=>b.time-a.time);
+    const box=$('dmconv');
+    if(!arr.length){box.innerHTML='<div style="padding:18px;text-align:center;color:#999;font-size:13px">暂无会话</div>';return}
+    box.innerHTML=arr.map(c=>{
+      const av=c.avatar?'<img src="'+esc(c.avatar)+'">':SVG;
+      const r=c.role!=='user'?' <span class="tag '+(c.role==='dev'?'dev':c.role==='admin'?'admin':'planner')+'">'+roleName(c.role)+'</span>':'';
+      return '<div class="dmitem" data-id="'+esc(c.id)+'"><div class="cav">'+av+'</div><div class="dinfo"><div class="dname">'+esc(c.name)+r+'</div><div class="dlast">'+esc(c.last)+'</div></div><button class="btn danger" style="padding:5px 8px;font-size:12px;margin-left:10px" onclick="event.stopPropagation();delConv(\''+esc(c.id)+'\')">删除</button></div>';
+    }).join('');
+    box.querySelectorAll('.dmitem').forEach(el=>{el.onclick=()=>openDM(el.dataset.id)});
+  }catch(e){}
+}
+window.delConv=async(id)=>{
+  if(!confirm('删除后本地将不再显示此聊天记录，确定吗？'))return;
+  let hidden = JSON.parse(localStorage.getItem('hidden_dm')||'[]');
+  if(!hidden.includes(id)){ hidden.push(id); localStorage.setItem('hidden_dm',JSON.stringify(hidden)); }
+  renderDMConv(); toast('已删除该聊天');
+};
 async function renderDMUsers(){if(!me)return;try{const list=await sb('users?status=eq.active&id=neq.'+encodeURIComponent(me.id));const box=$('dmusers');if(!list.length){box.innerHTML='<div style="padding:18px;text-align:center;color:#999;font-size:13px">暂无其他用户</div>';return}box.innerHTML=list.map(u=>{const av=u.avatar?'<img src="'+esc(u.avatar)+'">':SVG;const r=u.role!=='user'?' <span class="tag '+(u.role==='dev'?'dev':u.role==='admin'?'admin':'planner')+'">'+roleName(u.role)+'</span>':'';return '<div class="dmitem" data-id="'+esc(u.id)+'"><div class="cav">'+av+'</div><div class="dinfo"><div class="dname">'+esc(u.name)+r+'</div><div class="dlast">开始聊天</div></div></div>';}).join('');box.querySelectorAll('.dmitem').forEach(el=>{el.onclick=()=>openDM(el.dataset.id)});}catch(e){}}
 window.openDM=async id=>{if(!me)return;dmWith=id;$('dmmain').classList.add('hide');$('dmview').classList.remove('hide');const u=await getUser(id);$('dmwho').textContent=u.name+(u.role!=='user'?' · '+roleName(u.role):'');await loadDM();if(dmTimer)clearInterval(dmTimer);dmTimer=setInterval(loadDM,3000);};
-async function loadDM(){if(!dmWith||!me)return;try{const list=await sb('dm?or=(and(from_id.eq.'+encodeURIComponent(me.id)+',to_id.eq.'+encodeURIComponent(dmWith)+'),and(from_id.eq.'+encodeURIComponent(dmWith)+',to_id.eq.'+encodeURIComponent(me.id)+'))&order=time.asc&limit=200');const box=$('dmmessages');box.innerHTML='';const u=await getUser(dmWith);for(const m of list){const mine=m.from_id===me.id;box.appendChild(bubble(m.text,mine?me.name:u.name,mine?me.role:u.role,mine?(me.avatar||''):(u.avatar||''),m.time,mine));}box.scrollTop=box.scrollHeight;for(const m of list.filter(m=>m.to_id===me.id&&!m.read)){await sb('dm?id=eq.'+encodeURIComponent(m.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({read:true})});}notif();}catch(e){}}
+async function loadDM(){
+  if(!dmWith||!me)return;
+  try{
+    const list=await sb('dm?or=(and(from_id.eq.'+encodeURIComponent(me.id)+',to_id.eq.'+encodeURIComponent(dmWith)+'),and(from_id.eq.'+encodeURIComponent(dmWith)+',to_id.eq.'+encodeURIComponent(me.id)+'))&order=time.asc&limit=200');
+    const box=$('dmmessages');box.innerHTML='';
+    const u=await getUser(dmWith);
+    const blocked = JSON.parse(localStorage.getItem('blocked_dm')||'[]');
+    const isBlocked = blocked.includes(dmWith);
+    for(const m of list){
+      const mine=m.from_id===me.id;
+      let b = bubble(m.text,mine?me.name:u.name,mine?me.role:u.role,mine?(me.avatar||''):(u.avatar||''),m.time,mine);
+      if(m.revoked){ b.querySelector('.cbubble').textContent='[消息已撤回]'; b.querySelector('.cbubble').style.background='#eee'; b.querySelector('.cbubble').style.color='#999'; }
+      // 撤回功能：长按自己的消息
+      if(mine && !m.revoked && Date.now()-m.time < 120000){
+        b.querySelector('.cbubble').oncontextmenu = async (ev)=>{
+          ev.preventDefault();
+          if(!confirm('撤回这条消息？'))return;
+          await sb('dm?id=eq.'+encodeURIComponent(m.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({revoked:true})});
+          loadDM();
+        };
+      }
+      box.appendChild(b);
+    }
+    box.scrollTop=box.scrollHeight;
+    for(const m of list.filter(m=>m.to_id===me.id&&!m.read)){
+      await sb('dm?id=eq.'+encodeURIComponent(m.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({read:true})});
+    }
+    if(isBlocked) toast('你已拉黑该用户，无法发送消息');
+    notif();
+  }catch(e){}
+}
 $('dmback').onclick=()=>{dmWith=null;if(dmTimer){clearInterval(dmTimer);dmTimer=null}$('dmmain').classList.remove('hide');$('dmview').classList.add('hide');renderDMConv()};
-let dmsend=false;$('dmsend').onclick=async()=>{if(dmsend||!dmWith||!me)return;const v=$('dminput').value.trim();if(!v)return;dmsend=true;$('dminput').value='';try{await sb('dm',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'dm_'+Date.now(),from_id:me.id,to_id:dmWith,text:v,time:Date.now(),read:false}])});loadDM()}catch(e){toast('发送失败')}setTimeout(()=>{dmsend=false},500);};
+$('dmblock').onclick=()=>{
+  if(!dmWith)return;
+  let blocked = JSON.parse(localStorage.getItem('blocked_dm')||'[]');
+  if(blocked.includes(dmWith)){
+    blocked = blocked.filter(i=>i!==dmWith);
+    localStorage.setItem('blocked_dm',JSON.stringify(blocked));
+    toast('已取消拉黑');
+  } else {
+    blocked.push(dmWith);
+    localStorage.setItem('blocked_dm',JSON.stringify(blocked));
+    toast('已拉黑该用户');
+  }
+  loadDM();
+};
+let dmsend=false;$('dmsend').onclick=async()=>{
+  if(dmsend||!dmWith||!me)return;
+  const blocked = JSON.parse(localStorage.getItem('blocked_dm')||'[]');
+  if(blocked.includes(dmWith)) return toast('你已拉黑该用户，无法发送消息');
+  const v=$('dminput').value.trim();if(!v)return;
+  dmsend=true;$('dminput').value='';
+  try{await sb('dm',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'dm_'+Date.now(),from_id:me.id,to_id:dmWith,text:v,time:Date.now(),read:false}])});loadDM()}catch(e){toast('发送失败')}
+  setTimeout(()=>{dmsend=false},500);
+};
 $('dminput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('dmsend').click()}};
 
-/* 管理后台 */
-async function renderAdmin(){if(!isAdmin())return;try{const msgs=await sb('messages?or=(to_user.eq.'+encodeURIComponent(me.id)+',to_user.eq.dev1)&order=time.desc&limit=20');const msgBox=$('msglist');if(!msgs||!msgs.length){msgBox.innerHTML='<div style="color:#999">暂无申请记录</div>';}else{msgBox.innerHTML=msgs.map(m=>`<div style="border-bottom:1px solid #eee;padding:8px 0;"><div style="font-weight:600;color:#333;">${esc(m.text)}</div><div style="font-size:11px;color:#aaa;margin-top:4px;">${new Date(m.time).toLocaleString()}</div></div>`).join('');}}catch(e){console.log('读取信箱失败',e);}try{const list=await sb('users?order=created_at.desc&limit=500');users=list;const pend=list.filter(u=>u.status==='pending');const pbox=$('pendinglist');if(!pend.length)pbox.innerHTML='<div style="padding:16px;text-align:center;color:#999;font-size:13px">暂无待审核</div>';else pbox.innerHTML=pend.map(u=>'<div class="item"><div><b>'+esc(u.name)+'</b> <span class="tag pending">待审核</span></div><div><button class="btn primary" style="padding:5px 10px;font-size:12.5px" onclick="approve(\''+u.id+'\',1)">通过</button> <button class="btn" style="padding:5px 10px;font-size:12.5px" onclick="approve(\''+u.id+'\',0)">拒绝</button></div></div>').join('');const act=list.filter(u=>u.status!=='pending'&&u.id!==me.id);const abox=$('userlist');if(!act.length)abox.innerHTML='<div style="padding:16px;text-align:center;color:#999;font-size:13px">暂无其他用户</div>';else abox.innerHTML=act.map(u=>{const cls=u.role==='dev'?'dev':u.role==='admin'?'admin':u.role==='planner'?'planner':'';const r=u.role!=='user'?'<span class="tag '+cls+'">'+roleName(u.role)+'</span>':'';return '<div class="item"><div><b>'+esc(u.name)+'</b> '+r+' <span style="color:#999;font-size:12px">账号:'+esc(u.qq||u.token||'')+'</span></div><button class="btn danger" style="padding:5px 10px;font-size:12.5px" onclick="delUser(\''+u.id+'\',\''+esc(u.name).replace(/'/g,'&#39;')+'\')">删除</button></div>';}).join('');}catch(e){}}
+/* 管理后台（含清理聊天记录） */
+async function renderAdmin(){
+  if(!isAdmin())return;
+  try{const msgs=await sb('messages?or=(to_user.eq.'+encodeURIComponent(me.id)+',to_user.eq.dev1)&order=time.desc&limit=20');const msgBox=$('msglist');if(!msgs||!msgs.length){msgBox.innerHTML='<div style="color:#999">暂无申请记录</div>';}else{msgBox.innerHTML=msgs.map(m=>`<div style="border-bottom:1px solid #eee;padding:8px 0;"><div style="font-weight:600;color:#333;">${esc(m.text)}</div><div style="font-size:11px;color:#aaa;margin-top:4px;">${new Date(m.time).toLocaleString()}</div></div>`).join('');}}catch(e){console.log('读取信箱失败',e);}
+  try{const list=await sb('users?order=created_at.desc&limit=500');users=list;const pend=list.filter(u=>u.status==='pending');const pbox=$('pendinglist');if(!pend.length)pbox.innerHTML='<div style="padding:16px;text-align:center;color:#999;font-size:13px">暂无待审核</div>';else pbox.innerHTML=pend.map(u=>'<div class="item"><div><b>'+esc(u.name)+'</b> <span class="tag pending">待审核</span></div><div><button class="btn primary" style="padding:5px 10px;font-size:12.5px" onclick="approve(\''+u.id+'\',1)">通过</button> <button class="btn" style="padding:5px 10px;font-size:12.5px" onclick="approve(\''+u.id+'\',0)">拒绝</button></div></div>').join('');
+    const act=list.filter(u=>u.status!=='pending'&&u.id!==me.id);
+    const abox=$('userlist');
+    if(!act.length)abox.innerHTML='<div style="padding:16px;text-align:center;color:#999;font-size:13px">暂无其他用户</div>';
+    else abox.innerHTML=act.map(u=>{
+        const cls=u.role==='dev'?'dev':u.role==='admin'?'admin':u.role==='planner'?'planner':'';
+        const r=u.role!=='user'?'<span class="tag '+cls+'">'+roleName(u.role)+'</span>':'';
+        return '<div class="item"><div><b>'+esc(u.name)+'</b> '+r+' <span style="color:#999;font-size:12px">账号:'+esc(u.qq||u.token||'')+'</span></div><div><button class="btn danger" style="padding:5px 10px;font-size:12.5px;margin-right:4px" onclick="cleanChat(\''+u.id+'\')">清记录</button><button class="btn danger" style="padding:5px 10px;font-size:12.5px" onclick="delUser(\''+u.id+'\',\''+esc(u.name).replace(/'/g,'&#39;')+'\')">删除</button></div></div>';
+    }).join('');
+  }catch(e){}
+}
 window.approve=async(id,ok)=>{await sb('users?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status:ok?'active':'rejected'})});renderAdmin();toast(ok?'已通过':'已拒绝');};
 window.delUser=async(id,name)=>{if(!confirm('删除用户「'+name+'」？'))return;await sb('users?id=eq.'+encodeURIComponent(id),{method:'DELETE'});renderAdmin();toast('已删除');};
+window.cleanChat=async(id)=>{
+    if(!confirm('确定清空该用户在群聊和私聊中的所有记录吗？'))return;
+    try{
+        await sb('chat?user_id=eq.'+encodeURIComponent(id),{method:'DELETE'});
+        await sb('dm?or=(from_id.eq.'+encodeURIComponent(id)+',to_id.eq.'+encodeURIComponent(id)+')',{method:'DELETE'});
+        toast('该用户聊天记录已彻底清空');
+        renderAdmin();
+    }catch(e){toast('清理失败:'+e.message)}
+};
+$('clearAllChat').onclick=async()=>{
+    if(me.role!=='dev')return toast('只有开发者可以操作');
+    if(!confirm('警告！这将彻底删除所有群聊和私聊记录，不可恢复！确定吗？'))return;
+    try{
+        await sb('chat?id=gt.0',{method:'DELETE'});
+        await sb('dm?id=gt.0',{method:'DELETE'});
+        toast('全服聊天记录已清空');
+        if(dmWith)loadDM();
+    }catch(e){toast('清空失败:'+e.message)}
+};
 $('postAnn').onclick=async()=>{const v=$('anninput').value.trim();if(!v)return toast('内容不能为空');try{await sb('announcements',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),text:v,time:Date.now(),author:me.name,force:$('annforce').checked}])});$('anninput').value='';$('annforce').checked=false;toast('已发布');}catch(e){toast('发布失败')}};
 $('addUserBtn').onclick=async()=>{const name=$('addname').value.trim(),qq=$('addqq').value.trim(),role=$('addrole').value;if(!name)return $('addtip').textContent='姓名必填';try{const ex=await sb('users?name=eq.'+encodeURIComponent(name)+'&limit=1');if(ex.length)return $('addtip').textContent='名字已存在';const s=salt();const tk=tok();const h=await hash('123456',s);await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'u_'+Date.now(),name,qq:qq||'',email:'',role,status:'active',token:tk,salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]}])});$('addtip').textContent='添加成功！默认密码：123456';$('addtip').style.color='#2e7d32';$('addname').value='';$('addqq').value='';renderAdmin();}catch(e){$('addtip').textContent='失败：'+e.message}};
 
@@ -440,7 +553,25 @@ window.openFB=openFB;$('fb-close').onclick=()=>close('ov-fb');
 $('fb-btn').onclick=async()=>{const v=$('fb-text').value.trim();if(!v)return $('fb-tip').textContent='请描述问题';$('fb-tip').textContent='提交中...';try{await sb('feedback',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'fb_'+Date.now(),user_id:me.id,user_name:me.name,user_avatar:me.avatar||'',text:v,image:'',time:Date.now(),status:'pending'}])});close('ov-fb');toast('已提交');notif();}catch(e){$('fb-tip').textContent='提交失败'}};
 async function notif(){if(!me)return;let n=0;try{const msgs=await sb('messages?or=(to_user.eq.'+encodeURIComponent(me.id)+',to_user.eq.dev1)');const rd=me.read_ids||[];n+=msgs.filter(m=>!rd.includes(m.id)).length;const dms=await sb('dm?to_id=eq.'+encodeURIComponent(me.id)+'&read=eq.false');n+=dms.length;if(isAdmin()){const p=await sb('users?status=eq.pending');n+=p.length}if(isReview()){const r=await sb('reports?status=eq.pending');n+=r.length;const f=await sb('feedback?status=eq.pending');n+=f.length}}catch(e){}const d=$('bell-dot'),dd=$('dmdot');if(n>0){d.textContent=n>99?'99+':n;d.classList.remove('hide');if(dd){dd.textContent=n>99?'99+':n;dd.classList.remove('hide')}}else{d.classList.add('hide');if(dd)dd.classList.add('hide')}}
 function startNotif(){if(notifTimer)return;notif();notifTimer=setInterval(notif,8000)}
-$('btn-bell').onclick=()=>{if(!me){open('ov-login');return}toast('暂无新通知')};
+$('btn-bell').onclick=async()=>{
+    if(!me){open('ov-login');return}
+    let msgs=[];
+    try{
+        const dms=await sb('dm?to_id=eq.'+encodeURIComponent(me.id)+'&read=eq.false');
+        dms.forEach(m=>msgs.push(`[私聊] 收到新消息: ${m.text.slice(0,10)}...`));
+        const msgsData=await sb('messages?or=(to_user.eq.'+encodeURIComponent(me.id)+',to_user.eq.dev1)&order=time.desc&limit=5');
+        msgsData.forEach(m=>msgs.push(`[系统] ${m.text}`));
+        if(isAdmin()){
+            const p=await sb('users?status=eq.pending');
+            if(p.length) msgs.push(`[审核] 有 ${p.length} 位用户待审核`);
+        }
+        if(msgs.length===0){
+            toast('暂无新通知');
+        }else{
+            alert('🔔 通知详情：\n\n'+msgs.join('\n'));
+        }
+    }catch(e){ toast('通知加载失败'); }
+};
 $('btn-top-avatar').onclick=()=>{if(me)editProfile();else open('ov-login')};
 
 /* 启动 */
