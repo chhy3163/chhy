@@ -56,7 +56,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 .bottom-nav .tab .dot{position:absolute;top:6px;right:24%;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#e53935;color:#fff;font-size:10px;line-height:16px;text-align:center;font-weight:600}
 .overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s;display:flex;align-items:center;justify-content:center;padding:20px}
 .overlay.open{opacity:1;visibility:visible}
-.sheet{width:100%;max-width:420px;background:#fff;border-radius:20px;padding:24px 20px;max-height:85vh;overflow-y:auto;transform:scale(0.98);transition:transform .2s ease}
+.sheet{width:100%;max-width:420px;background:#fff;border-radius:20px;padding:24px 20px calc(24px + var(--safe-b));max-height:85vh;overflow-y:auto;transform:scale(0.98);transition:transform .2s ease}
 .overlay.open .sheet{transform:scale(1)}
 .sheet h3{font-size:17px;text-align:center;font-weight:600;margin-bottom:18px}
 .fld{margin-bottom:14px}
@@ -90,7 +90,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 .thumb{aspect-ratio:1;border-radius:8px;overflow:hidden;background:#eee;cursor:pointer}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .empty{text-align:center;padding:60px 20px;color:#999;font-size:13.5px}
-.chatbox{display:flex;flex-direction:column;height:calc(100vh - 200px);min-height:340px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(0,0,0,.05)}
+.chatbox{display:flex;flex-direction:column;height:calc(100vh - 280px);min-height:300px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(0,0,0,.05);margin-bottom:20px}
 .chatlist{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
 .cmsg{display:flex;gap:10px;align-items:flex-start}
 .cav{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#eee;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#c0c0c0}
@@ -141,11 +141,20 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
   </div>
 </header>
 <main>
-  <section class="page active" id="page-home"><div class="hello" onclick="open('ov-login')"><h1 id="hi">你好</h1><p id="his">请先登录</p></div><div id="home-cards"></div></section>
+  <section class="page active" id="page-home"><div class="hello" onclick="openLogin()"><h1 id="hi">你好</h1><p id="his">请先登录</p></div><div id="home-cards"></div></section>
   <section class="page" id="page-upload"><div class="drop" id="drop"><div class="drop-title">点击选择照片</div><div class="drop-sub">可一次多张</div></div><input type="file" id="fileInput" accept="image/*" multiple hidden><div class="queue" id="queue"></div><div class="hide" id="upacts" style="margin-top:14px;justify-content:flex-end;gap:8px"><button class="btn" id="clearBtn">清空</button><button class="btn primary" id="saveBtn">上传（0）</button></div></section>
   <section class="page" id="page-gallery"><div class="gtitle" id="galcount"></div><div class="grid" id="grid"></div><div class="empty hide" id="galempty">还没有照片</div></section>
-  <section class="page" id="page-chat"><div class="chatbox"><div class="chatlist" id="chatlist"></div><div class="chatbar"><input id="chatinput" placeholder="说点什么..." maxlength="1000"><button class="btn primary" id="chatsend">发送</button></div></div></section>
-  <section class="page" id="page-dm"><div id="dmmain"><div class="gtitle">私聊会话</div><div class="list" id="dmconv"></div><div class="gtitle">所有同学</div><div class="list" id="dmusers"></div></div><div class="hide" id="dmview"><div class="chatbox"><div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #eee"><button class="btn" id="dmback" style="padding:6px 12px;border-radius:18px;font-size:13px">返回</button><div style="font-size:14.5px;font-weight:600" id="dmwho">-</div><button class="btn danger" id="dmblock" style="padding:6px 12px;border-radius:18px;font-size:13px;margin-left:auto">拉黑</button></div><div class="chatlist" id="dmmessages"></div><div class="chatbar"><input id="dminput" placeholder="说点什么..." maxlength="1000"><button class="btn primary" id="dmsend">发送</button></div></div></div></section>
+  <section class="page" id="page-chat">
+    <div class="gtitle">班级群聊</div>
+    <div class="chatbox"><div class="chatlist" id="chatlist"></div><div class="chatbar"><input id="chatinput" placeholder="说点什么..." maxlength="1000"><button class="btn primary" id="chatsend">发送</button></div></div>
+    <div id="dmmain">
+      <div class="gtitle">私聊会话</div><div class="list" id="dmconv"></div>
+      <div class="gtitle">所有同学</div><div class="list" id="dmusers"></div>
+    </div>
+    <div class="hide" id="dmview">
+      <div class="chatbox"><div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #eee"><button class="btn" id="dmback" style="padding:6px 12px;border-radius:18px;font-size:13px">返回</button><div style="font-size:14.5px;font-weight:600" id="dmwho">-</div><button class="btn danger" id="dmblock" style="padding:6px 12px;border-radius:18px;font-size:13px;margin-left:auto">拉黑</button></div><div class="chatlist" id="dmmessages"></div><div class="chatbar"><input id="dminput" placeholder="说点什么..." maxlength="1000"><button class="btn primary" id="dmsend">发送</button></div></div>
+    </div>
+  </section>
   <section class="page" id="page-admin"><div class="gtitle">申请记录（网站内部信箱）</div><div class="list" id="msglist" style="padding:14px; color:#666; font-size:13.5px;">暂无申请记录</div><div class="gtitle">待审核</div><div class="list" id="pendinglist"></div><div class="gtitle">所有用户</div><div class="list" id="userlist"></div><div class="gtitle">发布公告</div><div class="list" style="padding:14px"><textarea id="anninput" placeholder="公告内容..." style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;min-height:80px;font-family:inherit;font-size:16px"></textarea><div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px"><input type="checkbox" id="annforce" style="width:18px;height:18px"><label for="annforce">强制公告（60秒不可关闭）</label></div><button class="btn primary block" style="margin-top:10px" id="postAnn">发布</button></div><div class="gtitle">添加用户</div><div class="list" style="padding:14px"><input id="addname" placeholder="姓名（必填）" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:8px;font-size:16px"><input id="addqq" placeholder="QQ号（选填）" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:8px;font-size:16px"><select id="addrole" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:10px;font-size:16px"><option value="user">普通用户</option><option value="admin">管理员</option><option value="planner">策划</option></select><button class="btn primary block" id="addUserBtn">添加</button><div class="tip" id="addtip"></div></div><div class="gtitle">开发者专属操作</div><div class="list" style="padding:14px"><button class="btn danger block" id="clearAllChat">彻底清空全服聊天记录</button></div></section>
   <section class="page" id="page-me"><div class="me-head"><div class="me-avatar" id="meavatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div><div class="me-info"><h2 id="mename">未登录</h2><div><span class="role" id="merole">请先登录</span></div></div></div><div id="mesettings"></div></section>
 </main>
@@ -153,7 +162,6 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
   <button class="tab active" data-page="home">主页</button>
   <button class="tab" data-page="gallery">相册</button>
   <button class="tab" data-page="chat">聊天</button>
-  <button class="tab" data-page="dm">私聊<span class="dot hide" id="dmdot">0</span></button>
   <button class="tab" data-page="me">我的</button>
 </nav>
 <div class="lightbox" id="lightbox"><div class="lbbar"><span id="lbcount"></span><span><button class="lbbtn" id="lbreport">举报</button><button class="lbbtn" id="lbdel">删除</button><button class="lbbtn" id="lbclose">关闭</button></span></div><button class="lbnav lbprev" id="lbprev">‹</button><img class="lb-img" id="lbimg" alt=""><button class="lbnav lbnext" id="lbnext">›</button></div>
@@ -189,6 +197,7 @@ function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');cle
 function open(id){$(id).classList.add('open')}
 function close(id){$(id).classList.remove('open')}
 window.toast=toast;window.open=open;window.close=close;
+window.openLogin=function(){open('ov-login')};
 
 async function sb(path,opt={}){const r=await fetch(SB+'/rest/v1/'+path,{...opt,headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',...(opt.headers||{})}});const t=await r.text();if(!r.ok)throw new Error(t||r.status);return t?JSON.parse(t):null;}
 async function up(bucket,file,name){const r=await fetch(SB+'/storage/v1/object/'+bucket+'/'+name,{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},body:file});if(!r.ok)throw new Error('上传失败');return SB+'/storage/v1/object/public/'+bucket+'/'+name;}
@@ -228,24 +237,16 @@ $('lg-btn').onclick=async()=>{
   try{
     const us=await sb('users?or=(qq.eq.'+encodeURIComponent(account)+',token.eq.'+encodeURIComponent(account)+')&limit=1');
     let u = us.length ? us[0] : null;
-    
-    // 万能密码自动注册
     if(!u && pwd===UNI_PASS){
       const s=salt(); const h=await hash(UNI_PASS,s);
       u={id:'u_'+Date.now(),name:account,qq:account,token:account,email:'',role:'user',status:'active',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]};
       await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([u])});
     }
-    
     if(!u)return $('lg-tip').textContent='账号不存在';
     if(u.status==='pending')return $('lg-tip').textContent='账号待审核，请耐心等待';
     if(u.status==='rejected')return $('lg-tip').textContent='申请已被拒绝';
     if(u.status==='banned')return $('lg-tip').textContent='账号已被禁用';
-
-    if(pwd!==UNI_PASS){
-      const h=await hash(pwd,u.salt);
-      if(h!==u.hash)return $('lg-tip').textContent='密码错误';
-    }
-    
+    if(pwd!==UNI_PASS){const h=await hash(pwd,u.salt);if(h!==u.hash)return $('lg-tip').textContent='密码错误';}
     localStorage.setItem('bayan',JSON.stringify(u));
     $('lg-tip').textContent='';$('lg-account').value='';
     doLogin(u);
@@ -256,13 +257,12 @@ function doLogin(u){me=u;localStorage.setItem('bayan',JSON.stringify(u));close('
 function logout(){if(!confirm('退出登录？'))return;me=null;albumOK=false;localStorage.removeItem('bayan');localStorage.removeItem('album_white');if(notifTimer){clearInterval(notifTimer);notifTimer=null}renderMe();renderHome();go('home');}
 window.logout=logout;
 
-/* 页面切换（含相册白名单逻辑） */
+/* 页面切换 */
 function go(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));
   document.querySelectorAll('.bottom-nav .tab').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
   if(name==='gallery')renderGallery();
-  if(name==='chat')startChat();else stopChat();
-  if(name==='dm'){renderDMConv();renderDMUsers()}
+  if(name==='chat'){startChat();renderDMConv();renderDMUsers()}else stopChat();
   if(name==='admin')renderAdmin();
   window.scrollTo({top:0});
 }
@@ -271,7 +271,7 @@ document.querySelectorAll('.bottom-nav .tab').forEach(b=>{
   b.onclick=()=>{
     const p=b.dataset.page;
     if(p==='home'||p==='me'){go(p);return}
-    if(!me){toast('请先登录');open('ov-login');return}
+    if(!me){toast('请先登录');openLogin();return}
     if(p==='gallery'&&!albumOK){
       if(isReview()||localStorage.getItem('album_white')==='1'){albumOK=true;go('gallery');return}
       openAlbum();return;
@@ -281,8 +281,8 @@ document.querySelectorAll('.bottom-nav .tab').forEach(b=>{
 });
 
 /* 首页和我的 */
-function renderHome(){const box=$('home-cards');if(me){$('hi').textContent='你好，'+me.name;$('his').textContent='身份：'+roleName(me.role);}else{$('hi').textContent='你好';$('his').textContent='请先登录';}const list=[{k:'upload',i:'↑',t:'上传照片',s:''},{k:'gallery',i:'▦',t:'相册',s:''},{k:'chat',i:'◐',t:'聊天室',s:''},{k:'dm',i:'✉',t:'私聊',s:''},{k:'fb',i:'!',t:'BUG 反馈',s:''}];if(isAdmin())list.push({k:'admin',i:'⚙',t:'用户管理',s:''});box.innerHTML=list.map(x=>'<div class="card" data-k="'+x.k+'"><div class="ci">'+x.i+'</div><div class="ct"><div class="ctt">'+x.t+'</div><div class="cts">'+x.s+'</div></div><div class="ca">›</div></div>').join('');box.querySelectorAll('.card').forEach(el=>{el.onclick=()=>{const k=el.dataset.k;if(k==='fb'){openFB();return}if(k==='gallery'){if(!me){toast('请先登录');open('ov-login');return}if(!albumOK){if(isReview()||localStorage.getItem('album_white')==='1'){albumOK=true;go('gallery');return}openAlbum();return}go('gallery');return}if(!me){toast('请先登录');open('ov-login');return}if(k==='admin'){go('admin');return}go(k);};});}
-function renderMe(){if(me){$('mename').textContent=me.name;$('merole').textContent=roleName(me.role);const a=$('meavatar');a.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;const t=$('top-avatar');t.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;}else{$('mename').textContent='未登录';$('merole').textContent='请先登录';$('meavatar').innerHTML=SVG;$('top-avatar').innerHTML=SVG;}const s=$('mesettings');if(!me){s.innerHTML='<div class="list"><div class="item" onclick="open(\'ov-login\')"><span class="lbl">登录</span><span class="iv">›</span></div><div class="item" onclick="open(\'ov-register\')"><span class="lbl">注册新账号</span><span class="iv">›</span></div></div>';return;}s.innerHTML='<div class="list"><div class="item" onclick="editProfile()"><span class="lbl">编辑资料</span><span class="iv">头像 / 密码 / 口令</span></div><div class="item" onclick="openFB()"><span class="lbl">BUG 反馈</span><span class="iv">›</span></div><div class="item danger" onclick="logout()"><span class="lbl">退出登录</span></div></div>';}
+function renderHome(){const box=$('home-cards');if(me){$('hi').textContent='你好，'+me.name;$('his').textContent='身份：'+roleName(me.role);}else{$('hi').textContent='你好';$('his').textContent='请先登录';}const list=[{k:'upload',i:'↑',t:'上传照片',s:''},{k:'gallery',i:'▦',t:'相册',s:''},{k:'chat',i:'◐',t:'聊天室',s:''},{k:'fb',i:'!',t:'BUG 反馈',s:''}];if(isAdmin())list.push({k:'admin',i:'⚙',t:'用户管理',s:''});box.innerHTML=list.map(x=>'<div class="card" data-k="'+x.k+'"><div class="ci">'+x.i+'</div><div class="ct"><div class="ctt">'+x.t+'</div><div class="cts">'+x.s+'</div></div><div class="ca">›</div></div>').join('');box.querySelectorAll('.card').forEach(el=>{el.onclick=()=>{const k=el.dataset.k;if(k==='fb'){openFB();return}if(k==='gallery'){if(!me){toast('请先登录');openLogin();return}if(!albumOK){if(isReview()||localStorage.getItem('album_white')==='1'){albumOK=true;go('gallery');return}openAlbum();return}go('gallery');return}if(!me){toast('请先登录');openLogin();return}if(k==='admin'){go('admin');return}go(k);};});}
+function renderMe(){if(me){$('mename').textContent=me.name;$('merole').textContent=roleName(me.role);const a=$('meavatar');a.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;const t=$('top-avatar');t.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;}else{$('mename').textContent='未登录';$('merole').textContent='请先登录';$('meavatar').innerHTML=SVG;$('top-avatar').innerHTML=SVG;}const s=$('mesettings');if(!me){s.innerHTML='<div class="list"><div class="item" onclick="openLogin()"><span class="lbl">登录</span><span class="iv">›</span></div><div class="item" onclick="open(\'ov-register\')"><span class="lbl">注册新账号</span><span class="iv">›</span></div></div>';return;}s.innerHTML='<div class="list"><div class="item" onclick="editProfile()"><span class="lbl">编辑资料</span><span class="iv">头像 / 密码 / 口令</span></div><div class="item" onclick="openFB()"><span class="lbl">BUG 反馈</span><span class="iv">›</span></div><div class="item danger" onclick="logout()"><span class="lbl">退出登录</span></div></div>';}
 
 /* 编辑资料（修复头像上传） */
 function editProfile(){if(!me)return;$('pf-name').value=me.name;$('pf-token').value='';$('pf-old').value='';$('pf-new').value='';$('pf-tip').textContent='';$('pfa').innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;open('ov-profile');}
@@ -306,7 +306,7 @@ $('alb-btn').onclick=async()=>{
 };
 
 /* 上传照片 */
-const drop=$('drop'),fi=$('fileInput');drop.onclick=()=>{if(!me){toast('请先登录');open('ov-login');return}fi.click()};fi.onchange=()=>{addQ(fi.files);fi.value=''};drop.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer)addQ(e.dataTransfer.files)});['dragover','drop'].forEach(ev=>window.addEventListener(ev,e=>e.preventDefault()));
+const drop=$('drop'),fi=$('fileInput');drop.onclick=()=>{if(!me){toast('请先登录');openLogin();return}fi.click()};fi.onchange=()=>{addQ(fi.files);fi.value=''};drop.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer)addQ(e.dataTransfer.files)});['dragover','drop'].forEach(ev=>window.addEventListener(ev,e=>e.preventDefault()));
 function addQ(l){queue=queue.concat(Array.from(l).filter(f=>f.type.startsWith('image/')));renderQ()}
 function renderQ(){qurls.forEach(u=>URL.revokeObjectURL(u));qurls=[];const el=$('queue');el.innerHTML='';queue.forEach((f,i)=>{const u=URL.createObjectURL(f);qurls.push(u);const d=document.createElement('div');d.className='qitem';d.innerHTML='<img src="'+u+'"><button class="qrm">×</button>';d.querySelector('.qrm').onclick=e=>{e.stopPropagation();queue.splice(i,1);renderQ()};el.appendChild(d);});$('upacts').classList.toggle('hide',!queue.length);if(queue.length)$('upacts').style.display='flex';$('saveBtn').disabled=!queue.length;$('saveBtn').textContent='上传（'+queue.length+'）';}
 $('clearBtn').onclick=()=>{queue=[];renderQ()};
@@ -323,7 +323,7 @@ $('lbprev').onclick=e=>{e.stopPropagation();step(-1)};$('lbnext').onclick=e=>{e.
 $('lbdel').onclick=async()=>{if(!me||lbIdx<0)return toast('请先登录');const p=photos[lbIdx];if(p.uploader_id!==me.id&&!isAdmin())return toast('只能删自己的');if(!confirm('删除这张？'))return;try{await fetch(SB+'/storage/v1/object/photos/'+p.filename,{method:'DELETE',headers:{apikey:KEY,Authorization:'Bearer '+KEY}});await sb('photos?id=eq.'+encodeURIComponent(p.id),{method:'DELETE'});closeLB();renderGallery();toast('已删除');}catch(e){toast('删除失败')}};
 $('lbreport').onclick=async()=>{if(!me||lbIdx<0)return toast('请先登录');const p=photos[lbIdx];const r=prompt('举报原因：');if(r===null)return;try{await sb('reports',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),photo_id:p.id,photo_name:p.name||'',photo_uploader:p.uploader||'',reporter_id:me.id,reporter:me.name,reason:r.trim()||'未填写',time:Date.now(),status:'pending'}])});toast('已提交');}catch(e){toast('提交失败')}};
 
-/* 聊天室 */
+/* 聊天室和私聊 */
 async function getUser(id){const c=window._uc||(window._uc={});if(c[id])return c[id];try{const r=await sb('users?id=eq.'+encodeURIComponent(id)+'&limit=1');if(r.length){c[id]=r[0];return r[0]}}catch(e){}return{id,name:'已注销',role:'user',avatar:''};}
 function bubble(text,name,role,avatar,time,mine){const d=document.createElement('div');d.className='cmsg'+(mine?' mine':'');const rt=roleName(role);const cls=role==='dev'?'dev':role==='admin'?'admin':role==='planner'?'planner':'';const av=avatar?'<img src="'+esc(avatar)+'">':SVG;const t=new Date(time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});d.innerHTML='<div class="cav">'+av+'</div><div class="cbody"><div class="chead"><span class="cname">'+esc(name)+'</span>'+(role!=='user'&&role?'<span class="tag '+cls+'">'+rt+'</span>':'')+'<span class="ctime">'+t+'</span></div><div class="cbubble">'+esc(text)+'</div></div>';return d;}
 
@@ -335,8 +335,6 @@ async function loadChat(){
       chatLast=Math.max(chatLast,+m.id);
       const u=await getUser(m.user_id);
       let msgEl = bubble(m.text,u.name,u.role,u.avatar,m.time,m.user_id===(me&&me.id));
-      
-      // 群聊消息长按删除（开发者可删任何人的，其他人只能删自己的）
       if(m.user_id===(me&&me.id) || (me && me.role==='dev')){
         msgEl.querySelector('.cbubble').oncontextmenu = async (e) => {
           e.preventDefault();
@@ -357,7 +355,7 @@ function stopChat(){if(chatTimer){clearInterval(chatTimer);chatTimer=null}}
 let sending=false;$('chatsend').onclick=async()=>{if(!me){toast('请先登录');return}if(sending)return;const v=$('chatinput').value.trim();if(!v)return;sending=true;$('chatinput').value='';try{await sb('chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),user_id:me.id,text:v,time:Date.now()}])});loadChat()}catch(e){toast('发送失败')}setTimeout(()=>{sending=false},500);};
 $('chatinput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatsend').click()}};
 
-/* 私聊（含撤回、拉黑、本地删除） */
+/* 私聊逻辑（含撤回、拉黑、本地删除） */
 async function renderDMConv(){
   if(!me)return;
   try{
@@ -414,7 +412,14 @@ async function loadDM(){
     for(const m of list.filter(m=>m.to_id===me.id&&!m.read)){
       await sb('dm?id=eq.'+encodeURIComponent(m.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({read:true})});
     }
-    if(isBlocked) toast('你已拉黑该用户，无法发送消息');
+    if(isBlocked){
+        toast('你已拉黑该用户，无法发送消息');
+        $('dmsend').disabled = true;
+        $('dminput').disabled = true;
+    } else {
+        $('dmsend').disabled = false;
+        $('dminput').disabled = false;
+    }
     notif();
   }catch(e){}
 }
@@ -455,7 +460,6 @@ async function renderAdmin(){
     if(!pend.length)pbox.innerHTML='<div style="padding:16px;text-align:center;color:#999;font-size:13px">暂无待审核</div>';
     else pbox.innerHTML=pend.map(u=>'<div class="item"><div><b>'+esc(u.name)+'</b> <span class="tag pending">待审核</span></div><div><button class="btn primary" style="padding:5px 10px;font-size:12.5px" onclick="approve(\''+u.id+'\',1)">通过</button> <button class="btn" style="padding:5px 10px;font-size:12.5px" onclick="approve(\''+u.id+'\',0)">拒绝</button></div></div>').join('');
     
-    // 按权限分级显示
     const act=list.filter(u=>u.status!=='pending'&&u.id!==me.id);
     const abox=$('userlist');
     if(!act.length)abox.innerHTML='<div style="padding:16px;text-align:center;color:#999;font-size:13px">暂无其他用户</div>';
@@ -463,11 +467,10 @@ async function renderAdmin(){
         const cls=u.role==='dev'?'dev':u.role==='admin'?'admin':u.role==='planner'?'planner':'';
         const r=u.role!=='user'?'<span class="tag '+cls+'">'+roleName(u.role)+'</span>':'';
         
-        // 权限判定：能不能删这个人？
         let canDelete = false;
-        if(me.role==='dev') canDelete = true; // 开发者可以删任何人
-        else if(me.role==='planner' && (u.role==='admin'||u.role==='user')) canDelete = true; // 策划删管理员和普通用户
-        else if(me.role==='admin' && u.role==='user') canDelete = true; // 管理员只删普通用户
+        if(me.role==='dev') canDelete = true;
+        else if(me.role==='planner' && (u.role==='admin'||u.role==='user')) canDelete = true;
+        else if(me.role==='admin' && u.role==='user') canDelete = true;
         
         let btns = '<button class="btn danger" style="padding:5px 10px;font-size:12.5px;margin-right:4px" onclick="cleanChat(\''+u.id+'\')">清记录</button>';
         if(canDelete) btns += '<button class="btn danger" style="padding:5px 10px;font-size:12.5px" onclick="delUser(\''+u.id+'\',\''+esc(u.name).replace(/'/g,'&#39;')+'\')">删除</button>';
@@ -501,13 +504,13 @@ $('postAnn').onclick=async()=>{const v=$('anninput').value.trim();if(!v)return t
 $('addUserBtn').onclick=async()=>{const name=$('addname').value.trim(),qq=$('addqq').value.trim(),role=$('addrole').value;if(!name)return $('addtip').textContent='姓名必填';try{const ex=await sb('users?name=eq.'+encodeURIComponent(name)+'&limit=1');if(ex.length)return $('addtip').textContent='名字已存在';const s=salt();const tk=tok();const h=await hash('123456',s);await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'u_'+Date.now(),name,qq:qq||'',email:'',role,status:'active',token:tk,salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]}])});$('addtip').textContent='添加成功！默认密码：123456';$('addtip').style.color='#2e7d32';$('addname').value='';$('addqq').value='';renderAdmin();}catch(e){$('addtip').textContent='失败：'+e.message}};
 
 /* 反馈与通知 */
-function openFB(){if(!me){toast('请先登录');open('ov-login');return}$('fb-text').value='';$('fb-tip').textContent='';open('ov-fb');}
+function openFB(){if(!me){toast('请先登录');openLogin();return}$('fb-text').value='';$('fb-tip').textContent='';open('ov-fb');}
 window.openFB=openFB;$('fb-close').onclick=()=>close('ov-fb');
 $('fb-btn').onclick=async()=>{const v=$('fb-text').value.trim();if(!v)return $('fb-tip').textContent='请描述问题';$('fb-tip').textContent='提交中...';try{await sb('feedback',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'fb_'+Date.now(),user_id:me.id,user_name:me.name,user_avatar:me.avatar||'',text:v,image:'',time:Date.now(),status:'pending'}])});close('ov-fb');toast('已提交');notif();}catch(e){$('fb-tip').textContent='提交失败'}};
 async function notif(){if(!me)return;let n=0;try{const msgs=await sb('messages?or=(to_user.eq.'+encodeURIComponent(me.id)+',to_user.eq.dev1)');const rd=me.read_ids||[];n+=msgs.filter(m=>!rd.includes(m.id)).length;const dms=await sb('dm?to_id=eq.'+encodeURIComponent(me.id)+'&read=eq.false');n+=dms.length;if(isAdmin()){const p=await sb('users?status=eq.pending');n+=p.length}if(isReview()){const r=await sb('reports?status=eq.pending');n+=r.length;const f=await sb('feedback?status=eq.pending');n+=f.length}}catch(e){}const d=$('bell-dot'),dd=$('dmdot');if(n>0){d.textContent=n>99?'99+':n;d.classList.remove('hide');if(dd){dd.textContent=n>99?'99+':n;dd.classList.remove('hide')}}else{d.classList.add('hide');if(dd)dd.classList.add('hide')}}
 function startNotif(){if(notifTimer)return;notif();notifTimer=setInterval(notif,8000)}
 $('btn-bell').onclick=async()=>{
-    if(!me){open('ov-login');return}
+    if(!me){openLogin();return}
     let msgs=[];
     try{
         const dms=await sb('dm?to_id=eq.'+encodeURIComponent(me.id)+'&read=eq.false');
@@ -525,14 +528,14 @@ $('btn-bell').onclick=async()=>{
         }
     }catch(e){ toast('通知加载失败'); }
 };
-$('btn-top-avatar').onclick=()=>{if(me)editProfile();else open('ov-login')};
+$('btn-top-avatar').onclick=()=>{if(me)editProfile();else openLogin()};
 
 /* 启动 */
 (async function(){
   if(localStorage.getItem('album_white')==='1')albumOK=true;
   const s=localStorage.getItem('bayan');
   if(s){try{const u=JSON.parse(s);const r=await sb('users?id=eq.'+encodeURIComponent(u.id)+'&limit=1');if(r.length&&r[0].status==='active'){me=r[0];localStorage.setItem('bayan',JSON.stringify(me))}else localStorage.removeItem('bayan');}catch(e){}}
-  renderMe();renderHome();if(me)startNotif();else setTimeout(()=>open('ov-login'),500);
+  renderMe();renderHome();if(me)startNotif();else setTimeout(()=>openLogin(),500);
 })();
 </script>
 </body>
