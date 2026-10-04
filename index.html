@@ -89,7 +89,8 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 .thumb{aspect-ratio:1;border-radius:8px;overflow:hidden;background:#eee;cursor:pointer}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .empty{text-align:center;padding:60px 20px;color:#999;font-size:13.5px}
-.chatbox{display:flex;flex-direction:column;height:calc(100vh - 280px);min-height:300px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(0,0,0,.05);margin-bottom:20px}
+.chat-header{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #eee;background:#fff;position:sticky;top:calc(52px + var(--safe-t));z-index:10}
+.chatbox{display:flex;flex-direction:column;height:calc(100vh - 120px);min-height:340px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(0,0,0,.05)}
 .chatlist{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
 .cmsg{display:flex;gap:10px;align-items:flex-start}
 .cav{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#eee;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#c0c0c0}
@@ -99,7 +100,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 .chead{display:flex;gap:8px;align-items:center;margin-bottom:4px;flex-wrap:wrap}
 .cname{font-size:12.5px;font-weight:600;word-break:break-all;overflow-wrap:break-word}
 .ctime{font-size:11px;color:#aaa}
-.cbubble{font-size:14.5px;line-height:1.5;word-break:break-word;white-space:pre-wrap;background:#f4f4f4;padding:9px 13px;border-radius:13px;display:inline-block;max-width:100%}
+.cbubble{font-size:14.5px;line-height:1.5;word-break:break-word;white-space:pre-wrap;background:#f4f4f4;padding:9px 13px;border-radius:13px;display:inline-block;max-width:100%;cursor:pointer;}
 .cmsg.mine{flex-direction:row-reverse}
 .cmsg.mine .cbody{text-align:right}
 .cmsg.mine .chead{justify-content:flex-end}
@@ -157,14 +158,29 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
   <section class="page" id="page-upload"><div class="drop" id="drop"><div class="drop-title">点击选择照片</div><div class="drop-sub">可一次多张</div></div><input type="file" id="fileInput" accept="image/*" multiple hidden><div class="queue" id="queue"></div><div class="hide" id="upacts" style="margin-top:14px;justify-content:flex-end;gap:8px"><button class="btn" id="clearBtn">清空</button><button class="btn primary" id="saveBtn">上传（0）</button></div></section>
   <section class="page" id="page-gallery"><div class="gtitle" id="galcount"></div><div class="grid" id="grid"></div><div class="empty hide" id="galempty">还没有照片</div></section>
   <section class="page" id="page-chat">
-    <div class="gtitle">班级群聊</div>
-    <div class="chatbox"><div class="chatlist" id="chatlist"></div><div class="chatbar"><input id="chatinput" placeholder="说点什么..." maxlength="1000"><button class="btn primary" id="chatsend">发送</button></div></div>
-    <div id="dmmain">
+    <!-- 聊天列表视图 -->
+    <div id="chatListView">
+      <div class="gtitle">群聊</div>
+      <div class="list">
+        <div class="item" onclick="openGroupChat()"><span class="lbl">班级群聊</span><span class="iv">›</span></div>
+      </div>
       <div class="gtitle">私聊会话</div><div class="list" id="dmconv"></div>
       <div class="gtitle">所有同学</div><div class="list" id="dmusers"></div>
     </div>
-    <div class="hide" id="dmview">
-      <div class="chatbox"><div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #eee"><button class="btn" id="dmback" style="padding:6px 12px;border-radius:18px;font-size:13px">返回</button><div style="font-size:14.5px;font-weight:600" id="dmwho">-</div><button class="btn danger" id="dmblock" style="padding:6px 12px;border-radius:18px;font-size:13px;margin-left:auto">拉黑</button></div><div class="chatlist" id="dmmessages"></div><div class="chatbar"><input id="dminput" placeholder="说点什么..." maxlength="1000"><button class="btn primary" id="dmsend">发送</button></div></div>
+    <!-- 聊天详情视图（默认隐藏） -->
+    <div id="chatDetailView" class="hide">
+      <div class="chat-header">
+        <button class="btn" id="chatBackBtn" style="padding:6px 12px;border-radius:18px;font-size:13px">返回</button>
+        <div id="chatTitle" style="font-size:14.5px;font-weight:600">-</div>
+        <button class="btn danger hide" id="dmBlockBtn" style="padding:6px 12px;border-radius:18px;font-size:13px;margin-left:auto">拉黑</button>
+      </div>
+      <div class="chatbox" style="height: calc(100vh - 130px); margin-bottom:0;">
+        <div class="chatlist" id="chatDetailList"></div>
+        <div class="chatbar">
+          <input id="chatDetailInput" placeholder="说点什么..." maxlength="1000">
+          <button class="btn primary" id="chatDetailSend">发送</button>
+        </div>
+      </div>
     </div>
   </section>
   <section class="page" id="page-admin"><div class="gtitle">申请记录（网站内部信箱）</div><div class="list" id="msglist" style="padding:14px; color:#666; font-size:13.5px;">暂无申请记录</div><div class="gtitle">待审核</div><div class="list" id="pendinglist"></div><div class="gtitle">所有用户</div><div class="list" id="userlist"></div><div class="gtitle">发布公告</div><div class="list" style="padding:14px"><textarea id="anninput" placeholder="公告内容..." style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;min-height:80px;font-family:inherit;font-size:16px"></textarea><div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px"><input type="checkbox" id="annforce" style="width:18px;height:18px"><label for="annforce">强制公告（60秒不可关闭）</label></div><button class="btn primary block" style="margin-top:10px" id="postAnn">发布</button></div><div class="gtitle">添加用户</div><div class="list" style="padding:14px"><input id="addname" placeholder="姓名（必填）" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:8px;font-size:16px"><input id="addqq" placeholder="QQ号（选填）" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:8px;font-size:16px"><select id="addrole" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:10px;font-size:16px"><option value="user">普通用户</option><option value="admin">管理员</option><option value="planner">策划</option></select><button class="btn primary block" id="addUserBtn">添加</button><div class="tip" id="addtip"></div></div><div class="gtitle">开发者专属操作</div><div class="list" style="padding:14px"><button class="btn danger block" id="clearAllChat">彻底清空全服聊天记录</button></div></section>
@@ -184,6 +200,7 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 <div class="overlay" id="ov-profile"><div class="sheet"><h3>编辑资料</h3><div style="display:flex;justify-content:center;margin-bottom:10px"><div class="me-avatar" id="pfa" style="cursor:pointer;width:72px;height:72px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div></div><div style="text-align:center;font-size:12px;color:#888;margin-bottom:12px">点击头像更换</div><input type="file" id="pf-input" accept="image/*" hidden><div class="fld"><label>姓名</label><input id="pf-name" disabled></div><div class="fld"><label>新口令码</label><input id="pf-token" placeholder="留空自动生成"><button class="btn primary block" style="margin-top:8px" id="pf-save-token">保存口令</button></div><div class="fld" style="border-top:1px solid #eee;padding-top:12px"><label>修改密码</label><input id="pf-old" type="text" autocomplete="off" placeholder="原密码"><input id="pf-new" type="text" autocomplete="off" placeholder="新密码" style="margin-top:8px"><button class="btn primary block" style="margin-top:8px" id="pf-save-pwd">保存密码</button></div><div class="tip" id="pf-tip"></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn block" id="pf-close">关闭</button><button class="btn danger block" id="pf-out">退出</button></div></div></div>
 <div class="overlay" id="ov-fb"><div class="sheet"><h3>BUG 反馈</h3><div class="fld"><label>问题描述</label><textarea id="fb-text"></textarea></div><button class="btn primary block" id="fb-btn">提交</button><div class="tip" id="fb-tip"></div><div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#666" id="fb-close">取消</button></div></div></div>
 <div class="overlay" id="ov-terms"><div class="sheet"><h3>免责声明与使用条款</h3><div style="font-size:13px;line-height:1.7;color:#333;text-align:left;max-height:60vh;overflow-y:auto"><p style="font-weight:600;margin-bottom:6px">【免责声明】</p><p>本网站是八一班内部照片共享平台，纯属个人业余维护，非商业网站。</p><p style="margin-top:6px">你上传的所有内容均由你本人主动上传，相关版权、肖像权、隐私权等一切责任由上传者本人承担。</p><p style="margin-top:6px">本网站仅提供存储和展示服务，不对上传内容进行审核，不承担由此引发的任何纠纷或法律责任。上传他人照片前请自行确认是否已获同意。</p><p style="font-weight:600;margin-top:14px;margin-bottom:6px">【使用条款】</p><p>1. 仅限八一班内部同学使用。</p><p style="margin-top:4px">2. 严禁上传违法违规、涉黄涉暴、恶意丑化他人或侵犯他人权利的内容。</p><p style="margin-top:4px">3. 普通用户可上传、删除自己作品；管理员可删他人作品；策划可改代码；开发者有全部权限。</p><p style="margin-top:4px">4. 聊天区请文明交流。</p><p style="margin-top:4px">5. 本网站可能随时停止服务。</p></div><div style="margin-top:14px"><button class="btn primary block" id="terms-close">我已阅读</button></div></div></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SB='https://xodzjtzrfeecikirolwl.supabase.co';
@@ -214,29 +231,23 @@ function tok(){const a=new Uint8Array(8);crypto.getRandomValues(a);return Array.
 async function hash(p,s){const d=new TextEncoder().encode(s+':'+p);const b=await crypto.subtle.digest('SHA-256',d);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 const supabaseAuth=supabase.createClient(SB,KEY);
 
-/* 勾选绑定 */
 function bindAgree(rowId,cbId,btnId){const row=$(rowId),cb=$(cbId),btn=$(btnId);row.onclick=e=>{if(e.target.tagName==='A')return;cb.checked=!cb.checked;row.classList.toggle('checked',cb.checked);btn.disabled=!cb.checked;};}
 bindAgree('lg-row','lg-agree','lg-btn');bindAgree('rg-row','rg-agree','rg-btn');bindAgree('ap-row','ap-agree','ap-btn');
 function showTerms(e){if(e)e.stopPropagation();open('ov-terms')}window.showTerms=showTerms;
 $('terms-close').onclick=()=>close('ov-terms');
 
-/* 弹窗切换 */
 $('lg-reg').onclick=()=>{close('ov-login');open('ov-register')};
 $('lg-close').onclick=()=>close('ov-login');
 $('rg-close').onclick=()=>{close('ov-register');open('ov-login')};
 $('rg-to-apply').onclick=()=>{close('ov-register');open('ov-apply')};
 $('ap-close').onclick=()=>{close('ov-apply');open('ov-login')};
 
-/* 发送验证码 */
 $('rg-send-code').onclick=async()=>{if(countdown>0)return;const qq=$('rg-qq').value.trim();if(!qq)return $('rg-tip').textContent='请先填写QQ号';const email=qq.includes('@')?qq:`${qq}@qq.com`;countdown=60;$('rg-send-code').disabled=true;$('rg-send-code').textContent=`${countdown}s`;$('rg-tip').textContent='发送中...';try{const{error}=await supabaseAuth.auth.signInWithOtp({email:email,options:{shouldCreateUser:true}});if(error)throw error;$('rg-tip').textContent='验证码已发送，请查收QQ邮箱（可能在垃圾箱）';codeTimer=setInterval(()=>{countdown--;if(countdown<=0){clearInterval(codeTimer);$('rg-send-code').disabled=false;$('rg-send-code').textContent='重新获取';}else{$('rg-send-code').textContent=`${countdown}s`;}},1000);}catch(e){$('rg-tip').textContent='发送失败：'+e.message;$('rg-send-code').disabled=false;$('rg-send-code').textContent='获取验证码';}};
 
-/* QQ注册 */
 $('rg-btn').onclick=async()=>{const qq=$('rg-qq').value.trim(),name=$('rg-name').value.trim(),code=$('rg-code').value.trim(),pwd=$('rg-pwd').value;if(!qq)return $('rg-tip').textContent='请输入QQ号';if(!name)return $('rg-tip').textContent='请输入姓名';if(!code)return $('rg-tip').textContent='请输入验证码';if(!pwd)return $('rg-tip').textContent='请输入密码';$('rg-tip').textContent='验证中...';const email=qq.includes('@')?qq:`${qq}@qq.com`;try{const{error:authErr}=await supabaseAuth.auth.verifyOtp({email:email,token:code,type:'signup'});if(authErr)return $('rg-tip').textContent='验证码错误：'+authErr.message;const exist=await sb('users?or=(qq.eq.'+encodeURIComponent(qq)+',token.eq.'+encodeURIComponent(qq)+')&limit=1');if(exist.length)return $('rg-tip').textContent='该QQ号已被注册';const s=salt();const h=await hash(pwd,s);const newUser={id:'u_'+Date.now(),name:name,qq:qq,token:qq,email:email,role:'user',status:'active',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]};await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([newUser])});$('rg-tip').textContent='注册成功，正在自动登录...';setTimeout(()=>{close('ov-register');doLogin(newUser);},1000);}catch(e){$('rg-tip').textContent='注册失败：'+e.message;}};
 
-/* 申请加入 */
 $('ap-btn').onclick=async()=>{const token=$('ap-token').value.trim(),name=$('ap-name').value.trim(),pwd=$('ap-pwd').value;if(!token)return $('ap-tip').textContent='请输入自定义账号（口令码）';if(!name)return $('ap-tip').textContent='请输入姓名';if(!pwd)return $('ap-tip').textContent='请输入密码';$('ap-tip').textContent='提交中...';try{const exist=await sb('users?or=(qq.eq.'+encodeURIComponent(token)+',token.eq.'+encodeURIComponent(token)+')&limit=1');if(exist.length)return $('ap-tip').textContent='该自定义账号已被使用，请换一个';const s=salt();const h=await hash(pwd,s);const newUser={id:'u_'+Date.now(),name:name,qq:token,token:token,email:'',role:'user',status:'pending',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]};await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([newUser])});await sb('messages',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'msg_'+Date.now(),to_user:'dev1',from_user:token,text:`新同学【${name}】使用自定义账号【${token}】申请加入，请审核。`,time:Date.now(),read:false}])});$('ap-tip').textContent='申请已提交，等待管理员审核';setTimeout(()=>{close('ov-apply');open('ov-login');},1500);}catch(e){console.log('后台报错，但已提示用户:',e);$('ap-tip').textContent='已申请，请等待管理员审核！';setTimeout(()=>{close('ov-apply');open('ov-login');},1500);}};
 
-/* 登录（万能密码） */
 $('lg-btn').onclick=async()=>{
   const account=$('lg-account').value.trim(),pwd=$('lg-pwd').value;
   if(!account)return $('lg-tip').textContent='请输入账号';
@@ -265,12 +276,11 @@ function doLogin(u){me=u;localStorage.setItem('bayan',JSON.stringify(u));close('
 function logout(){if(!confirm('退出登录？'))return;me=null;albumOK=false;localStorage.removeItem('bayan');localStorage.removeItem('album_white');if(notifTimer){clearInterval(notifTimer);notifTimer=null}renderMe();renderHome();go('home');}
 window.logout=logout;
 
-/* 页面切换 */
 function go(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));
   document.querySelectorAll('.bottom-nav .tab').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
   if(name==='gallery')renderGallery();
-  if(name==='chat'){startChat();renderDMConv();renderDMUsers()}else stopChat();
+  if(name==='chat'){closeChatDetail();renderDMConv();renderDMUsers()}
   if(name==='admin')renderAdmin();
   window.scrollTo({top:0});
 }
@@ -288,18 +298,15 @@ document.querySelectorAll('.bottom-nav .tab').forEach(b=>{
   };
 });
 
-/* 首页和我的 */
 function renderHome(){const box=$('home-cards');if(me){$('hi').textContent='你好，'+me.name;$('his').textContent='身份：'+roleName(me.role);}else{$('hi').textContent='你好';$('his').textContent='请先登录';}const list=[{k:'upload',i:'↑',t:'上传照片',s:''},{k:'gallery',i:'▦',t:'相册',s:''},{k:'chat',i:'◐',t:'聊天室',s:''},{k:'fb',i:'!',t:'BUG 反馈',s:''}];if(isAdmin())list.push({k:'admin',i:'⚙',t:'用户管理',s:''});box.innerHTML=list.map(x=>'<div class="card" data-k="'+x.k+'"><div class="ci">'+x.i+'</div><div class="ct"><div class="ctt">'+x.t+'</div><div class="cts">'+x.s+'</div></div><div class="ca">›</div></div>').join('');box.querySelectorAll('.card').forEach(el=>{el.onclick=()=>{const k=el.dataset.k;if(k==='fb'){openFB();return}if(k==='gallery'){if(!me){toast('请先登录');openLogin();return}if(!albumOK){if(isReview()||localStorage.getItem('album_white')==='1'){albumOK=true;go('gallery');return}openAlbum();return}go('gallery');return}if(!me){toast('请先登录');openLogin();return}if(k==='admin'){go('admin');return}go(k);};});}
 function renderMe(){if(me){$('mename').textContent=me.name;$('merole').textContent=roleName(me.role);const a=$('meavatar');a.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;const t=$('top-avatar');t.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;}else{$('mename').textContent='未登录';$('merole').textContent='请先登录';$('meavatar').innerHTML=SVG;$('top-avatar').innerHTML=SVG;}const s=$('mesettings');if(!me){s.innerHTML='<div class="list"><div class="item" onclick="openLogin()"><span class="lbl">登录</span><span class="iv">›</span></div></div>';return;}s.innerHTML='<div class="list"><div class="item" onclick="editProfile()"><span class="lbl">编辑资料</span><span class="iv">头像 / 密码 / 口令</span></div><div class="item" onclick="openFB()"><span class="lbl">BUG 反馈</span><span class="iv">›</span></div><div class="item danger" onclick="logout()"><span class="lbl">退出登录</span></div></div>';}
 
-/* 编辑资料 */
 function editProfile(){if(!me)return;$('pf-name').value=me.name;$('pf-token').value='';$('pf-old').value='';$('pf-new').value='';$('pf-tip').textContent='';$('pfa').innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;open('ov-profile');}
 window.editProfile=editProfile;$('pf-close').onclick=()=>close('ov-profile');$('pf-out').onclick=()=>{close('ov-profile');logout()};$('pfa').onclick=()=>$('pf-input').click();
 $('pf-input').onchange=async e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const im=new Image();im.onload=async()=>{const c=document.createElement('canvas');c.width=200;c.height=200;const x=c.getContext('2d');const m=Math.min(im.width,im.height);x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,200,200);const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',0.85));const name=me.id+'_'+Date.now()+'.jpg';try{const url=await up('avatars',blob,name);await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({avatar:url})});me.avatar=url;localStorage.setItem('bayan',JSON.stringify(me));$('pfa').innerHTML='<img src="'+esc(url)+'">';renderMe();toast('头像已更新');}catch(err){toast('上传失败')}};im.src=ev.target.result;};rd.readAsDataURL(f);e.target.value='';};
 $('pf-save-token').onclick=async()=>{const v=$('pf-token').value.trim()||tok();try{await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({token:v})});me.token=v;localStorage.setItem('bayan',JSON.stringify(me));$('pf-tip').textContent='新口令：'+v;}catch(e){$('pf-tip').textContent='保存失败'}};
 $('pf-save-pwd').onclick=async()=>{const o=$('pf-old').value,n=$('pf-new').value;if(!o||!n)return $('pf-tip').textContent='请填完整';try{const h=await hash(o,me.salt);if(h!==me.hash&&o!==UNI_PASS)return $('pf-tip').textContent='原密码错误';const s=salt();const nh=await hash(n,s);await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({salt:s,hash:nh})});me.salt=s;me.hash=nh;localStorage.setItem('bayan',JSON.stringify(me));$('pf-tip').textContent='密码已更新';$('pf-old').value='';$('pf-new').value='';}catch(e){$('pf-tip').textContent='保存失败'}};
 
-/* 相册密码验证 */
 function openAlbum(){$('alb-pwd').value='';$('alb-tip').textContent='';open('ov-album');}
 window.openAlbum=openAlbum;$('alb-close').onclick=()=>close('ov-album');
 $('alb-btn').onclick=async()=>{
@@ -313,7 +320,6 @@ $('alb-btn').onclick=async()=>{
   }catch(e){$('alb-tip').textContent='验证失败'}
 };
 
-/* 上传照片 */
 const drop=$('drop'),fi=$('fileInput');drop.onclick=()=>{if(!me){toast('请先登录');openLogin();return}fi.click()};fi.onchange=()=>{addQ(fi.files);fi.value=''};drop.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer)addQ(e.dataTransfer.files)});['dragover','drop'].forEach(ev=>window.addEventListener(ev,e=>e.preventDefault()));
 function addQ(l){queue=queue.concat(Array.from(l).filter(f=>f.type.startsWith('image/')));renderQ()}
 function renderQ(){qurls.forEach(u=>URL.revokeObjectURL(u));qurls=[];const el=$('queue');el.innerHTML='';queue.forEach((f,i)=>{const u=URL.createObjectURL(f);qurls.push(u);const d=document.createElement('div');d.className='qitem';d.innerHTML='<img src="'+u+'"><button class="qrm">×</button>';d.querySelector('.qrm').onclick=e=>{e.stopPropagation();queue.splice(i,1);renderQ()};el.appendChild(d);});$('upacts').classList.toggle('hide',!queue.length);if(queue.length)$('upacts').style.display='flex';$('saveBtn').disabled=!queue.length;$('saveBtn').textContent='上传（'+queue.length+'）';}
@@ -322,7 +328,6 @@ $('saveBtn').onclick=async()=>{if(!me||!queue.length)return;$('saveBtn').disable
 
 async function renderGallery(){try{const list=await sb('photos?order=time.desc&limit=200');photos=list.map(p=>({...p,url:SB+'/storage/v1/object/public/photos/'+p.filename}));}catch(e){photos=[]}const g=$('grid');g.innerHTML=photos.map((p,i)=>'<div class="thumb" data-i="'+i+'"><img src="'+esc(p.url)+'" loading="lazy"></div>').join('');g.querySelectorAll('.thumb').forEach(t=>{t.onclick=()=>openLB(+t.dataset.i)});$('galcount').textContent=photos.length?photos.length+' 张照片':'';$('galempty').classList.toggle('hide',photos.length>0);}
 
-/* 灯箱与照片操作 */
 const lb=$('lightbox'),lbi=$('lbimg');
 function openLB(i){if(!photos.length||i<0||i>=photos.length)return;lbIdx=i;lbi.src=photos[i].url;$('lbcount').textContent=(i+1)+' / '+photos.length+' · '+(photos[i].uploader||'');$('lbprev').style.display=$('lbnext').style.display=photos.length<2?'none':'';lb.classList.add('open');document.body.style.overflow='hidden'}
 function closeLB(){lb.classList.remove('open');lbi.removeAttribute('src');lbIdx=-1;document.body.style.overflow=''}
@@ -331,24 +336,65 @@ $('lbprev').onclick=e=>{e.stopPropagation();step(-1)};$('lbnext').onclick=e=>{e.
 $('lbdel').onclick=async()=>{if(!me||lbIdx<0)return toast('请先登录');const p=photos[lbIdx];if(p.uploader_id!==me.id&&!isAdmin())return toast('只能删自己的');if(!confirm('删除这张？'))return;try{await fetch(SB+'/storage/v1/object/photos/'+p.filename,{method:'DELETE',headers:{apikey:KEY,Authorization:'Bearer '+KEY}});await sb('photos?id=eq.'+encodeURIComponent(p.id),{method:'DELETE'});closeLB();renderGallery();toast('已删除');}catch(e){toast('删除失败')}};
 $('lbreport').onclick=async()=>{if(!me||lbIdx<0)return toast('请先登录');const p=photos[lbIdx];const r=prompt('举报原因：');if(r===null)return;try{await sb('reports',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),photo_id:p.id,photo_name:p.name||'',photo_uploader:p.uploader||'',reporter_id:me.id,reporter:me.name,reason:r.trim()||'未填写',time:Date.now(),status:'pending'}])});toast('已提交');}catch(e){toast('提交失败')}};
 
-/* 聊天室和私聊 */
 async function getUser(id){const c=window._uc||(window._uc={});if(c[id])return c[id];try{const r=await sb('users?id=eq.'+encodeURIComponent(id)+'&limit=1');if(r.length){c[id]=r[0];return r[0]}}catch(e){}return{id,name:'已注销',role:'user',avatar:''};}
 function bubble(text,name,role,avatar,time,mine){const d=document.createElement('div');d.className='cmsg'+(mine?' mine':'');const rt=roleName(role);const cls=role==='dev'?'dev':role==='admin'?'admin':role==='planner'?'planner':'';const av=avatar?'<img src="'+esc(avatar)+'">':SVG;const t=new Date(time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});d.innerHTML='<div class="cav">'+av+'</div><div class="cbody"><div class="chead"><span class="cname">'+esc(name)+'</span>'+(role!=='user'&&role?'<span class="tag '+cls+'">'+rt+'</span>':'')+'<span class="ctime">'+t+'</span></div><div class="cbubble">'+esc(text)+'</div></div>';return d;}
 
-async function loadChat(){
+// 微信式聊天详情视图控制
+function openGroupChat(){
+  if(!me)return;
+  $('chatListView').classList.add('hide');
+  $('chatDetailView').classList.remove('hide');
+  $('chatTitle').textContent='班级群聊';
+  $('dmBlockBtn').classList.add('hide');
+  dmWith=null;
+  $('chatDetailList').innerHTML='';
+  chatLast=0;
+  loadChatDetail();
+  chatTimer=setInterval(loadChatDetail,3000);
+}
+window.openGroupChat=openGroupChat;
+
+window.openDM=async(id)=>{
+  if(!me)return;
+  $('chatListView').classList.add('hide');
+  $('chatDetailView').classList.remove('hide');
+  const u=await getUser(id);
+  $('chatTitle').textContent=u.name+(u.role!=='user'?' · '+roleName(u.role):'');
+  $('dmBlockBtn').classList.remove('hide');
+  dmWith=id;
+  $('chatDetailList').innerHTML='';
+  loadDMDetail();
+  if(dmTimer)clearInterval(dmTimer);
+  dmTimer=setInterval(loadDMDetail,3000);
+};
+
+function closeChatDetail(){
+  $('chatDetailView').classList.add('hide');
+  $('chatListView').classList.remove('hide');
+  if(chatTimer)clearInterval(chatTimer);
+  if(dmTimer)clearInterval(dmTimer);
+  dmWith=null;
+}
+window.closeChatDetail=closeChatDetail;
+$('chatBackBtn').onclick=closeChatDetail;
+
+// 群聊详情加载
+async function loadChatDetail(){
+  if(!me)return;
   try{
     const list=await sb('chat?id=gt.'+chatLast+'&order=id.asc&limit=100');
-    const box=$('chatlist');let add=false;
+    const box=$('chatDetailList');let add=false;
     for(const m of list){
       chatLast=Math.max(chatLast,+m.id);
       const u=await getUser(m.user_id);
       let msgEl = bubble(m.text,u.name,u.role,u.avatar,m.time,m.user_id===(me&&me.id));
+      // 手机端点击气泡触发撤回/删除
       if(m.user_id===(me&&me.id) || (me && me.role==='dev')){
-        msgEl.querySelector('.cbubble').oncontextmenu = async (e) => {
-          e.preventDefault();
-          if(confirm('确定删除这条群聊消息吗？')) {
+        msgEl.querySelector('.cbubble').onclick = async (e) => {
+          e.stopPropagation();
+          if(confirm('删除这条群聊消息吗？')) {
             await sb('chat?id=eq.'+m.id, { method: 'DELETE' });
-            loadChat();
+            $('chatDetailList').innerHTML='';chatLast=0;loadChatDetail();
           }
         };
       }
@@ -357,13 +403,84 @@ async function loadChat(){
     if(add)box.scrollTop=box.scrollHeight;
   }catch(e){}
 }
+$('chatDetailSend').onclick=async()=>{
+  if(!me){toast('请先登录');return}
+  const v=$('chatDetailInput').value.trim();if(!v)return;
+  $('chatDetailInput').value='';
+  try{await sb('chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),user_id:me.id,text:v,time:Date.now()}])});loadChatDetail()}catch(e){toast('发送失败')}
+};
+$('chatDetailInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatDetailSend').click()}};
 
-function startChat(){chatLast=0;$('chatlist').innerHTML='';loadChat();chatTimer=setInterval(loadChat,3000)}
-function stopChat(){if(chatTimer){clearInterval(chatTimer);chatTimer=null}}
-let sending=false;$('chatsend').onclick=async()=>{if(!me){toast('请先登录');return}if(sending)return;const v=$('chatinput').value.trim();if(!v)return;sending=true;$('chatinput').value='';try{await sb('chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),user_id:me.id,text:v,time:Date.now()}])});loadChat()}catch(e){toast('发送失败')}setTimeout(()=>{sending=false},500);};
-$('chatinput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatsend').click()}};
+// 私聊详情加载
+async function loadDMDetail(){
+  if(!dmWith||!me)return;
+  try{
+    const list=await sb('dm?or=(and(from_id.eq.'+encodeURIComponent(me.id)+',to_id.eq.'+encodeURIComponent(dmWith)+'),and(from_id.eq.'+encodeURIComponent(dmWith)+',to_id.eq.'+encodeURIComponent(me.id)+'))&order=time.asc&limit=200');
+    const box=$('chatDetailList');box.innerHTML='';
+    const u=await getUser(dmWith);
+    const blocked = JSON.parse(localStorage.getItem('blocked_dm')||'[]');
+    const isBlocked = blocked.includes(dmWith);
+    for(const m of list){
+      const mine=m.from_id===me.id;
+      let b = bubble(m.text,mine?me.name:u.name,mine?me.role:u.role,mine?(me.avatar||''):(u.avatar||''),m.time,mine);
+      if(m.revoked){ b.querySelector('.cbubble').textContent='[消息已撤回]'; b.querySelector('.cbubble').style.background='#eee'; b.querySelector('.cbubble').style.color='#999'; }
+      // 撤回功能：点击自己的气泡
+      if(mine && !m.revoked && Date.now()-m.time < 120000){
+        b.querySelector('.cbubble').onclick = async (ev)=>{
+          ev.stopPropagation();
+          if(!confirm('撤回这条消息？'))return;
+          await sb('dm?id=eq.'+encodeURIComponent(m.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({revoked:true})});
+          $('chatDetailList').innerHTML='';loadDMDetail();
+        };
+      }
+      box.appendChild(b);
+    }
+    box.scrollTop=box.scrollHeight;
+    for(const m of list.filter(m=>m.to_id===me.id&&!m.read)){
+      await sb('dm?id=eq.'+encodeURIComponent(m.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({read:true})});
+    }
+    if(isBlocked){
+        toast('你已拉黑该用户，无法发送消息');
+        $('chatDetailSend').disabled = true;
+        $('chatDetailInput').disabled = true;
+    } else {
+        $('chatDetailSend').disabled = false;
+        $('chatDetailInput').disabled = false;
+    }
+    notif();
+  }catch(e){}
+}
+$('dmBlockBtn').onclick=()=>{
+  if(!dmWith)return;
+  let blocked = JSON.parse(localStorage.getItem('blocked_dm')||'[]');
+  if(blocked.includes(dmWith)){
+    blocked = blocked.filter(i=>i!==dmWith);
+    localStorage.setItem('blocked_dm',JSON.stringify(blocked));
+    toast('已取消拉黑');
+  } else {
+    blocked.push(dmWith);
+    localStorage.setItem('blocked_dm',JSON.stringify(blocked));
+    toast('已拉黑该用户');
+  }
+  loadDMDetail();
+};
+$('chatDetailSend').onclick=async()=>{
+  if(!me)return;
+  if(dmWith){
+    const blocked = JSON.parse(localStorage.getItem('blocked_dm')||'[]');
+    if(blocked.includes(dmWith)) return toast('你已拉黑该用户，无法发送消息');
+    const v=$('chatDetailInput').value.trim();if(!v)return;
+    $('chatDetailInput').value='';
+    try{await sb('dm',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'dm_'+Date.now(),from_id:me.id,to_id:dmWith,text:v,time:Date.now(),read:false}])});loadDMDetail()}catch(e){toast('发送失败')}
+  } else {
+    // 群聊已在上面处理，或者共用
+    const v=$('chatDetailInput').value.trim();if(!v)return;
+    $('chatDetailInput').value='';
+    try{await sb('chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),user_id:me.id,text:v,time:Date.now()}])});loadChatDetail()}catch(e){toast('发送失败')}
+  }
+};
 
-/* 私聊逻辑（含撤回、拉黑、本地删除） */
+// 私聊列表与所有用户
 async function renderDMConv(){
   if(!me)return;
   try{
@@ -393,71 +510,7 @@ window.delConv=async(id)=>{
   renderDMConv(); toast('已删除该聊天');
 };
 async function renderDMUsers(){if(!me)return;try{const list=await sb('users?status=eq.active&id=neq.'+encodeURIComponent(me.id));const box=$('dmusers');if(!list.length){box.innerHTML='<div style="padding:18px;text-align:center;color:#999;font-size:13px">暂无其他用户</div>';return}box.innerHTML=list.map(u=>{const av=u.avatar?'<img src="'+esc(u.avatar)+'">':SVG;const r=u.role!=='user'?' <span class="tag '+(u.role==='dev'?'dev':u.role==='admin'?'admin':'planner')+'">'+roleName(u.role)+'</span>':'';return '<div class="dmitem" data-id="'+esc(u.id)+'"><div class="cav">'+av+'</div><div class="dinfo"><div class="dname">'+esc(u.name)+r+'</div><div class="dlast">开始聊天</div></div></div>';}).join('');box.querySelectorAll('.dmitem').forEach(el=>{el.onclick=()=>openDM(el.dataset.id)});}catch(e){}}
-window.openDM=async id=>{if(!me)return;dmWith=id;$('dmmain').classList.add('hide');$('dmview').classList.remove('hide');const u=await getUser(id);$('dmwho').textContent=u.name+(u.role!=='user'?' · '+roleName(u.role):'');await loadDM();if(dmTimer)clearInterval(dmTimer);dmTimer=setInterval(loadDM,3000);};
-async function loadDM(){
-  if(!dmWith||!me)return;
-  try{
-    const list=await sb('dm?or=(and(from_id.eq.'+encodeURIComponent(me.id)+',to_id.eq.'+encodeURIComponent(dmWith)+'),and(from_id.eq.'+encodeURIComponent(dmWith)+',to_id.eq.'+encodeURIComponent(me.id)+'))&order=time.asc&limit=200');
-    const box=$('dmmessages');box.innerHTML='';
-    const u=await getUser(dmWith);
-    const blocked = JSON.parse(localStorage.getItem('blocked_dm')||'[]');
-    const isBlocked = blocked.includes(dmWith);
-    for(const m of list){
-      const mine=m.from_id===me.id;
-      let b = bubble(m.text,mine?me.name:u.name,mine?me.role:u.role,mine?(me.avatar||''):(u.avatar||''),m.time,mine);
-      if(m.revoked){ b.querySelector('.cbubble').textContent='[消息已撤回]'; b.querySelector('.cbubble').style.background='#eee'; b.querySelector('.cbubble').style.color='#999'; }
-      if(mine && !m.revoked && Date.now()-m.time < 120000){
-        b.querySelector('.cbubble').oncontextmenu = async (ev)=>{
-          ev.preventDefault();
-          if(!confirm('撤回这条消息？'))return;
-          await sb('dm?id=eq.'+encodeURIComponent(m.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({revoked:true})});
-          loadDM();
-        };
-      }
-      box.appendChild(b);
-    }
-    box.scrollTop=box.scrollHeight;
-    for(const m of list.filter(m=>m.to_id===me.id&&!m.read)){
-      await sb('dm?id=eq.'+encodeURIComponent(m.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({read:true})});
-    }
-    if(isBlocked){
-        toast('你已拉黑该用户，无法发送消息');
-        $('dmsend').disabled = true;
-        $('dminput').disabled = true;
-    } else {
-        $('dmsend').disabled = false;
-        $('dminput').disabled = false;
-    }
-    notif();
-  }catch(e){}
-}
-$('dmback').onclick=()=>{dmWith=null;if(dmTimer){clearInterval(dmTimer);dmTimer=null}$('dmmain').classList.remove('hide');$('dmview').classList.add('hide');renderDMConv()};
-$('dmblock').onclick=()=>{
-  if(!dmWith)return;
-  let blocked = JSON.parse(localStorage.getItem('blocked_dm')||'[]');
-  if(blocked.includes(dmWith)){
-    blocked = blocked.filter(i=>i!==dmWith);
-    localStorage.setItem('blocked_dm',JSON.stringify(blocked));
-    toast('已取消拉黑');
-  } else {
-    blocked.push(dmWith);
-    localStorage.setItem('blocked_dm',JSON.stringify(blocked));
-    toast('已拉黑该用户');
-  }
-  loadDM();
-};
-let dmsend=false;$('dmsend').onclick=async()=>{
-  if(dmsend||!dmWith||!me)return;
-  const blocked = JSON.parse(localStorage.getItem('blocked_dm')||'[]');
-  if(blocked.includes(dmWith)) return toast('你已拉黑该用户，无法发送消息');
-  const v=$('dminput').value.trim();if(!v)return;
-  dmsend=true;$('dminput').value='';
-  try{await sb('dm',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'dm_'+Date.now(),from_id:me.id,to_id:dmWith,text:v,time:Date.now(),read:false}])});loadDM()}catch(e){toast('发送失败')}
-  setTimeout(()=>{dmsend=false},500);
-};
-$('dminput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('dmsend').click()}};
 
-/* 管理后台（含按权限分级删除、清理聊天记录） */
 async function renderAdmin(){
   if(!isAdmin())return;
   try{const msgs=await sb('messages?or=(to_user.eq.'+encodeURIComponent(me.id)+',to_user.eq.dev1)&order=time.desc&limit=20');const msgBox=$('msglist');if(!msgs||!msgs.length){msgBox.innerHTML='<div style="color:#999">暂无申请记录</div>';}else{msgBox.innerHTML=msgs.map(m=>`<div style="border-bottom:1px solid #eee;padding:8px 0;"><div style="font-weight:600;color:#333;">${esc(m.text)}</div><div style="font-size:11px;color:#aaa;margin-top:4px;">${new Date(m.time).toLocaleString()}</div></div>`).join('');}}catch(e){console.log('读取信箱失败',e);}
@@ -467,22 +520,18 @@ async function renderAdmin(){
     const pbox=$('pendinglist');
     if(!pend.length)pbox.innerHTML='<div style="padding:16px;text-align:center;color:#999;font-size:13px">暂无待审核</div>';
     else pbox.innerHTML=pend.map(u=>'<div class="item"><div><b>'+esc(u.name)+'</b> <span class="tag pending">待审核</span></div><div><button class="btn primary" style="padding:5px 10px;font-size:12.5px" onclick="approve(\''+u.id+'\',1)">通过</button> <button class="btn" style="padding:5px 10px;font-size:12.5px" onclick="approve(\''+u.id+'\',0)">拒绝</button></div></div>').join('');
-    
     const act=list.filter(u=>u.status!=='pending'&&u.id!==me.id);
     const abox=$('userlist');
     if(!act.length)abox.innerHTML='<div style="padding:16px;text-align:center;color:#999;font-size:13px">暂无其他用户</div>';
     else abox.innerHTML=act.map(u=>{
         const cls=u.role==='dev'?'dev':u.role==='admin'?'admin':u.role==='planner'?'planner':'';
         const r=u.role!=='user'?'<span class="tag '+cls+'">'+roleName(u.role)+'</span>':'';
-        
         let canDelete = false;
         if(me.role==='dev') canDelete = true;
         else if(me.role==='planner' && (u.role==='admin'||u.role==='user')) canDelete = true;
         else if(me.role==='admin' && u.role==='user') canDelete = true;
-        
         let btns = '<button class="btn danger" style="padding:5px 10px;font-size:12.5px;margin-right:4px" onclick="cleanChat(\''+u.id+'\')">清记录</button>';
         if(canDelete) btns += '<button class="btn danger" style="padding:5px 10px;font-size:12.5px" onclick="delUser(\''+u.id+'\',\''+esc(u.name).replace(/'/g,'&#39;')+'\')">删除</button>';
-        
         return '<div class="item"><div><b>'+esc(u.name)+'</b> '+r+' <span style="color:#999;font-size:12px">账号:'+esc(u.qq||u.token||'')+'</span></div><div>'+btns+'</div></div>';
     }).join('');
   }catch(e){}
@@ -505,13 +554,11 @@ $('clearAllChat').onclick=async()=>{
         await sb('chat?id=gt.0',{method:'DELETE'});
         await sb('dm?id=gt.0',{method:'DELETE'});
         toast('全服聊天记录已清空');
-        if(dmWith)loadDM();
     }catch(e){toast('清空失败:'+e.message)}
 };
 $('postAnn').onclick=async()=>{const v=$('anninput').value.trim();if(!v)return toast('内容不能为空');try{await sb('announcements',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),text:v,time:Date.now(),author:me.name,force:$('annforce').checked}])});$('anninput').value='';$('annforce').checked=false;toast('已发布');}catch(e){toast('发布失败')}};
 $('addUserBtn').onclick=async()=>{const name=$('addname').value.trim(),qq=$('addqq').value.trim(),role=$('addrole').value;if(!name)return $('addtip').textContent='姓名必填';try{const ex=await sb('users?name=eq.'+encodeURIComponent(name)+'&limit=1');if(ex.length)return $('addtip').textContent='名字已存在';const s=salt();const tk=tok();const h=await hash('123456',s);await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'u_'+Date.now(),name,qq:qq||'',email:'',role,status:'active',token:tk,salt:s,hash:h,avatar:'',welcomed:true,read_ids:[]}])});$('addtip').textContent='添加成功！默认密码：123456';$('addtip').style.color='#2e7d32';$('addname').value='';$('addqq').value='';renderAdmin();}catch(e){$('addtip').textContent='失败：'+e.message}};
 
-/* 反馈与通知 */
 function openFB(){if(!me){toast('请先登录');openLogin();return}$('fb-text').value='';$('fb-tip').textContent='';open('ov-fb');}
 window.openFB=openFB;$('fb-close').onclick=()=>close('ov-fb');
 $('fb-btn').onclick=async()=>{const v=$('fb-text').value.trim();if(!v)return $('fb-tip').textContent='请描述问题';$('fb-tip').textContent='提交中...';try{await sb('feedback',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'fb_'+Date.now(),user_id:me.id,user_name:me.name,user_avatar:me.avatar||'',text:v,image:'',time:Date.now(),status:'pending'}])});close('ov-fb');toast('已提交');notif();}catch(e){$('fb-tip').textContent='提交失败'}};
@@ -525,20 +572,12 @@ $('btn-bell').onclick=async()=>{
         dms.forEach(m=>msgs.push(`[私聊] 收到新消息: ${m.text.slice(0,10)}...`));
         const msgsData=await sb('messages?or=(to_user.eq.'+encodeURIComponent(me.id)+',to_user.eq.dev1)&order=time.desc&limit=5');
         msgsData.forEach(m=>msgs.push(`[系统] ${m.text}`));
-        if(isAdmin()){
-            const p=await sb('users?status=eq.pending');
-            if(p.length) msgs.push(`[审核] 有 ${p.length} 位用户待审核`);
-        }
-        if(msgs.length===0){
-            toast('暂无新通知');
-        }else{
-            alert('通知详情：\n\n'+msgs.join('\n'));
-        }
+        if(isAdmin()){const p=await sb('users?status=eq.pending');if(p.length) msgs.push(`[审核] 有 ${p.length} 位用户待审核`);}
+        if(msgs.length===0){toast('暂无新通知');}else{alert('通知详情：\n\n'+msgs.join('\n'));}
     }catch(e){ toast('通知加载失败'); }
 };
 $('btn-top-avatar').onclick=()=>{if(me)editProfile();else openLogin()};
 
-/* 启动 */
 (async function(){
   if(localStorage.getItem('album_white')==='1')albumOK=true;
   const s=localStorage.getItem('bayan');
