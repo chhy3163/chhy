@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>八一班</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:rgba(0,0,0,0);outline:none}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:rgba(0,0,0,0);outline:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 *:focus,*:focus-visible,*:active{outline:none;box-shadow:none}
 :root{--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px)}
-html,body{height:100%}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#111;background:#f5f5f7;overflow-x:hidden;font-size:15px;-webkit-font-smoothing:antialiased}
+html,body{height:100%;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#111;background:#f5f5f7;font-size:15px;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer;border:0;background:none}
 input,textarea,select{font-size:16px!important}
@@ -23,15 +23,14 @@ input,textarea,select{font-size:16px!important}
 .mini-avatar{width:30px;height:30px;border-radius:50%;overflow:hidden;background:#eee;display:flex;align-items:center;justify-content:center;color:#c0c0c0;flex-shrink:0}
 .mini-avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .mini-avatar svg{width:18px;height:18px}
-main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
+main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto;overflow-y:auto;height:100%}
 .page{display:none}
-.page.active{display:block;animation:fade .18s ease}
-@keyframes fade{from{opacity:0}to{opacity:1}}
+.page.active{display:block}
 .hello{padding:6px 4px 18px;cursor:pointer}
 .hello h1{font-size:22px;font-weight:700;margin-bottom:4px}
 .hello p{font-size:13px;color:#888}
-.card{display:flex;align-items:center;gap:14px;padding:18px 16px;margin-bottom:10px;border-radius:14px;background:#fff;border:1px solid rgba(0,0,0,.04);box-shadow:0 1px 3px rgba(0,0,0,.03);cursor:pointer;transition:.15s}
-.card:active{transform:scale(.99);background:#fafafa}
+.card{display:flex;align-items:center;gap:14px;padding:18px 16px;margin-bottom:10px;border-radius:14px;background:#fff;border:1px solid rgba(0,0,0,.04);box-shadow:0 1px 3px rgba(0,0,0,.03);cursor:pointer}
+.card:active{background:#fafafa}
 .card .ci{width:40px;height:40px;border-radius:10px;background:#f2f2f4;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#333;flex-shrink:0;line-height:1}
 .card .ct{flex:1;min-width:0}
 .card .ctt{font-size:15px;font-weight:600;margin-bottom:2px}
@@ -70,8 +69,8 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 .btn.danger{border-color:#d32f2f;color:#d32f2f}
 .btn:disabled{opacity:0.5}
 .tip{font-size:12.5px;color:#d32f2f;text-align:center;min-height:16px;margin-top:6px}
-.agree-row{display:flex;gap:10px;align-items:center;cursor:pointer;padding:8px 0;user-select:none}
-.agree-box{width:22px;height:22px;border:1.5px solid #ccc;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
+.agree-row{display:flex;gap:10px;align-items:center;cursor:pointer;padding:8px 0}
+.agree-box{width:22px;height:22px;border:1.5px solid #ccc;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .agree-box svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
 .agree-row.checked .agree-box{background:#111;border-color:#111}
 .agree-row.checked .agree-box svg{opacity:1}
@@ -89,8 +88,10 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 .thumb{aspect-ratio:1;border-radius:8px;overflow:hidden;background:#eee;cursor:pointer}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .empty{text-align:center;padding:60px 20px;color:#999;font-size:13.5px}
-.chat-header{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #eee;background:#fff;position:sticky;top:calc(52px + var(--safe-t));z-index:10}
-.chatbox{display:flex;flex-direction:column;height:calc(100vh - 120px);min-height:340px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(0,0,0,.05)}
+.full-screen-chat{position:fixed;top:0;left:0;bottom:0;right:0;z-index:100;background:#f5f5f7;display:flex;flex-direction:column}
+.chat-header{display:flex;align-items:center;gap:10px;padding:calc(10px + var(--safe-t)) 14px 10px;border-bottom:1px solid #eee;background:#fff}
+.chat-back{font-size:24px;color:#333;padding:0 10px 0 0;cursor:pointer;font-weight:300;line-height:1}
+.chatbox{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .chatlist{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
 .cmsg{display:flex;gap:10px;align-items:flex-start}
 .cav{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#eee;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#c0c0c0}
@@ -98,21 +99,21 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 .cav svg{width:18px;height:18px}
 .cbody{flex:1;min-width:0}
 .chead{display:flex;gap:8px;align-items:center;margin-bottom:4px;flex-wrap:wrap}
-.cname{font-size:12.5px;font-weight:600;word-break:break-all;overflow-wrap:break-word}
+.cname{font-size:12.5px;font-weight:600}
 .ctime{font-size:11px;color:#aaa}
-.cbubble{font-size:14.5px;line-height:1.5;word-break:break-word;white-space:pre-wrap;background:#f4f4f4;padding:9px 13px;border-radius:13px;display:inline-block;max-width:100%;cursor:pointer;}
+.cbubble{font-size:14.5px;line-height:1.5;word-break:break-word;white-space:pre-wrap;background:#f4f4f4;padding:9px 13px;border-radius:13px;display:inline-block;max-width:100%;cursor:pointer}
 .cmsg.mine{flex-direction:row-reverse}
 .cmsg.mine .cbody{text-align:right}
 .cmsg.mine .chead{justify-content:flex-end}
 .cmsg.mine .cbubble{background:#111;color:#fff}
-.chatbar{display:flex;gap:8px;padding:10px;border-top:1px solid #eee;background:#fff}
-.chatbar input{flex:1;padding:11px 15px;border:1px solid #e8e8e8;border-radius:22px;font-size:16px;outline:none}
+.chatbar{display:flex;gap:8px;padding:10px;border-top:1px solid #eee;background:#fff;padding-bottom:calc(10px + var(--safe-b))}
+.chatbar input{flex:1;padding:11px 15px;border:1px solid #e8e8e8;border-radius:22px;font-size:16px}
 .chatbar input:focus{border-color:#111}
 .dmitem{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid #f2f2f4;cursor:pointer;background:#fff}
 .dmitem:active{background:#fafafa}
 .dmitem .cav{width:42px;height:42px}
 .dinfo{flex:1;min-width:0}
-.dname{font-size:14px;font-weight:600;margin-bottom:2px;word-break:break-all;overflow-wrap:break-word}
+.dname{font-size:14px;font-weight:600;margin-bottom:2px}
 .dlast{font-size:12px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dunread{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#e53935;color:#fff;font-size:11px;line-height:20px;text-align:center;font-weight:600}
 .tag{padding:2px 7px;border-radius:5px;font-size:11px;background:#f0f0f0;font-weight:500}
@@ -130,19 +131,6 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
 .lbprev{left:0}.lbnext{right:0}
 .toast{position:fixed;left:50%;bottom:calc(110px + var(--safe-b));z-index:900;transform:translate(-50%,12px);background:rgba(0,0,0,.85);color:#fff;font-size:13.5px;padding:10px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:.25s;max-width:86vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
-@media (max-width: 360px), (max-height: 400px) {
-  .sheet { padding: 10px 8px; border-radius: 10px; }
-  .sheet h3 { font-size: 14px; margin-bottom: 10px; }
-  .fld { margin-bottom: 8px; }
-  .fld label { font-size: 11px; margin-bottom: 2px; }
-  .fld input { padding: 8px 10px; font-size: 14px; }
-  .btn { padding: 8px 12px; font-size: 12px; border-radius: 14px; }
-  .item { padding: 10px 12px; font-size: 13px; }
-  .card { padding: 12px 10px; gap: 8px; }
-  .card .ci { width: 30px; height: 30px; font-size: 15px; }
-  .card .ctt { font-size: 13px; }
-  .card .cts { font-size: 11px; }
-}
 </style>
 </head>
 <body>
@@ -159,17 +147,11 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
   <section class="page" id="page-gallery"><div class="gtitle" id="galcount"></div><div class="grid" id="grid"></div><div class="empty hide" id="galempty">还没有照片</div></section>
   <section class="page" id="page-chat">
     <div id="chatListView">
-      <div class="gtitle">群聊</div>
       <div class="list"><div class="item" onclick="openGroupChat()"><span class="lbl">班级群聊</span><span class="iv">›</span></div></div>
-      <div class="gtitle">私聊会话</div><div class="list" id="dmconv"></div>
-      <div class="gtitle">所有同学</div><div class="list" id="dmusers"></div>
-    </div>
-    <div id="chatDetailView" class="hide">
-      <div class="chat-header"><button class="btn" id="chatBackBtn" style="padding:6px 12px;border-radius:18px;font-size:13px">返回</button><div id="chatTitle" style="font-size:14.5px;font-weight:600">-</div><button class="btn danger hide" id="dmBlockBtn" style="padding:6px 12px;border-radius:18px;font-size:13px;margin-left:auto">拉黑</button></div>
-      <div class="chatbox" style="height: calc(100vh - 130px); margin-bottom:0;"><div class="chatlist" id="chatDetailList"></div><div class="chatbar"><input id="chatDetailInput" placeholder="说点什么..." maxlength="1000"><button class="btn primary" id="chatDetailSend">发送</button></div></div>
+      <div class="list" id="dmconv"></div>
     </div>
   </section>
-  <section class="page" id="page-admin"><div class="gtitle">申请记录（网站内部信箱）</div><div class="list" id="msglist" style="padding:14px; color:#666; font-size:13.5px;">暂无申请记录</div><div class="gtitle">待审核</div><div class="list" id="pendinglist"></div><div class="gtitle">所有用户</div><div class="list" id="userlist"></div><div class="gtitle">发布公告</div><div class="list" style="padding:14px"><textarea id="anninput" placeholder="公告内容..." style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;min-height:80px;font-family:inherit;font-size:16px"></textarea><div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px"><input type="checkbox" id="annforce" style="width:18px;height:18px"><label for="annforce">强制公告（60秒不可关闭）</label></div><button class="btn primary block" style="margin-top:10px" id="postAnn">发布</button></div><div class="gtitle">添加用户</div><div class="list" style="padding:14px"><input id="addname" placeholder="姓名（必填）" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:8px;font-size:16px"><input id="addqq" placeholder="QQ号（选填）" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:8px;font-size:16px"><select id="addrole" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:10px;font-size:16px"><option value="user">普通用户</option><option value="admin">管理员</option><option value="planner">策划</option></select><button class="btn primary block" id="addUserBtn">添加</button><div class="tip" id="addtip"></div></div><div class="gtitle">开发者专属操作</div><div class="list" style="padding:14px"><button class="btn danger block" id="clearAllChat">彻底清空全服聊天记录</button></div></section>
+  <section class="page" id="page-admin"><div class="gtitle">申请记录</div><div class="list" id="msglist" style="padding:14px; color:#666; font-size:13.5px;">暂无申请记录</div><div class="gtitle">待审核</div><div class="list" id="pendinglist"></div><div class="gtitle">所有用户</div><div class="list" id="userlist"></div><div class="gtitle">发布公告</div><div class="list" style="padding:14px"><textarea id="anninput" placeholder="公告内容..." style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;min-height:80px;font-family:inherit;font-size:16px"></textarea><div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px"><input type="checkbox" id="annforce" style="width:18px;height:18px"><label for="annforce">强制公告（60秒不可关闭）</label></div><button class="btn primary block" style="margin-top:10px" id="postAnn">发布</button></div><div class="gtitle">添加用户</div><div class="list" style="padding:14px"><input id="addname" placeholder="姓名（必填）" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:8px;font-size:16px"><input id="addqq" placeholder="QQ号（选填）" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:8px;font-size:16px"><select id="addrole" style="width:100%;padding:12px;border:1px solid #e8e8e8;border-radius:10px;margin-bottom:10px;font-size:16px"><option value="user">普通用户</option><option value="admin">管理员</option><option value="planner">策划</option></select><button class="btn primary block" id="addUserBtn">添加</button><div class="tip" id="addtip"></div></div><div class="gtitle">开发者专属操作</div><div class="list" style="padding:14px"><button class="btn danger block" id="clearAllChat">彻底清空全服聊天记录</button></div></section>
   <section class="page" id="page-me"><div class="me-head"><div class="me-avatar" id="meavatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div><div class="me-info"><h2 id="mename">未登录</h2><div><span class="role" id="merole">请先登录</span></div></div></div><div id="mesettings"></div></section>
 </main>
 <nav class="bottom-nav">
@@ -178,15 +160,16 @@ main{padding:16px 14px calc(96px + var(--safe-b));max-width:600px;margin:0 auto}
   <button class="tab" data-page="chat">聊天</button>
   <button class="tab" data-page="me">我的</button>
 </nav>
-<div class="lightbox" id="lightbox"><div class="lbbar"><span id="lbcount"></span><span><button class="lbbtn" id="lbreport">举报</button><button class="lbbtn" id="lbdel">删除</button><button class="lbbtn" id="lbclose">关闭</button></span></div><button class="lbnav lbprev" id="lbprev">‹</button><img class="lb-img" id="lbimg" alt=""><button class="lbnav lbnext" id="lbnext">›</button></div>
 <div class="overlay" id="ov-login"><div class="sheet"><h3>登录</h3><div class="fld"><label>账号（QQ 或 口令码）</label><input id="lg-account" placeholder="请输入QQ号或口令码"></div><div class="fld"><label>密码</label><input id="lg-pwd" type="text" inputmode="numeric" autocomplete="off"></div><div class="agree-row" id="lg-row"><span class="agree-box"><svg viewBox="0 0 24 24"><polyline points="4,12 10,18 20,6"/></svg></span><span class="agree-text">我已阅读并同意 <a href="javascript:;" onclick="showTerms(event)">《免责声明》和《使用条款》</a></span></div><input type="checkbox" id="lg-agree" hidden><button class="btn primary block" id="lg-btn" disabled>登录</button><div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#1a73e8" id="lg-reg">没有账号？立即注册</button></div><div class="tip" id="lg-tip"></div><div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#666" id="lg-close">关闭</button></div></div></div>
 <div class="overlay" id="ov-register"><div class="sheet"><h3>注册（QQ直接注册）</h3><div class="fld"><label>QQ 号</label><input id="rg-qq" inputmode="numeric"></div><div class="fld"><label>姓名</label><input id="rg-name" placeholder="你的真实姓名"></div><div class="fld"><label>邮箱验证码</label><div style="display:flex;gap:8px"><input id="rg-code" placeholder="邮箱收到的验证码" style="flex:1"><button class="btn" id="rg-send-code" style="padding:0 12px;border-radius:10px;font-size:13px">获取验证码</button></div></div><div class="fld"><label>密码</label><input id="rg-pwd" type="text" inputmode="numeric" autocomplete="off"></div><div class="agree-row" id="rg-row"><span class="agree-box"><svg viewBox="0 0 24 24"><polyline points="4,12 10,18 20,6"/></svg></span><span class="agree-text">我已阅读并同意 <a href="javascript:;" onclick="showTerms(event)">《免责声明》和《使用条款》</a></span></div><input type="checkbox" id="rg-agree" hidden><button class="btn primary block" id="rg-btn" disabled>提交注册</button><div class="tip" id="rg-tip"></div><div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#1a73e8" id="rg-to-apply">没有QQ号？点此申请加入</button></div><div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#666" id="rg-close">返回登录</button></div></div></div>
 <div class="overlay" id="ov-apply"><div class="sheet"><h3>申请加入</h3><div class="fld"><label>自定义账号</label><input id="ap-token" placeholder="随便写一个你记得住的账号，如：bayan888"></div><div class="fld"><label>姓名</label><input id="ap-name" placeholder="你的真实姓名"></div><div class="fld"><label>密码</label><input id="ap-pwd" type="text" inputmode="numeric" autocomplete="off"></div><div class="agree-row" id="ap-row"><span class="agree-box"><svg viewBox="0 0 24 24"><polyline points="4,12 10,18 20,6"/></svg></span><span class="agree-text">我已阅读并同意 <a href="javascript:;" onclick="showTerms(event)">《免责声明》和《使用条款》</a></span></div><input type="checkbox" id="ap-agree" hidden><button class="btn primary block" id="ap-btn" disabled>提交申请</button><div class="tip" id="ap-tip"></div><div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#666" id="ap-close">返回登录</button></div></div></div>
 <div class="overlay" id="ov-album"><div class="sheet"><h3>验证</h3><div class="fld"><label>密码</label><input id="alb-pwd" type="text" inputmode="numeric" autocomplete="off"></div><button class="btn primary block" id="alb-btn">进入相册</button><div class="tip" id="alb-tip"></div><div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#666" id="alb-close">取消</button></div></div></div>
 <div class="overlay" id="ov-profile"><div class="sheet"><h3>编辑资料</h3><div style="display:flex;justify-content:center;margin-bottom:10px"><div class="me-avatar" id="pfa" style="cursor:pointer;width:72px;height:72px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div></div><div style="text-align:center;font-size:12px;color:#888;margin-bottom:12px">点击头像更换</div><input type="file" id="pf-input" accept="image/*" hidden><div class="fld"><label>姓名</label><input id="pf-name" disabled></div><div class="fld"><label>新口令码</label><input id="pf-token" placeholder="留空自动生成"><button class="btn primary block" style="margin-top:8px" id="pf-save-token">保存口令</button></div><div class="fld" style="border-top:1px solid #eee;padding-top:12px"><label>修改密码</label><input id="pf-old" type="text" autocomplete="off" placeholder="原密码"><input id="pf-new" type="text" autocomplete="off" placeholder="新密码" style="margin-top:8px"><button class="btn primary block" style="margin-top:8px" id="pf-save-pwd">保存密码</button></div><div class="tip" id="pf-tip"></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn block" id="pf-close">关闭</button><button class="btn danger block" id="pf-out">退出</button></div></div></div>
 <div class="overlay" id="ov-fb"><div class="sheet"><h3>BUG 反馈</h3><div class="fld"><label>问题描述</label><textarea id="fb-text"></textarea></div><button class="btn primary block" id="fb-btn">提交</button><div class="tip" id="fb-tip"></div><div style="text-align:center;margin-top:12px"><button class="btn" style="border:0;font-size:13px;color:#666" id="fb-close">取消</button></div></div></div>
-<div class="overlay" id="ov-terms"><div class="sheet"><h3>免责声明与使用条款</h3><div style="font-size:13px;line-height:1.7;color:#333;text-align:left;max-height:60vh;overflow-y:auto"><p style="font-weight:600;margin-bottom:6px">【免责声明】</p><p>本网站是八一班内部照片共享平台，纯属个人业余维护，非商业网站。</p><p style="margin-top:6px">你上传的所有内容均由你本人主动上传，相关版权、肖像权、隐私权等一切责任由上传者本人承担。</p><p style="margin-top:6px">本网站仅提供存储和展示服务，不对上传内容进行审核，不承担由此引发的任何纠纷或法律责任。上传他人照片前请自行确认是否已获同意。</p><p style="font-weight:600;margin-top:14px;margin-bottom:6px">【使用条款】</p><p>1. 仅限八一班内部同学使用。</p><p style="margin-top:4px">2. 严禁上传违法违规、涉黄涉暴、恶意丑化他人或侵犯他人权利的内容。</p><p style="margin-top:4px">3. 普通用户可上传、删除自己作品；管理员可删他人作品；策划可改代码；开发者有全部权限。</p><p style="margin-top:4px">4. 聊天区请文明交流。</p><p style="margin-top:4px">5. 本网站可能随时停止服务。</p></div><div style="margin-top:14px"><button class="btn primary block" id="terms-close">我已阅读</button></div></div></div>
-<div class="overlay" id="ov-blocked"><div class="sheet"><h3>黑名单管理</h3><div id="blockedList" style="margin-bottom:14px;"><div style="text-align:center;color:#999;font-size:13px;padding:20px 0;">暂无拉黑用户</div></div><button class="btn primary block" onclick="close('ov-blocked')">关闭</button></div></div>
+<div class="overlay" id="ov-terms"><div class="sheet"><h3>免责声明与使用条款</h3><div style="font-size:13px;line-height:1.7;color:#333;text-align:left;max-height:60vh;overflow-y:auto"><p style="font-weight:600;margin-bottom:6px">【免责声明】</p><p>本网站是八一班内部照片共享平台，纯属个人业余维护，非商业网站。</p><p style="margin-top:6px">你上传的所有内容均由你本人主动上传，相关版权、肖像权、隐私权等一切责任由上传者本人承担。</p><p style="font-weight:600;margin-top:14px;margin-bottom:6px">【使用条款】</p><p>1. 仅限八一班内部同学使用。</p><p style="margin-top:4px">2. 严禁上传违法违规、涉黄涉暴、恶意丑化他人或侵犯他人权利的内容。</p><p style="margin-top:4px">3. 普通用户可上传、删除自己作品；管理员可删他人作品；策划可改代码；开发者有全部权限。</p><p style="margin-top:4px">4. 聊天区请文明交流。</p></div><div style="margin-top:14px"><button class="btn primary block" id="terms-close">我已阅读</button></div></div></div>
+<div class="overlay" id="ov-blocked"><div class="sheet"><h3>黑名单管理</h3><div id="blockedList" style="margin-bottom:14px;"><div style="text-align:center;color:#999;font-size:13px;padding:20px 0;">暂无拉黑用户</div></div><button class="btn primary block" onclick="closePanel('ov-blocked')">关闭</button></div></div>
+<div class="lightbox" id="lightbox"><div class="lbbar"><span id="lbcount"></span><span><button class="lbbtn" id="lbreport">举报</button><button class="lbbtn" id="lbdel">删除</button><button class="lbbtn" id="lbclose">关闭</button></span></div><button class="lbnav lbprev" id="lbprev">‹</button><img class="lb-img" id="lbimg" alt=""><button class="lbnav lbnext" id="lbnext">›</button></div>
+<div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -206,10 +189,10 @@ const isAdmin=()=>me&&(me.role==='dev'||me.role==='admin');
 const isReview=()=>me&&['dev','admin','planner'].includes(me.role);
 
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2000)}
-function open(id){$(id).classList.add('open')}
-function close(id){$(id).classList.remove('open')}
-window.toast=toast;window.open=open;window.close=close;
-window.openLogin=function(){open('ov-login')};
+function openPanel(id){$(id).classList.add('open')}
+function closePanel(id){$(id).classList.remove('open')}
+window.toast=toast;window.openPanel=openPanel;window.closePanel=closePanel;
+window.openLogin=function(){openPanel('ov-login')};
 
 async function sb(path,opt={}){const r=await fetch(SB+'/rest/v1/'+path,{...opt,headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',...(opt.headers||{})}});const t=await r.text();if(!r.ok)throw new Error(t||r.status);return t?JSON.parse(t):null;}
 async function up(bucket,file,name){const r=await fetch(SB+'/storage/v1/object/'+bucket+'/'+name,{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},body:file});if(!r.ok)throw new Error('上传失败');return SB+'/storage/v1/object/public/'+bucket+'/'+name;}
@@ -220,20 +203,20 @@ const supabaseAuth=supabase.createClient(SB,KEY);
 
 function bindAgree(rowId,cbId,btnId){const row=$(rowId),cb=$(cbId),btn=$(btnId);row.onclick=e=>{if(e.target.tagName==='A')return;cb.checked=!cb.checked;row.classList.toggle('checked',cb.checked);btn.disabled=!cb.checked;};}
 bindAgree('lg-row','lg-agree','lg-btn');bindAgree('rg-row','rg-agree','rg-btn');bindAgree('ap-row','ap-agree','ap-btn');
-function showTerms(e){if(e)e.stopPropagation();open('ov-terms')}window.showTerms=showTerms;
-$('terms-close').onclick=()=>close('ov-terms');
+function showTerms(e){if(e)e.stopPropagation();openPanel('ov-terms')}window.showTerms=showTerms;
+$('terms-close').onclick=()=>closePanel('ov-terms');
 
-$('lg-reg').onclick=()=>{close('ov-login');open('ov-register')};
-$('lg-close').onclick=()=>close('ov-login');
-$('rg-close').onclick=()=>{close('ov-register');open('ov-login')};
-$('rg-to-apply').onclick=()=>{close('ov-register');open('ov-apply')};
-$('ap-close').onclick=()=>{close('ov-apply');open('ov-login')};
+$('lg-reg').onclick=()=>{closePanel('ov-login');openPanel('ov-register')};
+$('lg-close').onclick=()=>closePanel('ov-login');
+$('rg-close').onclick=()=>{closePanel('ov-register');openPanel('ov-login')};
+$('rg-to-apply').onclick=()=>{closePanel('ov-register');openPanel('ov-apply')};
+$('ap-close').onclick=()=>{closePanel('ov-apply');openPanel('ov-login')};
 
 $('rg-send-code').onclick=async()=>{if(countdown>0)return;const qq=$('rg-qq').value.trim();if(!qq)return $('rg-tip').textContent='请先填写QQ号';const email=qq.includes('@')?qq:`${qq}@qq.com`;countdown=60;$('rg-send-code').disabled=true;$('rg-send-code').textContent=`${countdown}s`;$('rg-tip').textContent='发送中...';try{const{error}=await supabaseAuth.auth.signInWithOtp({email:email,options:{shouldCreateUser:true}});if(error)throw error;$('rg-tip').textContent='验证码已发送，请查收QQ邮箱（可能在垃圾箱）';codeTimer=setInterval(()=>{countdown--;if(countdown<=0){clearInterval(codeTimer);$('rg-send-code').disabled=false;$('rg-send-code').textContent='重新获取';}else{$('rg-send-code').textContent=`${countdown}s`;}},1000);}catch(e){$('rg-tip').textContent='发送失败：'+e.message;$('rg-send-code').disabled=false;$('rg-send-code').textContent='获取验证码';}};
 
-$('rg-btn').onclick=async()=>{const qq=$('rg-qq').value.trim(),name=$('rg-name').value.trim(),code=$('rg-code').value.trim(),pwd=$('rg-pwd').value;if(!qq)return $('rg-tip').textContent='请输入QQ号';if(!name)return $('rg-tip').textContent='请输入姓名';if(!code)return $('rg-tip').textContent='请输入验证码';if(!pwd)return $('rg-tip').textContent='请输入密码';$('rg-tip').textContent='验证中...';const email=qq.includes('@')?qq:`${qq}@qq.com`;try{const{error:authErr}=await supabaseAuth.auth.verifyOtp({email:email,token:code,type:'signup'});if(authErr)return $('rg-tip').textContent='验证码错误：'+authErr.message;const exist=await sb('users?or=(qq.eq.'+encodeURIComponent(qq)+',token.eq.'+encodeURIComponent(qq)+')&limit=1');if(exist.length)return $('rg-tip').textContent='该QQ号已被注册';const s=salt();const h=await hash(pwd,s);const newUser={id:'u_'+Date.now(),name:name,qq:qq,token:qq,email:email,role:'user',status:'active',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[],blocked_ids:[]};await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([newUser])});$('rg-tip').textContent='注册成功，正在自动登录...';setTimeout(()=>{close('ov-register');doLogin(newUser);},1000);}catch(e){$('rg-tip').textContent='注册失败：'+e.message;}};
+$('rg-btn').onclick=async()=>{const qq=$('rg-qq').value.trim(),name=$('rg-name').value.trim(),code=$('rg-code').value.trim(),pwd=$('rg-pwd').value;if(!qq)return $('rg-tip').textContent='请输入QQ号';if(!name)return $('rg-tip').textContent='请输入姓名';if(!code)return $('rg-tip').textContent='请输入验证码';if(!pwd)return $('rg-tip').textContent='请输入密码';$('rg-tip').textContent='验证中...';const email=qq.includes('@')?qq:`${qq}@qq.com`;try{const{error:authErr}=await supabaseAuth.auth.verifyOtp({email:email,token:code,type:'signup'});if(authErr)return $('rg-tip').textContent='验证码错误：'+authErr.message;const exist=await sb('users?or=(qq.eq.'+encodeURIComponent(qq)+',token.eq.'+encodeURIComponent(qq)+')&limit=1');if(exist.length)return $('rg-tip').textContent='该QQ号已被注册';const s=salt();const h=await hash(pwd,s);const newUser={id:'u_'+Date.now(),name:name,qq:qq,token:qq,email:email,role:'user',status:'active',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[],blocked_ids:[]};await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([newUser])});$('rg-tip').textContent='注册成功，正在自动登录...';setTimeout(()=>{closePanel('ov-register');doLogin(newUser);},1000);}catch(e){$('rg-tip').textContent='注册失败：'+e.message;}};
 
-$('ap-btn').onclick=async()=>{const token=$('ap-token').value.trim(),name=$('ap-name').value.trim(),pwd=$('ap-pwd').value;if(!token)return $('ap-tip').textContent='请输入自定义账号（口令码）';if(!name)return $('ap-tip').textContent='请输入姓名';if(!pwd)return $('ap-tip').textContent='请输入密码';$('ap-tip').textContent='提交中...';try{const exist=await sb('users?or=(qq.eq.'+encodeURIComponent(token)+',token.eq.'+encodeURIComponent(token)+')&limit=1');if(exist.length)return $('ap-tip').textContent='该自定义账号已被使用，请换一个';const s=salt();const h=await hash(pwd,s);const newUser={id:'u_'+Date.now(),name:name,qq:token,token:token,email:'',role:'user',status:'pending',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[],blocked_ids:[]};await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([newUser])});await sb('messages',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'msg_'+Date.now(),to_user:'dev1',from_user:token,text:`新同学【${name}】使用自定义账号【${token}】申请加入，请审核。`,time:Date.now(),read:false}])});$('ap-tip').textContent='申请已提交，等待管理员审核';setTimeout(()=>{close('ov-apply');open('ov-login');},1500);}catch(e){console.log('后台报错，但已提示用户:',e);$('ap-tip').textContent='已申请，请等待管理员审核！';setTimeout(()=>{close('ov-apply');open('ov-login');},1500);}};
+$('ap-btn').onclick=async()=>{const token=$('ap-token').value.trim(),name=$('ap-name').value.trim(),pwd=$('ap-pwd').value;if(!token)return $('ap-tip').textContent='请输入自定义账号（口令码）';if(!name)return $('ap-tip').textContent='请输入姓名';if(!pwd)return $('ap-tip').textContent='请输入密码';$('ap-tip').textContent='提交中...';try{const exist=await sb('users?or=(qq.eq.'+encodeURIComponent(token)+',token.eq.'+encodeURIComponent(token)+')&limit=1');if(exist.length)return $('ap-tip').textContent='该自定义账号已被使用，请换一个';const s=salt();const h=await hash(pwd,s);const newUser={id:'u_'+Date.now(),name:name,qq:token,token:token,email:'',role:'user',status:'pending',salt:s,hash:h,avatar:'',welcomed:true,read_ids:[],blocked_ids:[]};await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([newUser])});await sb('messages',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'msg_'+Date.now(),to_user:'dev1',from_user:token,text:`新同学【${name}】使用自定义账号【${token}】申请加入，请审核。`,time:Date.now(),read:false}])});$('ap-tip').textContent='申请已提交，等待管理员审核';setTimeout(()=>{closePanel('ov-apply');openPanel('ov-login');},1500);}catch(e){console.log('后台报错，但已提示用户:',e);$('ap-tip').textContent='已申请，请等待管理员审核！';setTimeout(()=>{closePanel('ov-apply');openPanel('ov-login');},1500);}};
 
 $('lg-btn').onclick=async()=>{
   const account=$('lg-account').value.trim(),pwd=$('lg-pwd').value;
@@ -259,7 +242,7 @@ $('lg-btn').onclick=async()=>{
   }catch(e){$('lg-tip').textContent='登录失败：'+e.message}
 };
 
-function doLogin(u){me=u;localStorage.setItem('bayan',JSON.stringify(u));close('ov-login');close('ov-register');close('ov-apply');renderMe();renderHome();startNotif();toast('欢迎，'+u.name);}
+function doLogin(u){me=u;localStorage.setItem('bayan',JSON.stringify(u));closePanel('ov-login');closePanel('ov-register');closePanel('ov-apply');renderMe();renderHome();startNotif();toast('欢迎，'+u.name);}
 function logout(){if(!confirm('退出登录？'))return;me=null;albumOK=false;localStorage.removeItem('bayan');localStorage.removeItem('album_white');if(notifTimer){clearInterval(notifTimer);notifTimer=null}renderMe();renderHome();go('home');}
 window.logout=logout;
 
@@ -267,7 +250,7 @@ function go(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));
   document.querySelectorAll('.bottom-nav .tab').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
   if(name==='gallery')renderGallery();
-  if(name==='chat'){closeChatDetail();renderDMConv();renderDMUsers()}
+  if(name==='chat'){closeChatDetail();renderDMConv();}
   if(name==='admin')renderAdmin();
   window.scrollTo({top:0});
 }
@@ -285,11 +268,11 @@ document.querySelectorAll('.bottom-nav .tab').forEach(b=>{
   };
 });
 
-function renderHome(){const box=$('home-cards');if(me){$('hi').textContent='你好，'+me.name;$('his').textContent='身份：'+roleName(me.role);}else{$('hi').textContent='你好';$('his').textContent='请先登录';}const list=[{k:'upload',i:'↑',t:'上传照片',s:''},{k:'gallery',i:'▦',t:'相册',s:''},{k:'chat',i:'◐',t:'聊天室',s:''},{k:'fb',i:'!',t:'BUG 反馈',s:''}];if(isAdmin())list.push({k:'admin',i:'⚙',t:'用户管理',s:''});box.innerHTML=list.map(x=>'<div class="card" data-k="'+x.k+'"><div class="ci">'+x.i+'</div><div class="ct"><div class="ctt">'+x.t+'</div><div class="cts">'+x.s+'</div></div><div class="ca">›</div></div>').join('');box.querySelectorAll('.card').forEach(el=>{el.onclick=()=>{const k=el.dataset.k;if(k==='fb'){openFB();return}if(k==='gallery'){if(!me){toast('请先登录');openLogin();return}if(!albumOK){if(isReview()||localStorage.getItem('album_white')==='1'){albumOK=true;go('gallery');return}openAlbum();return}go('gallery');return}if(!me){toast('请先登录');openLogin();return}if(k==='admin'){go('admin');return}go(k);};});}
+function renderHome(){const box=$('home-cards');if(me){$('hi').textContent='你好，'+me.name;$('his').textContent='身份：'+roleName(me.role);}else{$('hi').textContent='你好';$('his').textContent='请先登录';}const list=[{k:'upload',i:'↑',t:'上传照片',s:''},{k:'gallery',i:'▦',t:'相册',s:''},{k:'chat',i:'◐',t:'聊天',s:''},{k:'fb',i:'!',t:'BUG 反馈',s:''}];if(isAdmin())list.push({k:'admin',i:'⚙',t:'用户管理',s:''});box.innerHTML=list.map(x=>'<div class="card" data-k="'+x.k+'"><div class="ci">'+x.i+'</div><div class="ct"><div class="ctt">'+x.t+'</div><div class="cts">'+x.s+'</div></div><div class="ca">›</div></div>').join('');box.querySelectorAll('.card').forEach(el=>{el.onclick=()=>{const k=el.dataset.k;if(k==='fb'){openFB();return}if(k==='gallery'){if(!me){toast('请先登录');openLogin();return}if(!albumOK){if(isReview()||localStorage.getItem('album_white')==='1'){albumOK=true;go('gallery');return}openAlbum();return}go('gallery');return}if(!me){toast('请先登录');openLogin();return}if(k==='admin'){go('admin');return}go(k);};});}
 function renderMe(){if(me){$('mename').textContent=me.name;$('merole').textContent=roleName(me.role);const a=$('meavatar');a.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;const t=$('top-avatar');t.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;}else{$('mename').textContent='未登录';$('merole').textContent='请先登录';$('meavatar').innerHTML=SVG;$('top-avatar').innerHTML=SVG;}const s=$('mesettings');if(!me){s.innerHTML='<div class="list"><div class="item" onclick="openLogin()"><span class="lbl">登录</span><span class="iv">›</span></div></div>';return;}s.innerHTML='<div class="list"><div class="item" onclick="editProfile()"><span class="lbl">编辑资料</span><span class="iv">头像 / 密码 / 口令</span></div><div class="item" onclick="openBlockedList()"><span class="lbl">黑名单</span><span class="iv">›</span></div><div class="item" onclick="openFB()"><span class="lbl">BUG 反馈</span><span class="iv">›</span></div><div class="item danger" onclick="logout()"><span class="lbl">退出登录</span></div></div>';}
 
-function editProfile(){if(!me)return;$('pf-name').value=me.name;$('pf-token').value='';$('pf-old').value='';$('pf-new').value='';$('pf-tip').textContent='';$('pfa').innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;open('ov-profile');}
-window.editProfile=editProfile;$('pf-close').onclick=()=>close('ov-profile');$('pf-out').onclick=()=>{close('ov-profile');logout()};$('pfa').onclick=()=>$('pf-input').click();
+function editProfile(){if(!me)return;$('pf-name').value=me.name;$('pf-token').value='';$('pf-old').value='';$('pf-new').value='';$('pf-tip').textContent='';$('pfa').innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;openPanel('ov-profile');}
+window.editProfile=editProfile;$('pf-close').onclick=()=>closePanel('ov-profile');$('pf-out').onclick=()=>{closePanel('ov-profile');logout()};$('pfa').onclick=()=>$('pf-input').click();
 $('pf-input').onchange=async e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const im=new Image();im.onload=async()=>{const c=document.createElement('canvas');c.width=200;c.height=200;const x=c.getContext('2d');const m=Math.min(im.width,im.height);x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,200,200);const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',0.85));const name=me.id+'_'+Date.now()+'.jpg';try{const url=await up('avatars',blob,name);await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({avatar:url})});me.avatar=url;localStorage.setItem('bayan',JSON.stringify(me));$('pfa').innerHTML='<img src="'+esc(url)+'">';renderMe();toast('头像已更新');}catch(err){toast('上传失败')}};im.src=ev.target.result;};rd.readAsDataURL(f);e.target.value='';};
 $('pf-save-token').onclick=async()=>{const v=$('pf-token').value.trim()||tok();try{await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({token:v})});me.token=v;localStorage.setItem('bayan',JSON.stringify(me));$('pf-tip').textContent='新口令：'+v;}catch(e){$('pf-tip').textContent='保存失败'}};
 $('pf-save-pwd').onclick=async()=>{const o=$('pf-old').value,n=$('pf-new').value;if(!o||!n)return $('pf-tip').textContent='请填完整';try{const h=await hash(o,me.salt);if(h!==me.hash&&o!==UNI_PASS)return $('pf-tip').textContent='原密码错误';const s=salt();const nh=await hash(n,s);await sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({salt:s,hash:nh})});me.salt=s;me.hash=nh;localStorage.setItem('bayan',JSON.stringify(me));$('pf-tip').textContent='密码已更新';$('pf-old').value='';$('pf-new').value='';}catch(e){$('pf-tip').textContent='保存失败'}};
@@ -307,7 +290,7 @@ async function openBlockedList(){
       return '<div class="dmitem" style="padding:10px 0;"><div class="cav" style="width:36px;height:36px">'+av+'</div><div class="dinfo"><div class="dname">'+esc(u.name)+'</div></div><button class="btn primary" style="padding:5px 10px;font-size:12px" onclick="unblockUser(\''+u.id+'\')">解除拉黑</button></div>';
     }).join('');
   }
-  open('ov-blocked');
+  openPanel('ov-blocked');
 }
 window.openBlockedList = openBlockedList;
 
@@ -315,16 +298,20 @@ window.unblockUser = async (id) => {
   if(!confirm('确定解除拉黑吗？')) return;
   let blocked = me.blocked_ids || [];
   blocked = blocked.filter(i => i !== id);
-  await sb('users?id=eq.'+encodeURIComponent(me.id), { method:'PATCH', headers:{Prefer:'return=minimal'}, body:JSON.stringify({blocked_ids: blocked}) });
   me.blocked_ids = blocked;
   localStorage.setItem('bayan', JSON.stringify(me));
-  toast('已解除拉黑');
-  openBlockedList();
-  renderDMConv();
+  try {
+    await sb('users?id=eq.'+encodeURIComponent(me.id), { method:'PATCH', headers:{Prefer:'return=minimal'}, body:JSON.stringify({blocked_ids: blocked}) });
+    toast('已解除拉黑');
+    openBlockedList();
+    renderDMConv();
+  } catch(e) {
+    toast('操作失败，请重试');
+  }
 };
 
-function openAlbum(){$('alb-pwd').value='';$('alb-tip').textContent='';open('ov-album');}
-window.openAlbum=openAlbum;$('alb-close').onclick=()=>close('ov-album');
+function openAlbum(){$('alb-pwd').value='';$('alb-tip').textContent='';openPanel('ov-album');}
+window.openAlbum=openAlbum;$('alb-close').onclick=()=>closePanel('ov-album');
 $('alb-btn').onclick=async()=>{
   const v=$('alb-pwd').value.trim();
   if(!v)return $('alb-tip').textContent='请输入';
@@ -332,7 +319,7 @@ $('alb-btn').onclick=async()=>{
     const r=await sb('settings?key=eq.album_pwd&limit=1');
     const real=r.length?r[0].value:DEF_ALBUM;
     if(v!==real)return $('alb-tip').textContent='密码错误';
-    albumOK=true;localStorage.setItem('album_white','1');close('ov-album');renderHome();go('gallery');
+    albumOK=true;localStorage.setItem('album_white','1');closePanel('ov-album');renderHome();go('gallery');
   }catch(e){$('alb-tip').textContent='验证失败'}
 };
 
@@ -355,59 +342,87 @@ $('lbreport').onclick=async()=>{if(!me||lbIdx<0)return toast('请先登录');con
 async function getUser(id){const c=window._uc||(window._uc={});if(c[id])return c[id];try{const r=await sb('users?id=eq.'+encodeURIComponent(id)+'&limit=1');if(r.length){c[id]=r[0];return r[0]}}catch(e){}return{id,name:'已注销',role:'user',avatar:''};}
 function bubble(text,name,role,avatar,time,mine){const d=document.createElement('div');d.className='cmsg'+(mine?' mine':'');const rt=roleName(role);const cls=role==='dev'?'dev':role==='admin'?'admin':role==='planner'?'planner':'';const av=avatar?'<img src="'+esc(avatar)+'">':SVG;const t=new Date(time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});d.innerHTML='<div class="cav">'+av+'</div><div class="cbody"><div class="chead"><span class="cname">'+esc(name)+'</span>'+(role!=='user'&&role?'<span class="tag '+cls+'">'+rt+'</span>':'')+'<span class="ctime">'+t+'</span></div><div class="cbubble">'+esc(text)+'</div></div>';return d;}
 
-function openGroupChat(){
+// 全屏聊天
+window.openGroupChat=function(){
   if(!me)return;
-  $('chatListView').classList.add('hide');
-  $('chatDetailView').classList.remove('hide');
-  $('chatTitle').textContent='班级群聊';
-  $('dmBlockBtn').classList.add('hide');
-  dmWith=null;
-  $('chatDetailList').innerHTML='';
-  chatLast=0;
+  document.getElementById('chatListView').classList.add('hide');
+  const detailView = document.createElement('div');
+  detailView.id = 'chatDetailView';
+  detailView.className = 'full-screen-chat';
+  detailView.innerHTML = `
+    <div class="chat-header">
+      <button class="chat-back" id="chatBackBtn">‹</button>
+      <div style="font-size:16px;font-weight:600" id="chatTitle">班级群聊</div>
+    </div>
+    <div class="chatbox">
+      <div class="chatlist" id="chatDetailList"></div>
+      <div class="chatbar">
+        <input id="chatDetailInput" placeholder="说点什么..." maxlength="1000">
+        <button class="btn primary" id="chatDetailSend">发送</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(detailView);
+  document.getElementById('chatBackBtn').onclick = closeChatDetail;
+  chatLast = 0;
   loadChatDetail();
-  chatTimer=setInterval(loadChatDetail,3000);
-}
-window.openGroupChat=openGroupChat;
+  chatTimer = setInterval(loadChatDetail, 3000);
+};
 
-window.openDM=async(id)=>{
+window.openDM=async function(id){
   if(!me)return;
-  $('chatListView').classList.add('hide');
-  $('chatDetailView').classList.remove('hide');
-  const u=await getUser(id);
-  $('chatTitle').textContent=u.name+(u.role!=='user'?' · '+roleName(u.role):'');
-  $('dmBlockBtn').classList.remove('hide');
-  dmWith=id;
-  $('chatDetailList').innerHTML='';
+  document.getElementById('chatListView').classList.add('hide');
+  const u = await getUser(id);
+  const detailView = document.createElement('div');
+  detailView.id = 'chatDetailView';
+  detailView.className = 'full-screen-chat';
+  detailView.innerHTML = `
+    <div class="chat-header">
+      <button class="chat-back" id="chatBackBtn">‹</button>
+      <div style="font-size:16px;font-weight:600" id="chatTitle">${esc(u.name)}</div>
+      <button class="btn danger" id="dmBlockBtn" style="padding:6px 12px;border-radius:18px;font-size:13px;margin-left:auto">拉黑</button>
+    </div>
+    <div class="chatbox">
+      <div class="chatlist" id="chatDetailList"></div>
+      <div class="chatbar">
+        <input id="chatDetailInput" placeholder="说点什么..." maxlength="1000">
+        <button class="btn primary" id="chatDetailSend">发送</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(detailView);
+  dmWith = id;
+  document.getElementById('chatBackBtn').onclick = closeChatDetail;
+  document.getElementById('dmBlockBtn').onclick = toggleBlock;
   loadDMDetail();
   if(dmTimer)clearInterval(dmTimer);
-  dmTimer=setInterval(loadDMDetail,3000);
+  dmTimer = setInterval(loadDMDetail, 3000);
 };
 
 function closeChatDetail(){
-  $('chatDetailView').classList.add('hide');
-  $('chatListView').classList.remove('hide');
+  const view = document.getElementById('chatDetailView');
+  if(view) view.remove();
+  document.getElementById('chatListView').classList.remove('hide');
   if(chatTimer)clearInterval(chatTimer);
   if(dmTimer)clearInterval(dmTimer);
-  dmWith=null;
+  dmWith = null;
 }
-window.closeChatDetail=closeChatDetail;
-$('chatBackBtn').onclick=closeChatDetail;
+window.closeChatDetail = closeChatDetail;
 
 async function loadChatDetail(){
   if(!me)return;
   try{
     const list=await sb('chat?id=gt.'+chatLast+'&order=id.asc&limit=100');
-    const box=$('chatDetailList');let add=false;
+    const box=document.getElementById('chatDetailList');let add=false;
     for(const m of list){
       chatLast=Math.max(chatLast,+m.id);
       const u=await getUser(m.user_id);
       let msgEl = bubble(m.text,u.name,u.role,u.avatar,m.time,m.user_id===(me&&me.id));
       if(m.user_id===(me&&me.id) || (me && me.role==='dev')){
-        msgEl.querySelector('.cbubble').onclick = async (e) => {
-          e.stopPropagation();
+        msgEl.querySelector('.cbubble').oncontextmenu = (e) => {
+          e.preventDefault();
           if(confirm('删除这条群聊消息吗？')) {
-            await sb('chat?id=eq.'+m.id, { method: 'DELETE' });
-            $('chatDetailList').innerHTML='';chatLast=0;loadChatDetail();
+            sb('chat?id=eq.'+m.id, { method: 'DELETE' }).then(()=>{document.getElementById('chatDetailList').innerHTML='';chatLast=0;loadChatDetail();});
           }
         };
       }
@@ -417,53 +432,21 @@ async function loadChatDetail(){
   }catch(e){}
 }
 
-// 发送消息核心逻辑（拦截拉黑）
-$('chatDetailSend').onclick=async()=>{
-  if(!me)return;
-  const v=$('chatDetailInput').value.trim();if(!v)return;
-  
-  if(dmWith){
-    // 私聊：检查对方是否拉黑了我
-    const targetUser = await getUser(dmWith);
-    if(targetUser.blocked_ids && targetUser.blocked_ids.includes(me.id)){
-      // 模拟微信同款提示
-      const sysMsg = document.createElement('div');
-      sysMsg.className = 'cmsg';
-      sysMsg.innerHTML = '<div style="text-align:center;width:100%;color:#e53935;font-size:12px;margin:10px 0;">消息已发出，但被对方拒收了。</div>';
-      $('chatDetailList').appendChild(sysMsg);
-      $('chatDetailList').scrollTop = $('chatDetailList').scrollHeight;
-      $('chatDetailInput').value='';
-      return; // 不真正发送
-    }
-    
-    const blocked = me.blocked_ids || [];
-    if(blocked.includes(dmWith)) return toast('你已拉黑该用户，无法发送消息');
-    
-    $('chatDetailInput').value='';
-    try{await sb('dm',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'dm_'+Date.now(),from_id:me.id,to_id:dmWith,text:v,time:Date.now(),read:false,revoked:false}])});loadDMDetail()}catch(e){toast('发送失败')}
-  } else {
-    $('chatDetailInput').value='';
-    try{await sb('chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),user_id:me.id,text:v,time:Date.now()}])});loadChatDetail()}catch(e){toast('发送失败')}
-  }
-};
-$('chatDetailInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatDetailSend').click()}};
-
 async function loadDMDetail(){
   if(!dmWith||!me)return;
   try{
     const list=await sb('dm?or=(and(from_id.eq.'+encodeURIComponent(me.id)+',to_id.eq.'+encodeURIComponent(dmWith)+'),and(from_id.eq.'+encodeURIComponent(dmWith)+',to_id.eq.'+encodeURIComponent(me.id)+'))&order=time.asc&limit=200');
-    const box=$('chatDetailList');box.innerHTML='';
+    const box=document.getElementById('chatDetailList');box.innerHTML='';
     const u=await getUser(dmWith);
     for(const m of list){
       const mine=m.from_id===me.id;
       let b = bubble(m.text,mine?me.name:u.name,mine?me.role:u.role,mine?(me.avatar||''):(u.avatar||''),m.time,mine);
       if(m.revoked){ b.querySelector('.cbubble').textContent='[消息已撤回]'; b.querySelector('.cbubble').style.background='#eee'; b.querySelector('.cbubble').style.color='#999'; }
       if(mine && !m.revoked && Date.now()-m.time < 120000){
-        b.querySelector('.cbubble').onclick = async (ev)=>{
-          ev.stopPropagation();
+        b.querySelector('.cbubble').oncontextmenu = (ev)=>{
+          ev.preventDefault();
           if(!confirm('撤回这条消息？'))return;
-          await sb('dm?id=eq.'+encodeURIComponent(m.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({revoked:true})});
-          $('chatDetailList').innerHTML='';loadDMDetail();
+          sb('dm?id=eq.'+encodeURIComponent(m.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({revoked:true})}).then(()=>{document.getElementById('chatDetailList').innerHTML='';loadDMDetail();});
         };
       }
       box.appendChild(b);
@@ -475,23 +458,73 @@ async function loadDMDetail(){
     notif();
   }catch(e){}
 }
-$('dmBlockBtn').onclick=()=>{
-  if(!dmWith)return;
+
+function toggleBlock() {
+  if(!dmWith) return;
   let blocked = me.blocked_ids || [];
   if(blocked.includes(dmWith)){
-    if(!confirm('确定取消拉黑该用户吗？'))return;
-    blocked = blocked.filter(i=>i!==dmWith);
+    if(!confirm('确定取消拉黑该用户吗？')) return;
+    blocked = blocked.filter(i => i !== dmWith);
+    toast('已取消拉黑');
   } else {
-    if(!confirm('确定拉黑该用户吗？拉黑后将从聊天列表消失，且无法互发消息。'))return;
+    if(!confirm('确定拉黑该用户吗？')) return;
     blocked.push(dmWith);
+    toast('已拉黑该用户');
   }
   me.blocked_ids = blocked;
-  localStorage.setItem('bayan',JSON.stringify(me));
-  sb('users?id=eq.'+encodeURIComponent(me.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({blocked_ids: blocked})});
-  toast(blocked.includes(dmWith)?'已拉黑':'已取消拉黑');
-  if(blocked.includes(dmWith)) closeChatDetail();
+  localStorage.setItem('bayan', JSON.stringify(me));
+  sb('users?id=eq.'+encodeURIComponent(me.id), { method:'PATCH', headers:{Prefer:'return=minimal'}, body:JSON.stringify({blocked_ids: blocked}) });
+  
+  if(blocked.includes(dmWith)) {
+    closeChatDetail();
+  }
   renderDMConv();
-};
+  if(document.getElementById('ov-blocked').classList.contains('open')) openBlockedList();
+}
+
+document.addEventListener('click', async function(e) {
+  if(e.target.id === 'chatDetailSend') {
+    if(!me) return;
+    const input = document.getElementById('chatDetailInput');
+    const v = input.value.trim();
+    if(!v) return;
+
+    if(dmWith) {
+      const targetUser = await getUser(dmWith);
+      if(targetUser.blocked_ids && targetUser.blocked_ids.includes(me.id)) {
+        const list = document.getElementById('chatDetailList');
+        const sysMsg = document.createElement('div');
+        sysMsg.className = 'cmsg';
+        sysMsg.innerHTML = '<div style="text-align:center;width:100%;color:#e53935;font-size:12px;margin:10px 0;">消息已发出，但被对方拒收了。</div>';
+        list.appendChild(sysMsg);
+        list.scrollTop = list.scrollHeight;
+        input.value = '';
+        return;
+      }
+      const blocked = me.blocked_ids || [];
+      if(blocked.includes(dmWith)) return toast('你已拉黑该用户，无法发送消息');
+      
+      input.value = '';
+      try {
+        await sb('dm',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'dm_'+Date.now(),from_id:me.id,to_id:dmWith,text:v,time:Date.now(),read:false,revoked:false}])});
+        loadDMDetail();
+      } catch(err) { toast('发送失败'); }
+    } else {
+      input.value = '';
+      try {
+        await sb('chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),user_id:me.id,text:v,time:Date.now()}])});
+        loadChatDetail();
+      } catch(err) { toast('发送失败'); }
+    }
+  }
+});
+
+document.addEventListener('keydown', function(e) {
+  if(e.key === 'Enter' && !e.shiftKey && e.target.id === 'chatDetailInput') {
+    e.preventDefault();
+    document.getElementById('chatDetailSend')?.click();
+  }
+});
 
 async function renderDMConv(){
   if(!me)return;
@@ -512,18 +545,11 @@ async function renderDMConv(){
     box.innerHTML=arr.map(c=>{
       const av=c.avatar?'<img src="'+esc(c.avatar)+'">':SVG;
       const r=c.role!=='user'?' <span class="tag '+(c.role==='dev'?'dev':c.role==='admin'?'admin':'planner')+'">'+roleName(c.role)+'</span>':'';
-      return '<div class="dmitem" data-id="'+esc(c.id)+'"><div class="cav">'+av+'</div><div class="dinfo"><div class="dname">'+esc(c.name)+r+'</div><div class="dlast">'+esc(c.last)+'</div></div><button class="btn danger" style="padding:5px 8px;font-size:12px;margin-left:10px" onclick="event.stopPropagation();delConv(\''+esc(c.id)+'\')">删除</button></div>';
+      return '<div class="dmitem" data-id="'+esc(c.id)+'"><div class="cav">'+av+'</div><div class="dinfo"><div class="dname">'+esc(c.name)+r+'</div><div class="dlast">'+esc(c.last)+'</div></div></div>';
     }).join('');
     box.querySelectorAll('.dmitem').forEach(el=>{el.onclick=()=>openDM(el.dataset.id)});
   }catch(e){}
 }
-window.delConv=async(id)=>{
-  if(!confirm('删除后本地将不再显示此聊天记录，确定吗？'))return;
-  let hidden = JSON.parse(localStorage.getItem('hidden_dm')||'[]');
-  if(!hidden.includes(id)){ hidden.push(id); localStorage.setItem('hidden_dm',JSON.stringify(hidden)); }
-  renderDMConv(); toast('已删除该聊天');
-};
-async function renderDMUsers(){if(!me)return;try{const list=await sb('users?status=eq.active&id=neq.'+encodeURIComponent(me.id));const box=$('dmusers');if(!list.length){box.innerHTML='<div style="padding:18px;text-align:center;color:#999;font-size:13px">暂无其他用户</div>';return}box.innerHTML=list.map(u=>{const av=u.avatar?'<img src="'+esc(u.avatar)+'">':SVG;const r=u.role!=='user'?' <span class="tag '+(u.role==='dev'?'dev':u.role==='admin'?'admin':'planner')+'">'+roleName(u.role)+'</span>':'';return '<div class="dmitem" data-id="'+esc(u.id)+'"><div class="cav">'+av+'</div><div class="dinfo"><div class="dname">'+esc(u.name)+r+'</div><div class="dlast">开始聊天</div></div></div>';}).join('');box.querySelectorAll('.dmitem').forEach(el=>{el.onclick=()=>openDM(el.dataset.id)});}catch(e){}}
 
 async function renderAdmin(){
   if(!isAdmin())return;
@@ -573,9 +599,9 @@ $('clearAllChat').onclick=async()=>{
 $('postAnn').onclick=async()=>{const v=$('anninput').value.trim();if(!v)return toast('内容不能为空');try{await sb('announcements',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),text:v,time:Date.now(),author:me.name,force:$('annforce').checked}])});$('anninput').value='';$('annforce').checked=false;toast('已发布');}catch(e){toast('发布失败')}};
 $('addUserBtn').onclick=async()=>{const name=$('addname').value.trim(),qq=$('addqq').value.trim(),role=$('addrole').value;if(!name)return $('addtip').textContent='姓名必填';try{const ex=await sb('users?name=eq.'+encodeURIComponent(name)+'&limit=1');if(ex.length)return $('addtip').textContent='名字已存在';const s=salt();const tk=tok();const h=await hash('123456',s);await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'u_'+Date.now(),name,qq:qq||'',email:'',role,status:'active',token:tk,salt:s,hash:h,avatar:'',welcomed:true,read_ids:[],blocked_ids:[]}])});$('addtip').textContent='添加成功！默认密码：123456';$('addtip').style.color='#2e7d32';$('addname').value='';$('addqq').value='';renderAdmin();}catch(e){$('addtip').textContent='失败：'+e.message}};
 
-function openFB(){if(!me){toast('请先登录');openLogin();return}$('fb-text').value='';$('fb-tip').textContent='';open('ov-fb');}
-window.openFB=openFB;$('fb-close').onclick=()=>close('ov-fb');
-$('fb-btn').onclick=async()=>{const v=$('fb-text').value.trim();if(!v)return $('fb-tip').textContent='请描述问题';$('fb-tip').textContent='提交中...';try{await sb('feedback',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'fb_'+Date.now(),user_id:me.id,user_name:me.name,user_avatar:me.avatar||'',text:v,image:'',time:Date.now(),status:'pending'}])});close('ov-fb');toast('已提交');notif();}catch(e){$('fb-tip').textContent='提交失败'}};
+function openFB(){if(!me){toast('请先登录');openLogin();return}$('fb-text').value='';$('fb-tip').textContent='';openPanel('ov-fb');}
+window.openFB=openFB;$('fb-close').onclick=()=>closePanel('ov-fb');
+$('fb-btn').onclick=async()=>{const v=$('fb-text').value.trim();if(!v)return $('fb-tip').textContent='请描述问题';$('fb-tip').textContent='提交中...';try{await sb('feedback',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'fb_'+Date.now(),user_id:me.id,user_name:me.name,user_avatar:me.avatar||'',text:v,image:'',time:Date.now(),status:'pending'}])});closePanel('ov-fb');toast('已提交');notif();}catch(e){$('fb-tip').textContent='提交失败'}};
 async function notif(){if(!me)return;let n=0;try{const msgs=await sb('messages?or=(to_user.eq.'+encodeURIComponent(me.id)+',to_user.eq.dev1)');const rd=me.read_ids||[];n+=msgs.filter(m=>!rd.includes(m.id)).length;const dms=await sb('dm?to_id=eq.'+encodeURIComponent(me.id)+'&read=eq.false');n+=dms.length;if(isAdmin()){const p=await sb('users?status=eq.pending');n+=p.length}if(isReview()){const r=await sb('reports?status=eq.pending');n+=r.length;const f=await sb('feedback?status=eq.pending');n+=f.length}}catch(e){}const d=$('bell-dot'),dd=$('dmdot');if(n>0){d.textContent=n>99?'99+':n;d.classList.remove('hide');if(dd){dd.textContent=n>99?'99+':n;dd.classList.remove('hide')}}else{d.classList.add('hide');if(dd)dd.classList.add('hide')}}
 function startNotif(){if(notifTimer)return;notif();notifTimer=setInterval(notif,8000)}
 $('btn-bell').onclick=async()=>{
