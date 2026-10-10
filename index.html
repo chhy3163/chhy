@@ -457,6 +457,6 @@ function renderComments(){var list=$('csList');$('csCount').textContent=currentC
 $('lbComment').onclick=function(e){e.stopPropagation();openCommentSheet()};
 $('csSend').onclick=async function(){if(!me){toast('请先登录');return}var input=$('csInput');var v=input.value.trim();if(!v)return;if(lbIdx<0)return;var p=photos[lbIdx];var comment={id:'c_'+Date.now(),uid:me.id,name:me.name,avatar:me.avatar||'',text:v,time:Date.now()};currentComments.push(comment);input.value='';renderComments();updateCommentBadge({id:p.id});var target=p.id;var arr=currentComments.slice();try{await sb('photos?id=eq.'+encodeURIComponent(target),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({comments:arr})});for(var i=0;i<allPhotos.length;i++){if(allPhotos[i].id===target)allPhotos[i].comments=arr}for(var j=0;j<photos.length;j++){if(photos[j].id===target)photos[j].comments=arr}}catch(e){toast('发送失败')}};
 $('csInput').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('csSend').click()}});
-  </script>
+</script>
 </body>
 </html>
