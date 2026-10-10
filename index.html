@@ -195,8 +195,10 @@ main{padding:0 0 calc(76px + var(--sb));max-width:600px;margin:0 auto;overflow-y
 .comment-sheet{position:fixed;left:0;right:0;bottom:0;z-index:1100;background:#fff;border-radius:16px 16px 0 0;height:68vh;transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:0 -6px 24px rgba(0,0,0,.18)}
 .comment-sheet.open{transform:translateY(0)}
 .cs-bar{width:36px;height:4px;background:#ddd;border-radius:2px;margin:8px auto 4px;flex-shrink:0}
-.cs-head{padding:6px 20px 12px;font-size:14px;font-weight:600;border-bottom:1px solid #f0f0f0;flex-shrink:0}
+.cs-head{display:flex;align-items:center;padding:6px 16px 12px;font-size:14px;font-weight:600;border-bottom:1px solid #f0f0f0;flex-shrink:0}
 .cs-head span{color:#999;font-weight:400;margin-left:4px}
+.cs-close{margin-left:auto;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#999;line-height:1;font-weight:300;border-radius:50%}
+.cs-close:active{background:#f2f2f2;color:#111}
 .cs-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 0}
 .cs-item{display:flex;gap:10px;padding:10px 20px}
 .cs-av{width:34px;height:34px;border-radius:50%;background:#f2f2f2;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#c0c0c0}
@@ -270,7 +272,7 @@ main{padding:0 0 calc(76px + var(--sb));max-width:600px;margin:0 auto;overflow-y
 </div>
 <div class="comment-sheet" id="commentSheet">
 <div class="cs-bar"></div>
-<div class="cs-head">评论 <span id="csCount">0</span></div>
+<div class="cs-head">评论 <span id="csCount">0</span><button class="cs-close" id="csClose">×</button></div>
 <div class="cs-list" id="csList"></div>
 <div class="cs-input"><input id="csInput" placeholder="说点什么..."><button id="csSend">发送</button></div>
 </div>
@@ -455,6 +457,7 @@ function openCommentSheet(){if(lbIdx<0)return;var p=photos[lbIdx];if(!p)return;c
 function closeCommentSheet(){$('commentSheet').classList.remove('open')}
 function renderComments(){var list=$('csList');$('csCount').textContent=currentComments.length;if(!currentComments.length){list.innerHTML='<div class="cs-empty">还没有评论，说点什么吧</div>';return}list.innerHTML=currentComments.map(function(c){var av=c.avatar?'<img src="'+esc(c.avatar)+'">':SVG;var t=new Date(c.time).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});return '<div class="cs-item"><div class="cs-av">'+av+'</div><div class="cs-body"><div class="cs-name">'+esc(c.name||'匿名')+'</div><div class="cs-text">'+esc(c.text||'')+'</div><div class="cs-time">'+t+'</div></div></div>'}).join('');list.scrollTop=list.scrollHeight}
 $('lbComment').onclick=function(e){e.stopPropagation();openCommentSheet()};
+$('csClose').onclick=function(){closeCommentSheet()};
 $('csSend').onclick=async function(){if(!me){toast('请先登录');return}var input=$('csInput');var v=input.value.trim();if(!v)return;if(lbIdx<0)return;var p=photos[lbIdx];var comment={id:'c_'+Date.now(),uid:me.id,name:me.name,avatar:me.avatar||'',text:v,time:Date.now()};currentComments.push(comment);input.value='';renderComments();updateCommentBadge({id:p.id});var target=p.id;var arr=currentComments.slice();try{await sb('photos?id=eq.'+encodeURIComponent(target),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({comments:arr})});for(var i=0;i<allPhotos.length;i++){if(allPhotos[i].id===target)allPhotos[i].comments=arr}for(var j=0;j<photos.length;j++){if(photos[j].id===target)photos[j].comments=arr}}catch(e){toast('发送失败')}};
 $('csInput').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('csSend').click()}});
 async function getUser(id){var c=window._uc||(window._uc={});if(c[id])return c[id];try{var r=await sb('users?id=eq.'+encodeURIComponent(id)+'&limit=1');if(r.length){c[id]=r[0];return r[0]}}catch(e){}return{id:id,name:'已注销',role:'user',avatar:''}}
