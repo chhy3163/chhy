@@ -25,7 +25,7 @@ input,textarea,select{font-size:16px!important}
 .mini-avatar{width:28px;height:28px;border-radius:50%;overflow:hidden;background:#f2f2f2;display:flex;align-items:center;justify-content:center;color:#c0c0c0;flex-shrink:0}
 .mini-avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .mini-avatar svg{width:16px;height:16px}
-main{padding:0 0 calc(76px + var(--sb));max-width:600px;margin:0 auto;min-height:100vh}
+main{padding:0 0 var(--sb);max-width:600px;margin:0 auto;min-height:60vh}
 .page{display:none}
 .page.active{display:block}
 .hello{padding:24px 20px 12px}
@@ -76,7 +76,7 @@ main{padding:0 0 calc(76px + var(--sb));max-width:600px;margin:0 auto;min-height
 .chat-item .ci-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
 .chat-item .ci-time{font-size:11.5px;color:#bbb}
 .chat-item .ci-dot{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:10.5px;line-height:18px;text-align:center;font-weight:600}
-.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;display:flex;background:#fff;border-top:1px solid var(--ln);padding-bottom:var(--sb)}
+.bottom-nav{display:flex;background:#fff;border-top:1px solid var(--ln);padding-bottom:var(--sb)}
 .bottom-nav .tab{flex:1;padding:14px 4px 16px;text-align:center;font-size:13px;color:#999;font-weight:500;position:relative}
 .bottom-nav .tab.active{color:#111;font-weight:700}
 .subpage{position:fixed;top:0;left:0;right:0;bottom:0;z-index:300;background:#fff;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;will-change:transform}
