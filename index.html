@@ -318,9 +318,9 @@ main{padding:0 0 calc(76px + var(--sb));max-width:600px;margin:0 auto;overflow-y
 var SB='https://xodzjtzrfeecikirolwl.supabase.co';
 var KEY='sb_publishable_k0TN3WX_ztQClBiFniXhtg_a2vGX8VG';
 var DEF_ALBUM='31631730811235879';
-var AI_TOKEN='ms-ecb70482-01da-40e3-8113-0457189d5c00';
-var AI_API='https://api-inference.modelscope.cn/v1/chat/completions';
-var AI_MODEL='Qwen/Qwen3-4B';
+var AI_TOKEN='';
+var AI_API='https://red-lab-18acbayan-ai.3883986328.workers.dev';
+var AI_MODEL='';
 var me=null,photos=[],queue=[],qurls=[];
 var chatLast=0,chatTimer=null,dmWith=null,dmTimer=null;
 var notifTimer=null,lbIdx=-1,users=[],countdown=0,codeTimer=null;
@@ -527,7 +527,7 @@ try{
   var msgs=[{role:'system',content:sysPrompt}];
   var recent=aiHistory.slice(-20);
   for(var i=0;i<recent.length;i++){if(recent[i].role==='user')msgs.push({role:'user',content:recent[i].content});else if(recent[i].role==='assistant')msgs.push({role:'assistant',content:recent[i].content})}
-  var r=await fetch(AI_API,{method:'POST',headers:{'Authorization':'Bearer '+AI_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({model:AI_MODEL,messages:msgs,stream:false})});
+  var r=await fetch(AI_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:msgs})});
   if(!r.ok){var errTxt=await r.text();throw new Error('('+r.status+') '+errTxt.slice(0,200))}
   var data=await r.json();var reply='';try{reply=data.choices[0].message.content}catch(e){reply=JSON.stringify(data).slice(0,500)}
   if(!reply)reply='（没收到回复）';
