@@ -318,8 +318,9 @@ main{padding:0 0 calc(76px + var(--sb));max-width:600px;margin:0 auto;overflow-y
 var SB='https://xodzjtzrfeecikirolwl.supabase.co';
 var KEY='sb_publishable_k0TN3WX_ztQClBiFniXhtg_a2vGX8VG';
 var DEF_ALBUM='31631730811235879';
-var AI_TOKEN='ms-1925b5cc-f02a-4336-a3d1-2be543e933e2';
-var AI_API='https://studio-chhy3163-gaowan.api-inference.modelscope.net/gradio_api/mcp/';
+var AI_TOKEN='ms-ecb70482-01da-40e3-8113-0457189d5c00';
+var AI_API='https://api-inference.modelscope.cn/v1/chat/completions';
+var AI_MODEL='Qwen/Qwen3-4B';
 var me=null,photos=[],queue=[],qurls=[];
 var chatLast=0,chatTimer=null,dmWith=null,dmTimer=null;
 var notifTimer=null,lbIdx=-1,users=[],countdown=0,codeTimer=null;
@@ -523,20 +524,12 @@ try{
   var sysPrompt='你是「八一班」班级网站里的 AI 助手。当前用户的名字是「'+me.name+'」，身份是「'+roleName(me.role)+'」。请用友好、简洁的中文回答，回答不要太长。';
   if(aiDeep)sysPrompt+=' 请先在心里推理，再给出最终回答，回答要准确、有逻辑。';
   if(aiSearch)sysPrompt+=' 请尽量给出直接、实用的答案。';
-  var userText=sysPrompt+'\n\n用户说：'+v;
-  var r=await fetch(AI_API,{method:'POST',headers:{'Authorization':'Bearer '+AI_TOKEN,'Content-Type':'application/json','Accept':'application/json, text/event-stream'},body:JSON.stringify({jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'chat',arguments:{message:userText}}})});
+  var msgs=[{role:'system',content:sysPrompt}];
+  var recent=aiHistory.slice(-20);
+  for(var i=0;i<recent.length;i++){if(recent[i].role==='user')msgs.push({role:'user',content:recent[i].content});else if(recent[i].role==='assistant')msgs.push({role:'assistant',content:recent[i].content})}
+  var r=await fetch(AI_API,{method:'POST',headers:{'Authorization':'Bearer '+AI_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({model:AI_MODEL,messages:msgs,stream:false})});
   if(!r.ok){var errTxt=await r.text();throw new Error('('+r.status+') '+errTxt.slice(0,200))}
-  var raw=await r.text();
-  var reply='';
-  try{
-    var lines=raw.split('\n');var jsonLine='';
-    for(var li=0;li<lines.length;li++){var L=lines[li].trim();if(L.indexOf('data:')===0){jsonLine=L.slice(5).trim();if(jsonLine)break}}
-    var obj=JSON.parse(jsonLine||raw);
-    if(obj.result&&obj.result.content&&obj.result.content.length){reply=obj.result.content[0].text||JSON.stringify(obj.result)}
-    else if(obj.result){reply=JSON.stringify(obj.result)}
-    else if(obj.error){throw new Error(JSON.stringify(obj.error).slice(0,200))}
-    else{reply=raw.slice(0,500)}
-  }catch(pe){reply=raw.slice(0,500)}
+  var data=await r.json();var reply='';try{reply=data.choices[0].message.content}catch(e){reply=JSON.stringify(data).slice(0,500)}
   if(!reply)reply='（没收到回复）';
   var aiMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:modeStr,content:reply,time:Date.now()};aiHistory.push(aiMsg);renderAIHistory();try{await sb('ai_chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([aiMsg])})}catch(e){}
 }catch(e){
