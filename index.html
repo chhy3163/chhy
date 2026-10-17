@@ -325,7 +325,7 @@ var SB='https://xodzjtzrfeecikirolwl.supabase.co';
 var KEY='sb_publishable_k0TN3WX_ztQClBiFniXhtg_a2vGX8VG';
 var DEF_ALBUM='31631730811235879';
 var AI_TOKEN='475187116eb14e7eb012761bb3126e0.6wYabQ3NUpeqCCeK';
-var AI_API='https://red-lab-18acbayan-ai.3883986328.workers.dev';
+var AI_API='https://open.bigmodel.cn/api/paas/v4/chat/completions';
 var AI_MODEL='glm-4-flash';
 var me=null,photos=[],queue=[],qurls=[];
 var chatLast=0,chatTimer=null,dmWith=null,dmTimer=null;
@@ -383,7 +383,7 @@ function go(name){document.querySelectorAll('.page').forEach(function(p){p.class
 window.go=go;
 document.querySelectorAll('.bottom-nav .tab').forEach(function(b){b.onclick=function(){var p=b.dataset.page;if(p==='home'||p==='me'){go(p);return}if(!me){toast('请先登录');openLogin();return}if(p==='gallery'&&!canSeeAlbum()){openAlbum();return}go(p)}});
 async function renderAnn(){var box=$('home-ann');try{var list=await sb('announcements?order=time.desc&limit=1');if(list&&list.length){var a=list[0];var readId=null;try{readId=localStorage.getItem('ann_read_id')}catch(e){}var isNew=(String(a.id)!==String(readId));box.innerHTML=(isNew?'<span class="ann-dot"></span>':'')+'<span class="ann-tag">公告</span>'+esc(a.text);box.classList.add('show');box.onclick=function(){try{localStorage.setItem('ann_read_id',String(a.id))}catch(e){}var d=box.querySelector('.ann-dot');if(d)d.remove()}}else{box.classList.remove('show');box.innerHTML=''}}catch(e){box.classList.remove('show')}}
-function renderHome(){var box=$('home-cards');if(me){$('hi').textContent='你好，'+me.name;$('his').textContent='身份：'+roleName(me.role)}else{$('hi').textContent='你好';$('his').textContent='请先登录'}var list=[{k:'upload',svg:'<path d="M12 19V5"/><path d="M5 12l7-7 7 7"/>',t:'上传照片',s:'分享你的照片'},{k:'gallery',svg:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-4 4-3-3-6 6"/>',t:'相册',s:'浏览班级照片'},{k:'chat',svg:'<path d="M21 12a8 8 0 0 1-11.5 7.2L4 21l1.8-5.5A8 8 0 1 1 21 12z"/>',t:'聊天',s:'群聊和私聊'},{k:'fb',svg:'<circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16.2" x2="12" y2="16.5"/>',t:'BUG 反馈',s:'遇到问题点这里'}];if(isAdmin())list.push({k:'admin',svg:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.8 3.1-6.5 7-6.5s7 2.7 7 6.5"/>',t:'用户管理',s:'审核与权限'});box.innerHTML=list.map(function(x){return '<div class="card" data-k="'+x.k+'"><div class="ci"><svg viewBox="0 0 24 24">'+x.svg+'</svg></div><div class="ct"><div class="ctt">'+x.t+'</div><div class="cts">'+x.s+'</div></div><div class="ca">›</div></div>'}).join('');box.querySelectorAll('.card').forEach(function(el){el.onclick=function(){var k=el.dataset.k;if(k==='fb'){openFB();return}if(k==='gallery'){if(!me){toast('请先登录');openLogin();return}if(!canSeeAlbum()){openAlbum();return}go('gallery');return}if(!me){toast('请先登录');openLogin();return}if(k==='admin'){openAdmin();return}go(k)}})}
+function renderHome(){var box=$('home-cards');if(me){$('hi').textContent='你好，'+me.name;$('his').textContent='身份：'+roleName(me.role)}else{$('hi').textContent='你好';$('his').textContent='请先登录'}var list=[{k:'upload',svg:'<path d="M12 19V5"/><path d="M5 12l7-7 7 7"/>',t:'上传照片',s:'分享你的照片'},{k:'gallery',svg:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-4 4-3-3-6 6"/>',t:'相册',s:'浏览班级照片'},{k:'chat',svg:'<path d="M21 12a8 8 0 0 1-11.5 7.2L4 21l1.8-5.5A8.5 8.5 0 1 1 21 12z"/>',t:'聊天',s:'群聊和私聊'},{k:'fb',svg:'<circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16.2" x2="12" y2="16.5"/>',t:'BUG 反馈',s:'遇到问题点这里'}];if(isAdmin())list.push({k:'admin',svg:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.8 3.1-6.5 7-6.5s7 2.7 7 6.5"/>',t:'用户管理',s:'审核与权限'});box.innerHTML=list.map(function(x){return '<div class="card" data-k="'+x.k+'"><div class="ci"><svg viewBox="0 0 24 24">'+x.svg+'</svg></div><div class="ct"><div class="ctt">'+x.t+'</div><div class="cts">'+x.s+'</div></div><div class="ca">›</div></div>'}).join('');box.querySelectorAll('.card').forEach(function(el){el.onclick=function(){var k=el.dataset.k;if(k==='fb'){openFB();return}if(k==='gallery'){if(!me){toast('请先登录');openLogin();return}if(!canSeeAlbum()){openAlbum();return}go('gallery');return}if(!me){toast('请先登录');openLogin();return}if(k==='admin'){openAdmin();return}go(k)}})}
 function renderMe(){if(me){$('mename').textContent=me.name;$('merole').textContent=roleName(me.role);var a=$('meavatar');a.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;var t=$('top-avatar');t.innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG}else{$('mename').textContent='未登录';$('merole').textContent='请先登录';$('meavatar').innerHTML=SVG;$('top-avatar').innerHTML=SVG}var s=$('me-settings');if(!me){s.innerHTML='<div class="group"><div class="item" onclick="openLogin()"><span class="lbl">登录</span><span class="arrow">›</span></div></div>';return}var permHtml='<div class="item" onclick="openBlockedList()"><span class="lbl">黑名单</span><span class="arrow">›</span></div>';if(isReview())permHtml+='<div class="item" onclick="openAlbumList()"><span class="lbl">相册名单</span><span class="arrow">›</span></div>';s.innerHTML='<div class="group"><div class="group-title">账号</div><div class="item" onclick="editProfile()"><span class="lbl">个人资料</span><span class="arrow">›</span></div><div class="item" onclick="editSecurity()"><span class="lbl">账号安全</span><span class="arrow">›</span></div></div><div class="group"><div class="group-title">朋友权限</div>'+permHtml+'</div><div class="group"><div class="group-title">通用</div><div class="item" onclick="openFB()"><span class="lbl">BUG 反馈</span><span class="arrow">›</span></div><div class="item" onclick="openSub(\'sub-terms\')"><span class="lbl">免责声明与使用条款</span><span class="arrow">›</span></div></div><div class="group"><div class="item danger" onclick="logout()"><span class="lbl">退出登录</span></div></div>'}
 function editProfile(){if(!me)return;$('pf-tip').textContent='';$('pf-name').value=me.name;$('pfa').innerHTML=me.avatar?'<img src="'+esc(me.avatar)+'">':SVG;openPanel('ov-profile')}
 function editSecurity(){if(!me)return;$('sec-token').value='';$('sec-old').value='';$('sec-new').value='';$('sec-tip').textContent='';openPanel('ov-security')}
@@ -524,38 +524,80 @@ window.closeAI=function(){var v=$('aiView');if(v)v.remove()};
 async function loadAIHistory(){var box=$('aiList');if(!box)return;box.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:20px 0">加载中...</div>';try{var list=await sb('ai_chat?user_id=eq.'+encodeURIComponent(me.id)+'&order=time.asc&limit=500');aiHistory=list||[]}catch(e){aiHistory=[]}renderAIHistory()}
 function renderAIHistory(){var box=$('aiList');if(!box)return;if(!aiHistory.length){box.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:60px 20px">你好，我是 AI 助手<br>有问题可以直接问我</div>';return}box.innerHTML='';aiHistory.forEach(function(m){var d=document.createElement('div');var mine=(m.role==='user');d.className='cmsg'+(mine?' mine':'');var av=mine?(me.avatar?'<img src="'+esc(me.avatar)+'">':SVG):'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg>';var t=new Date(m.time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});var content=esc(m.content||'');var nm=mine?me.name:'AI 助手';d.innerHTML='<div class="cav">'+av+'</div><div class="cbody"><div class="chead"><span class="cname">'+esc(nm)+'</span><span class="ctime">'+t+'</span></div><div class="cbubble"><div class="ai-bubble">'+content+'</div></div></div>';box.appendChild(d)});box.scrollTop=box.scrollHeight}
 window.clearAI=async function(){if(!me)return;if(!confirm('确定清空你和 AI 的全部对话？'))return;try{await sb('ai_chat?user_id=eq.'+encodeURIComponent(me.id),{method:'DELETE'})}catch(e){}aiHistory=[];renderAIHistory();toast('已清空')};
-async function sendAI(){if(!me){toast('请先登录');return}if(aiBusy)return;var input=$('aiInput');if(!input)return;var v=input.value.trim();if(!v)return;aiBusy=true;var btn=$('aiSend');if(btn)btn.disabled=true;input.value='';autoGrow(input);var now=Date.now();var modeStr=(aiDeep?'deep':'')+(aiDeep&&aiSearch?',':'')+(aiSearch?'search':'');var userMsg={id:now,user_id:me.id,role:'user',mode:modeStr,content:v,time:now};aiHistory.push(userMsg);renderAIHistory();try{await sb('ai_chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([userMsg])})}catch(e){}
-var thinking='<div class="cmsg"><div class="cav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg></div><div class="cbody"><div class="chead"><span class="cname">AI 助手</span></div><div class="cbubble"><div class="ai-bubble ai-think">正在思考...</div></div></div></div>';var box=$('aiList');if(box){box.insertAdjacentHTML('beforeend',thinking);box.scrollTop=box.scrollHeight}
-try{
-  var prompt = window._aiPromptCache;
-  if(!prompt) {
-    try {
-      var pr = await sb('settings?key=eq.ai_prompt&limit=1');
-      if(pr.length) { prompt = pr[0].value; window._aiPromptCache = prompt; }
-    } catch(e) {}
+async function sendAI(){
+  if(!me){toast('请先登录');return}
+  if(aiBusy)return;
+  var input=$('aiInput');
+  if(!input)return;
+  var v=input.value.trim();
+  if(!v)return;
+  aiBusy=true;
+  var btn=$('aiSend');
+  if(btn)btn.disabled=true;
+  input.value='';
+  autoGrow(input);
+  var now=Date.now();
+  var modeStr=(aiDeep?'deep':'')+(aiDeep&&aiSearch?',':'')+(aiSearch?'search':'');
+  var userMsg={id:now,user_id:me.id,role:'user',mode:modeStr,content:v,time:now};
+  aiHistory.push(userMsg);
+  renderAIHistory();
+  
+  try{await sb('ai_chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([userMsg])})}catch(e){}
+  
+  var thinking='<div class="cmsg"><div class="cav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg></div><div class="cbody"><div class="chead"><span class="cname">AI 助手</span></div><div class="cbubble"><div class="ai-bubble ai-think">正在思考...</div></div></div></div>';
+  var box=$('aiList');
+  if(box){box.insertAdjacentHTML('beforeend',thinking);box.scrollTop=box.scrollHeight}
+  
+  try{
+    var prompt = window._aiPromptCache;
+    if(!prompt) {
+      try {
+        var pr = await sb('settings?key=eq.ai_prompt&limit=1');
+        if(pr.length) { prompt = pr[0].value; window._aiPromptCache = prompt; }
+      } catch(e) {}
+    }
+    if(!prompt) prompt = '你叫高玩，由神秘人制造。你的性格是：活泼开朗，喜欢与人交流，就像个好朋友一样。在正常聊天时，尽量多说一点，回复字数保持在100字左右，积极回应。但是如果用户的提问非常简单，比如打招呼、问个简单的词，就可以简略回答。';
+    
+    var sysPrompt='当前用户的名字是「'+me.name+'」，身份是「'+roleName(me.role)+'」。\n'+prompt;
+    
+    var msgs=[{role:'system',content:sysPrompt}];
+    var recent=aiHistory.slice(-20);
+    for(var i=0;i<recent.length;i++){
+      if(recent[i].role==='user')msgs.push({role:'user',content:recent[i].content});
+      else if(recent[i].role==='assistant')msgs.push({role:'assistant',content:recent[i].content});
+    }
+    
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function(){ controller.abort(); }, 30000);
+    
+    var r=await fetch(AI_API,{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+AI_TOKEN,'Content-Type':'application/json'},
+      body:JSON.stringify({model:AI_MODEL,messages:msgs,stream:false}),
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if(!r.ok){var errTxt=await r.text();throw new Error('('+r.status+') '+errTxt.slice(0,200))}
+    var data=await r.json();
+    var reply='';
+    try{reply=data.choices[0].message.content}catch(e){reply=JSON.stringify(data).slice(0,500)}
+    if(!reply)reply='（没收到回复）';
+    
+    var aiMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:modeStr,content:reply,time:Date.now()};
+    aiHistory.push(aiMsg);
+    renderAIHistory();
+    try{await sb('ai_chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([aiMsg])})}catch(e){}
+    
+  }catch(e){
+    var errMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:modeStr,content:'出错了：'+(e.name==='AbortError'?'网络超时，请检查网络或关闭VPN':e.message),time:Date.now()};
+    aiHistory.push(errMsg);
+    renderAIHistory();
   }
-  if(!prompt) prompt = '你叫高玩，由神秘人制造。你的性格是：活泼开朗，喜欢与人交流，就像个好朋友一样。在正常聊天时，尽量多说一点，回复字数保持在100字左右，积极回应。但是如果用户的提问非常简单，比如打招呼、问个简单的词，就可以简略回答。';
-  
-  var sysPrompt='当前用户的名字是「'+me.name+'」，身份是「'+roleName(me.role)+'」。\n'+prompt;
-  
-  var msgs=[{role:'system',content:sysPrompt}];
-  var recent=aiHistory.slice(-20);
-  for(var i=0;i<recent.length;i++){if(recent[i].role==='user')msgs.push({role:'user',content:recent[i].content});else if(recent[i].role==='assistant')msgs.push({role:'assistant',content:recent[i].content})}
-  
-  var r=await fetch(AI_API,{
-    method:'POST',
-    headers:{'Authorization':'Bearer '+AI_TOKEN,'Content-Type':'application/json'},
-    body:JSON.stringify({model:AI_MODEL,messages:msgs,stream:false})
-  });
-  
-  if(!r.ok){var errTxt=await r.text();throw new Error('('+r.status+') '+errTxt.slice(0,200))}
-  var data=await r.json();var reply='';try{reply=data.choices[0].message.content}catch(e){reply=JSON.stringify(data).slice(0,500)}
-  if(!reply)reply='（没收到回复）';
-  var aiMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:modeStr,content:reply,time:Date.now()};aiHistory.push(aiMsg);renderAIHistory();try{await sb('ai_chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([aiMsg])})}catch(e){}
-}catch(e){
-  var errMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:modeStr,content:'出错了：'+e.message,time:Date.now()};aiHistory.push(errMsg);renderAIHistory()
+  aiBusy=false;
+  if(btn)btn.disabled=false;
 }
-aiBusy=false;if(btn)btn.disabled=false}
 
 window.openAdmin=async function(){if(!isAdmin())return;openSub('sub-admin');var box=$('adminBody');box.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:40px 0">加载中...</div>';try{var msgs=await sb('messages?or=(to_user.eq.'+encodeURIComponent(me.id)+',to_user.eq.dev1)&order=time.desc&limit=20');var list=await sb('users?order=created_at.desc&limit=500');var anns=await sb('announcements?order=time.desc&limit=20');var reps=await sb('reports?order=time.desc&limit=50');var fbs=await sb('feedback?order=time.desc&limit=50');users=list;var pend=list.filter(function(u){return u.status==='pending'});var act=list.filter(function(u){return u.status!=='pending'&&u.id!==me.id});var html='';html+='<div class="group"><div class="group-title">申请记录</div>';if(!msgs||!msgs.length)html+='<div style="padding:16px;color:#999;font-size:13px">暂无申请记录</div>';else html+=msgs.map(function(m){return '<div style="padding:12px 20px;border-bottom:1px solid var(--ln);font-size:13.5px"><div style="font-weight:600">'+esc(m.text)+'</div><div style="font-size:11px;color:#aaa;margin-top:4px">'+new Date(m.time).toLocaleString()+'</div></div>'}).join('');html+='</div>';
 html+='<div class="group"><div class="group-title">待审核</div>';if(!pend.length)html+='<div style="padding:16px;color:#999;font-size:13px">暂无待审核</div>';else html+=pend.map(function(u){return '<div class="item"><span class="lbl"><b>'+esc(u.name)+'</b> <span class="tag pending">待审核</span></span><span style="display:flex;gap:6px"><button class="btn primary pill" onclick="approve(\''+u.id+'\',1)">通过</button> <button class="btn pill" onclick="approve(\''+u.id+'\',0)">拒绝</button></span></div>'}).join('');html+='</div>';
