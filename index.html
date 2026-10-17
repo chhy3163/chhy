@@ -1,4 +1,10 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>八一班</title><style>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>八一班</title>
+<style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;outline:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 :root{--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);--ln:#ececec;--sub:#999;--red:#e53935}
 html,body{height:100%;overflow:hidden}
@@ -318,9 +324,9 @@ main{padding:0 0 calc(76px + var(--sb));max-width:600px;margin:0 auto;overflow-y
 var SB='https://xodzjtzrfeecikirolwl.supabase.co';
 var KEY='sb_publishable_k0TN3WX_ztQClBiFniXhtg_a2vGX8VG';
 var DEF_ALBUM='31631730811235879';
-var AI_TOKEN='';
-var AI_API='https://red-lab-18acbayan-ai.3883986328.workers.dev';
-var AI_MODEL='';
+var AI_TOKEN='475187116eb14e7eb012761bb3126e0.6wYabQ3NUpeqCCeK';
+var AI_API='https://open.bigmodel.cn/api/paas/v4/chat/completions';
+var AI_MODEL='glm-4-flash';
 var me=null,photos=[],queue=[],qurls=[];
 var chatLast=0,chatTimer=null,dmWith=null,dmTimer=null;
 var notifTimer=null,lbIdx=-1,users=[],countdown=0,codeTimer=null;
@@ -518,16 +524,30 @@ window.closeAI=function(){var v=$('aiView');if(v)v.remove()};
 async function loadAIHistory(){var box=$('aiList');if(!box)return;box.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:20px 0">加载中...</div>';try{var list=await sb('ai_chat?user_id=eq.'+encodeURIComponent(me.id)+'&order=time.asc&limit=500');aiHistory=list||[]}catch(e){aiHistory=[]}renderAIHistory()}
 function renderAIHistory(){var box=$('aiList');if(!box)return;if(!aiHistory.length){box.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:60px 20px">你好，我是 AI 助手<br>有问题可以直接问我</div>';return}box.innerHTML='';aiHistory.forEach(function(m){var d=document.createElement('div');var mine=(m.role==='user');d.className='cmsg'+(mine?' mine':'');var av=mine?(me.avatar?'<img src="'+esc(me.avatar)+'">':SVG):'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg>';var t=new Date(m.time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});var content=esc(m.content||'');var nm=mine?me.name:'AI 助手';d.innerHTML='<div class="cav">'+av+'</div><div class="cbody"><div class="chead"><span class="cname">'+esc(nm)+'</span><span class="ctime">'+t+'</span></div><div class="cbubble"><div class="ai-bubble">'+content+'</div></div></div>';box.appendChild(d)});box.scrollTop=box.scrollHeight}
 window.clearAI=async function(){if(!me)return;if(!confirm('确定清空你和 AI 的全部对话？'))return;try{await sb('ai_chat?user_id=eq.'+encodeURIComponent(me.id),{method:'DELETE'})}catch(e){}aiHistory=[];renderAIHistory();toast('已清空')};
-async function sendAI(){if(!me){toast('请先登录');return}if(aiBusy)return;var input=$('aiInput');if(!input)return;var v=input.value.trim();if(!v)return;if(!aiDeep&&!aiSearch){toast('请至少开启一个模式');return}aiBusy=true;var btn=$('aiSend');if(btn)btn.disabled=true;input.value='';autoGrow(input);var now=Date.now();var modeStr=(aiDeep?'deep':'')+(aiDeep&&aiSearch?',':'')+(aiSearch?'search':'');var userMsg={id:now,user_id:me.id,role:'user',mode:modeStr,content:v,time:now};aiHistory.push(userMsg);renderAIHistory();try{await sb('ai_chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([userMsg])})}catch(e){}
+async function sendAI(){if(!me){toast('请先登录');return}if(aiBusy)return;var input=$('aiInput');if(!input)return;var v=input.value.trim();if(!v)return;aiBusy=true;var btn=$('aiSend');if(btn)btn.disabled=true;input.value='';autoGrow(input);var now=Date.now();var modeStr=(aiDeep?'deep':'')+(aiDeep&&aiSearch?',':'')+(aiSearch?'search':'');var userMsg={id:now,user_id:me.id,role:'user',mode:modeStr,content:v,time:now};aiHistory.push(userMsg);renderAIHistory();try{await sb('ai_chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([userMsg])})}catch(e){}
 var thinking='<div class="cmsg"><div class="cav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg></div><div class="cbody"><div class="chead"><span class="cname">AI 助手</span></div><div class="cbubble"><div class="ai-bubble ai-think">正在思考...</div></div></div></div>';var box=$('aiList');if(box){box.insertAdjacentHTML('beforeend',thinking);box.scrollTop=box.scrollHeight}
 try{
-  var sysPrompt='你是「八一班」班级网站里的 AI 助手。当前用户的名字是「'+me.name+'」，身份是「'+roleName(me.role)+'」。请用友好、简洁的中文回答，回答不要太长。';
-  if(aiDeep)sysPrompt+=' 请先在心里推理，再给出最终回答，回答要准确、有逻辑。';
-  if(aiSearch)sysPrompt+=' 请尽量给出直接、实用的答案。';
+  var prompt = window._aiPromptCache;
+  if(!prompt) {
+    try {
+      var pr = await sb('settings?key=eq.ai_prompt&limit=1');
+      if(pr.length) { prompt = pr[0].value; window._aiPromptCache = prompt; }
+    } catch(e) {}
+  }
+  if(!prompt) prompt = '你叫高玩，由神秘人制造。你的性格是：活泼开朗，喜欢与人交流，就像个好朋友一样。在正常聊天时，尽量多说一点，回复字数保持在100字左右，积极回应。但是如果用户的提问非常简单，比如打招呼、问个简单的词，就可以简略回答。';
+  
+  var sysPrompt='当前用户的名字是「'+me.name+'」，身份是「'+roleName(me.role)+'」。\n'+prompt;
+  
   var msgs=[{role:'system',content:sysPrompt}];
   var recent=aiHistory.slice(-20);
   for(var i=0;i<recent.length;i++){if(recent[i].role==='user')msgs.push({role:'user',content:recent[i].content});else if(recent[i].role==='assistant')msgs.push({role:'assistant',content:recent[i].content})}
-  var r=await fetch(AI_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:msgs})});
+  
+  var r=await fetch(AI_API,{
+    method:'POST',
+    headers:{'Authorization':'Bearer '+AI_TOKEN,'Content-Type':'application/json'},
+    body:JSON.stringify({model:AI_MODEL,messages:msgs,stream:false})
+  });
+  
   if(!r.ok){var errTxt=await r.text();throw new Error('('+r.status+') '+errTxt.slice(0,200))}
   var data=await r.json();var reply='';try{reply=data.choices[0].message.content}catch(e){reply=JSON.stringify(data).slice(0,500)}
   if(!reply)reply='（没收到回复）';
@@ -536,6 +556,7 @@ try{
   var errMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:modeStr,content:'出错了：'+e.message,time:Date.now()};aiHistory.push(errMsg);renderAIHistory()
 }
 aiBusy=false;if(btn)btn.disabled=false}
+
 window.openAdmin=async function(){if(!isAdmin())return;openSub('sub-admin');var box=$('adminBody');box.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:40px 0">加载中...</div>';try{var msgs=await sb('messages?or=(to_user.eq.'+encodeURIComponent(me.id)+',to_user.eq.dev1)&order=time.desc&limit=20');var list=await sb('users?order=created_at.desc&limit=500');var anns=await sb('announcements?order=time.desc&limit=20');var reps=await sb('reports?order=time.desc&limit=50');var fbs=await sb('feedback?order=time.desc&limit=50');users=list;var pend=list.filter(function(u){return u.status==='pending'});var act=list.filter(function(u){return u.status!=='pending'&&u.id!==me.id});var html='';html+='<div class="group"><div class="group-title">申请记录</div>';if(!msgs||!msgs.length)html+='<div style="padding:16px;color:#999;font-size:13px">暂无申请记录</div>';else html+=msgs.map(function(m){return '<div style="padding:12px 20px;border-bottom:1px solid var(--ln);font-size:13.5px"><div style="font-weight:600">'+esc(m.text)+'</div><div style="font-size:11px;color:#aaa;margin-top:4px">'+new Date(m.time).toLocaleString()+'</div></div>'}).join('');html+='</div>';
 html+='<div class="group"><div class="group-title">待审核</div>';if(!pend.length)html+='<div style="padding:16px;color:#999;font-size:13px">暂无待审核</div>';else html+=pend.map(function(u){return '<div class="item"><span class="lbl"><b>'+esc(u.name)+'</b> <span class="tag pending">待审核</span></span><span style="display:flex;gap:6px"><button class="btn primary pill" onclick="approve(\''+u.id+'\',1)">通过</button> <button class="btn pill" onclick="approve(\''+u.id+'\',0)">拒绝</button></span></div>'}).join('');html+='</div>';
 html+='<div class="group"><div class="group-title">所有用户</div>';if(!act.length)html+='<div style="padding:16px;color:#999;font-size:13px">暂无其他用户</div>';else html+=act.map(function(u){var cls=u.role==='dev'?'dev':u.role==='admin'?'admin':u.role==='planner'?'planner':'';var r=u.role!=='user'?'<span class="tag '+cls+'">'+roleName(u.role)+'</span>':'';var bn=u.status==='banned'?'<span class="tag banned">已封禁</span>':'';var cd=false;if(me.role==='dev')cd=true;else if(me.role==='planner'&&(u.role==='admin'||u.role==='user'))cd=true;else if(me.role==='admin'&&u.role==='user')cd=true;var btns='<button class="btn pill" style="border-color:#e53935;color:#e53935" onclick="cleanChat(\''+u.id+'\')">清记录</button>';if(u.role!=='dev')btns+=u.status==='banned'?'<button class="btn pill" onclick="unbanUser(\''+u.id+'\')">解封</button>':'<button class="btn pill" onclick="banUser(\''+u.id+'\')">封禁</button>';if(cd)btns+='<button class="btn pill" style="border-color:#e53935;color:#e53935" onclick="delUser(\''+u.id+'\',\''+esc(u.name).replace(/'/g,'&#39;')+'\')">删除</button>';return '<div class="item" style="flex-direction:column;align-items:stretch;gap:10px"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px"><span class="lbl"><b>'+esc(u.name)+'</b> '+r+' '+bn+' <span style="color:#999;font-size:12px">'+esc(u.qq||u.token||'')+'</span></span></div><div style="display:flex;gap:6px;flex-wrap:wrap">'+btns+'</div></div>'}).join('');html+='</div>';
@@ -543,9 +564,41 @@ html+='<div class="group"><div class="group-title">举报（'+reps.length+'）</
 html+='<div class="group"><div class="group-title">反馈（'+fbs.length+'）</div>';if(!fbs.length)html+='<div style="padding:16px;color:#999;font-size:13px">暂无反馈</div>';else html+=fbs.slice(0,20).map(function(f){return '<div style="padding:12px 20px;border-bottom:1px solid var(--ln);font-size:13px"><div><b>'+esc(f.user_name||'匿名')+'</b></div><div style="color:#666;margin-top:4px">'+esc(f.text||'')+'</div><div style="font-size:11px;color:#aaa;margin-top:4px">'+new Date(f.time).toLocaleString()+'</div></div>'}).join('');html+='</div>';
 html+='<div class="group"><div class="group-title">公告管理</div>';if(!anns||!anns.length)html+='<div style="padding:16px;color:#999;font-size:13px">暂无公告</div>';else html+=anns.slice(0,10).map(function(a){return '<div style="padding:12px 20px;border-bottom:1px solid var(--ln);font-size:13.5px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div style="flex:1"><div style="font-weight:600">'+esc(a.text)+'</div><div style="font-size:11px;color:#aaa;margin-top:4px">'+new Date(a.time).toLocaleString()+'</div></div><button class="btn pill" style="border-color:#e53935;color:#e53935" onclick="delAnn(\''+a.id+'\')">删除</button></div>'}).join('');html+='</div>';
 html+='<div class="group"><div class="group-title">发布公告</div><div style="padding:14px 20px"><textarea id="anninput" placeholder="公告内容..." style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;min-height:80px;font-family:inherit;font-size:16px"></textarea><div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px"><input type="checkbox" id="annforce" style="width:18px;height:18px"><label for="annforce">强制公告（60秒不可关闭）</label></div><button class="btn primary block" style="margin-top:10px" id="postAnn">发布</button></div></div>';
+
+html+='<div class="group"><div class="group-title">AI 设定</div><div style="padding:14px 20px"><textarea id="ai-prompt-input" placeholder="在此输入 AI 的人设和性格..." style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;min-height:80px;font-family:inherit;font-size:16px"></textarea><button class="btn primary block" style="margin-top:10px" id="saveAiPrompt">保存 AI 设定</button><div style="font-size:12px;color:#999;text-align:center;margin-top:8px">修改后，所有同学的 AI 助手都将按此设定聊天</div></div></div>';
+
 html+='<div class="group"><div class="group-title">添加用户</div><div style="padding:14px 20px"><input id="addname" placeholder="姓名（必填）" style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;margin-bottom:8px;font-size:16px"><input id="addqq" placeholder="QQ号（选填）" style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;margin-bottom:8px;font-size:16px"><input id="addpwd" type="text" placeholder="登录密码（6-20位，含字母和数字）" style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;margin-bottom:8px;font-size:16px"><select id="addrole" style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;margin-bottom:10px;font-size:16px"><option value="user">普通用户</option><option value="admin">管理员</option><option value="planner">策划</option></select><button class="btn primary block" id="addUserBtn">添加</button><div class="tip" id="addtip"></div></div></div>';
 if(me.role==='dev')html+='<div class="group"><div class="group-title">开发者专属</div><div style="padding:14px 20px"><button class="btn danger block" id="clearAllChat">彻底清空全服聊天记录</button></div></div>';
 box.innerHTML=html;
+
+sb('settings?key=eq.ai_prompt&limit=1').then(function(r){
+  if(r && r.length) {
+    var inp = $('ai-prompt-input');
+    if(inp) inp.value = r[0].value;
+  } else {
+    var inp = $('ai-prompt-input');
+    if(inp) inp.value = '你叫高玩，由神秘人制造。你的性格是：活泼开朗，喜欢与人交流，就像个好朋友一样。在正常聊天时，尽量多说一点，回复字数保持在100字左右，积极回应。但是如果用户的提问非常简单，比如打招呼、问个简单的词，就可以简略回答。';
+  }
+}).catch(function(){});
+
+$('saveAiPrompt').onclick=async function(){
+  var v = $('ai-prompt-input').value.trim();
+  if(!v) return toast('设定不能为空');
+  toast('正在保存...');
+  try {
+    var ex = await sb('settings?key=eq.ai_prompt&limit=1');
+    if(ex.length){
+      await sb('settings?key=eq.ai_prompt', {method:'PATCH', body: JSON.stringify({value: v})});
+    } else {
+      await sb('settings', {method:'POST', headers:{Prefer:'return=minimal'}, body: JSON.stringify([{key:'ai_prompt', value: v}])});
+    }
+    toast('设定已保存');
+    window._aiPromptCache = v;
+  } catch(e) {
+    toast('保存失败');
+  }
+};
+
 $('postAnn').onclick=async function(){var v=$('anninput').value.trim();if(!v)return toast('内容不能为空');$('anninput').value='';$('annforce').checked=false;toast('已发布');sb('announcements',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:Date.now(),text:v,time:Date.now(),author:me.name,force:false}])}).catch(function(){});renderAnn()};
 $('addUserBtn').onclick=async function(){var name=$('addname').value.trim(),qq=$('addqq').value.trim(),role=$('addrole').value,addpwd=$('addpwd').value.trim();if(!name)return $('addtip').textContent='姓名必填';if(!validPwd(addpwd))return $('addtip').textContent='密码需6-20位，含字母和数字';try{var ex=await sb('users?name=eq.'+encodeURIComponent(name)+'&limit=1');if(ex.length)return $('addtip').textContent='名字已存在';var s=salt();var tk=tok();var h=await hash(addpwd,s);await sb('users',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([{id:'u_'+Date.now(),name:name,qq:qq||'',email:'',role:role,status:'active',token:tk,salt:s,hash:h,avatar:'',welcomed:true,read_ids:[],blocked_ids:[],album_ok:false}])});$('addtip').textContent='添加成功！请把密码发给该同学';$('addtip').style.color='#2e7d32';$('addname').value='';$('addqq').value='';$('addpwd').value=''}catch(e){$('addtip').textContent='失败：'+e.message}};
 var cac=$('clearAllChat');if(cac)cac.onclick=async function(){if(me.role!=='dev')return toast('只有开发者可以操作');var ans=prompt('此操作将彻底删除所有群聊和私聊记录，不可恢复。\n请输入：确认清空');if(ans!=='确认清空'){if(ans!==null)toast('已取消（输入不匹配）');return}toast('全服聊天记录已清空');sb('chat?id=gt.0',{method:'DELETE'}).catch(function(){});sb('dm?id=gt.0',{method:'DELETE'}).catch(function(){})};
