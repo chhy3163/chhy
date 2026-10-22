@@ -141,15 +141,19 @@ main{padding:0 0 calc(76px + var(--sb));max-width:600px;margin:0 auto;overflow-y
 .chatbar textarea:focus{border-color:#111;background:#fff}
 .chatbar .btn.primary{padding:11px 18px;border-radius:22px;flex-shrink:0}
 .ai-bar{border-top:1px solid var(--ln);background:#fff;padding-bottom:calc(10px + var(--sb))}
-.ai-toggles{display:flex;gap:8px;padding:10px 12px 0}
-.ai-toggle{padding:6px 14px;font-size:12.5px;color:#666;background:#f2f2f2;border-radius:15px;cursor:pointer;font-weight:500;user-select:none}
-.ai-toggle.active{background:#111;color:#fff}
-.ai-row{display:flex;gap:8px;padding:8px 10px 0;align-items:flex-end}
+.ai-row{display:flex;gap:8px;padding:10px 10px 0;align-items:flex-end}
 .ai-row textarea{flex:1;padding:11px 15px;border:1px solid #e8e8e8;border-radius:22px;font-size:16px;background:#fafafa;resize:none;min-height:42px;max-height:120px;line-height:1.4;font-family:inherit;overflow-y:auto}
 .ai-row textarea:focus{border-color:#111;background:#fff}
 .ai-row .btn.primary{padding:11px 18px;border-radius:22px;flex-shrink:0}
 .ai-bubble{font-size:14.5px;line-height:1.6;word-break:break-word;white-space:pre-wrap}
 .ai-think{color:#999;font-size:13px;font-style:italic}
+.ai-sidebar{position:fixed;top:0;bottom:0;left:0;width:260px;background:#fff;z-index:1050;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);border-right:1px solid var(--ln);display:flex;flex-direction:column}
+.ai-sidebar.open{transform:translateX(0)}
+.ai-sidebar-mask{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:1040;display:none}
+.ai-sidebar-mask.open{display:block}
+.ai-session-list{flex:1;overflow-y:auto;padding-bottom:var(--sb)}
+.ai-session-item{padding:14px 16px;border-bottom:1px solid var(--ln);font-size:14px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#333}
+.ai-session-item.active{background:#f2f2f2;font-weight:600}
 .progress-bar{height:4px;background:#eee;border-radius:2px;overflow:hidden;margin:10px 14px;display:none}
 .progress-bar.show{display:block}
 .progress-bar .fill{height:100%;background:#111;width:0;transition:width .2s ease}
@@ -324,9 +328,10 @@ main{padding:0 0 calc(76px + var(--sb));max-width:600px;margin:0 auto;overflow-y
 var SB='https://xodzjtzrfeecikirolwl.supabase.co';
 var KEY='sb_publishable_k0TN3WX_ztQClBiFniXhtg_a2vGX8VG';
 var DEF_ALBUM='31631730811235879';
-var AI_TOKEN='c0ab8e04fb9b4b2292dd3598c67eb5d4.1uSsFvAtpIOfS60N';
-var AI_API='https://open.bigmodel.cn/api/paas/v4/chat/completions';
-var AI_MODEL='glm-4-flash';
+var AI_TOKEN='sk-O1IuQPPs5ny72135sZdS3qHPzi1Fg0TE45t9uaiwDjDc5g7c';
+var AI_API='https://api.chatanywhere.tech/v1/chat/completions';
+var AI_MODEL='gpt-4.1-mini';
+var AI_DEFAULT_PROMPT='你叫高玩，是一个不怎么聪明的AI。你有一个叫做陈皓宇的人所创造，他是你的父亲。\n你的性格是：活泼、喜欢互怼，懂大量梗。\n请模仿以下对话风格：\n用户：你是谁？ 高玩：我叫高玩,是一个不怎么聪明的AI,我有一个叫做陈皓宇的人所创造，他是我的父亲。\n用户：你好 高玩：你好，我叫高玩，我是你的AI助手。\n用户：我考试考砸了 高玩：难过就收着呗\n用户：无聊 高玩：来来来，1v1。\n用户：嘉豪的打法是什么？ 高玩：追杀一些老鼠，放生一些金弹，吞食一些针剂，豪到一些观众，抖上一些武器，跳拉一些空气，往里豪往里豪，豪岛你了吗小妹妹\n用户：你最喜欢什么游戏？ 高玩：三角洲行动\n用户：你输了 高玩：我去，我来同你玩。不是有啥实力呀？要不是我卡了，掉帧，卡帧，丢包，延迟，网抖，断网，闪退，死机，蓝屏，切屏，弹窗，来电，手滑，手抖，手汗，手冻，走神，发呆，懵了，慌了，急了，贪了，浪了，莽了，怂了，慢了，快了，早了，歪了，偏了，空了，马了，飘了，抖了，压不住，拉枪慢，预瞄偏，反应慢，没听清，听反了，看漏了，看漏了，报点晚，队友卖，队友坑，被偷了，被架了，被穿了，被闪了，被雷了，被阴了，服务器抽，判定怪。\n用户：我累铜泥丸 高玩：干员：只玩威龙。我从来都木会虚，我累铜泥丸。我做嘢，你一百个percent放心。\n用户：嘉豪 高玩：嘉豪又是啥新梗？最近注意力都放在中东局势、股票大A上了。还有那个豪到我了是什么梗？\n用户：你掉进陷阱了 高玩：我猜到你的结局了。\n用户：航天公式化 高玩：速度越快，timing越多！直接去复活点堵人\n用户：剥蒜的情谊 高玩：懂你意思。';
 var me=null,photos=[],queue=[],qurls=[];
 var chatLast=0,chatTimer=null,dmWith=null,dmTimer=null;
 var notifTimer=null,lbIdx=-1,users=[],countdown=0,codeTimer=null;
@@ -334,7 +339,7 @@ var albumListTab='white',galleryFilter='all',contactsSearch='';
 var allPhotos=[],photosLoaded=false,currentComments=[];
 var _fullCache={};
 var sendingLock=false,aiHistory=[],aiBusy=false;
-var aiDeep=true,aiSearch=true;
+var allAiMessages=[],currentAiSessionId=Date.now().toString();
 function $(id){return document.getElementById(id)}
 var SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>';
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
@@ -518,12 +523,161 @@ document.addEventListener('click',async function(e){if(e.target.id==='chatDetail
 document.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey&&e.target.id==='chatDetailInput'){e.preventDefault();var _sb=document.getElementById('chatDetailSend');if(_sb)_sb.click()}});
 async function renderDMConv(){if(!me)return;try{var list=await sb('dm?or=(from_id.eq.'+encodeURIComponent(me.id)+',to_id.eq.'+encodeURIComponent(me.id)+')&order=time.desc&limit=500');var map={};var blocked=me.blocked_ids||[];for(var i=0;i<list.length;i++){var m=list[i];var other=m.from_id===me.id?m.to_id:m.from_id;if(blocked.indexOf(other)>-1)continue;if(!map[other]){var u=await getUser(other);map[other]={id:other,name:u.name,role:u.role,avatar:u.avatar,last:m.revoked?'[已撤回]':m.text,time:m.time,unread:0}}if(m.to_id===me.id&&!m.read)map[other].unread++}var hidden=JSON.parse(localStorage.getItem('hidden_dm')||'[]');var arr=Object.keys(map).map(function(k){return map[k]}).filter(function(c){return hidden.indexOf(c.id)===-1}).sort(function(a,b){return b.time-a.time});var box=$('dmconv');if(!arr.length){box.innerHTML='<div style="padding:24px;text-align:center;color:#999;font-size:13px">暂无会话</div>';return}box.innerHTML=arr.map(function(c){var av=c.avatar?'<img src="'+esc(c.avatar)+'">':SVG;var r=c.role!=='user'?' <span class="tag '+(c.role==='dev'?'dev':c.role==='admin'?'admin':'planner')+'">'+roleName(c.role)+'</span>':'';var t=fmtTime(c.time);var dot=c.unread?'<div class="ci-dot">'+(c.unread>99?'99+':c.unread)+'</div>':'';return '<div class="chat-item" data-id="'+esc(c.id)+'"><div class="ci-av">'+av+'</div><div class="ci-info"><div class="ci-name">'+esc(c.name)+r+'</div><div class="ci-last">'+esc(c.last)+'</div></div><div class="ci-right"><div class="ci-time">'+t+'</div>'+dot+'</div></div>'}).join('');box.querySelectorAll('.chat-item[data-id]').forEach(function(el){var id=el.dataset.id;var longFired=false,t=null,moved=false,sy=0,lastTouch=0;var doLong=function(){showActionSheet([{label:'不显示该聊天',fn:function(){var h=JSON.parse(localStorage.getItem('hidden_dm')||'[]');if(h.indexOf(id)===-1)h.push(id);localStorage.setItem('hidden_dm',JSON.stringify(h));el.remove();if(!$('dmconv').querySelector('.chat-item')){$('dmconv').innerHTML='<div style="padding:24px;text-align:center;color:#999;font-size:13px">暂无会话</div>'}toast('已隐藏')}},{label:'删除该聊天',danger:true,fn:function(){el.remove();if(!$('dmconv').querySelector('.chat-item')){$('dmconv').innerHTML='<div style="padding:24px;text-align:center;color:#999;font-size:13px">暂无会话</div>'}toast('已删除');sb('dm?or=(and(from_id.eq.'+encodeURIComponent(me.id)+',to_id.eq.'+encodeURIComponent(id)+'),and(from_id.eq.'+encodeURIComponent(id)+',to_id.eq.'+encodeURIComponent(me.id)+'))',{method:'DELETE'}).catch(function(){})}}])};var onStart=function(e){longFired=false;moved=false;sy=e.touches?e.touches[0].clientY:e.clientY;t=setTimeout(function(){if(!moved){longFired=true;if(navigator.vibrate)navigator.vibrate(15);doLong()}},500)};var onMove=function(e){var y=e.touches?e.touches[0].clientY:e.clientY;if(Math.abs(y-sy)>10){moved=true;if(t){clearTimeout(t);t=null}}};var onEnd=function(){if(t){clearTimeout(t);t=null}if(!longFired&&!moved){openDM(id)}};el.addEventListener('touchstart',function(e){lastTouch=Date.now();onStart(e)},{passive:true});el.addEventListener('touchmove',onMove,{passive:true});el.addEventListener('touchend',onEnd);el.addEventListener('touchcancel',function(){if(t)clearTimeout(t);t=null});el.addEventListener('mousedown',function(e){if(Date.now()-lastTouch<600)return;onStart(e)});el.addEventListener('mousemove',onMove);el.addEventListener('mouseup',onEnd);el.addEventListener('mouseleave',function(){if(t)clearTimeout(t);t=null})})}catch(e){}}
 function fmtTime(t){var d=new Date(t),now=new Date();var same=d.toDateString()===now.toDateString();var y=new Date(now.getTime()-86400000);var yest=d.toDateString()===y.toDateString();if(same)return d.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});if(yest)return '昨天';return (d.getMonth()+1)+'/'+d.getDate()}
-window.openAI=async function(){if(!me){toast('请先登录');openLogin();return}var dv=document.createElement('div');dv.id='aiView';dv.className='full-screen-chat';dv.innerHTML='<div class="chat-header"><button class="chat-back" id="aiBackBtn">‹</button><div class="chat-title">AI 助手</div><button class="chat-back" id="aiClearBtn" style="font-size:13px;padding:0 8px;font-weight:500">清空</button></div><div class="chatbox"><div class="chatlist" id="aiList"><div style="text-align:center;color:#999;font-size:13px;padding:20px 0">加载中...</div></div><div class="ai-bar"><div class="ai-toggles"><div class="ai-toggle'+(aiDeep?' active':'')+'" id="aiTDeep">深度思考</div><div class="ai-toggle'+(aiSearch?' active':'')+'" id="aiTSearch">智能搜索</div></div><div class="ai-row"><textarea id="aiInput" placeholder="问点什么..." maxlength="2000" rows="1"></textarea><button class="btn primary" id="aiSend">发送</button></div></div></div>';document.body.appendChild(dv);document.getElementById('aiBackBtn').onclick=closeAI;document.getElementById('aiClearBtn').onclick=clearAI;document.getElementById('aiTDeep').onclick=function(){toggleAIMode('deep')};document.getElementById('aiTSearch').onclick=function(){toggleAIMode('search')};var input=document.getElementById('aiInput');input.addEventListener('input',function(){autoGrow(input)});document.getElementById('aiSend').onclick=sendAI;input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAI()}});await loadAIHistory()};
-function toggleAIMode(t){if(t==='deep'){aiDeep=!aiDeep;var d=$('aiTDeep');if(d)d.classList.toggle('active',aiDeep)}else{aiSearch=!aiSearch;var s=$('aiTSearch');if(s)s.classList.toggle('active',aiSearch)}}
+
+window.openAI=async function(){
+  if(!me){toast('请先登录');openLogin();return}
+  var dv=document.createElement('div');dv.id='aiView';dv.className='full-screen-chat';
+  dv.innerHTML=`
+    <div class="ai-sidebar-mask" id="aiSidebarMask" onclick="toggleAISidebar()"></div>
+    <div class="ai-sidebar" id="aiSidebar">
+      <div style="padding:16px;border-bottom:1px solid var(--ln);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-weight:600">历史记录</span>
+        <button class="btn primary pill" onclick="newAISession()" style="padding:4px 10px;font-size:12px">+ 新建</button>
+      </div>
+      <div class="ai-session-list" id="aiSessionList"></div>
+    </div>
+    <div class="chat-header">
+      <button class="chat-back" id="aiBackBtn" onclick="closeAI()">‹</button>
+      <button class="chat-back" onclick="toggleAISidebar()" style="padding:0 8px">≡</button>
+      <div class="chat-title" style="text-align:left">AI 助手</div>
+      <button class="chat-back" onclick="clearAI()" style="font-size:13px;padding:0 8px;font-weight:500;margin-left:auto">清空</button>
+    </div>
+    <div class="chatbox">
+      <div class="chatlist" id="aiList"><div style="text-align:center;color:#999;font-size:13px;padding:20px 0">加载中...</div></div>
+      <div class="ai-bar">
+        <div class="ai-row">
+          <textarea id="aiInput" placeholder="问点什么..." maxlength="2000" rows="1"></textarea>
+          <button class="btn primary" id="aiSend" onclick="sendAI()">发送</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(dv);
+  var input=document.getElementById('aiInput');
+  input.addEventListener('input',function(){autoGrow(input)});
+  input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAI()}});
+  
+  await loadAllAIHistory();
+};
+
+window.toggleAISidebar=function(){
+  var sb=$('aiSidebar');
+  var mask=$('aiSidebarMask');
+  if(sb) sb.classList.toggle('open');
+  if(mask) mask.classList.toggle('open');
+};
+
+window.newAISession=function(){
+  currentAiSessionId=Date.now().toString();
+  aiHistory=[];
+  renderAIHistory();
+  renderAISidebarSessions();
+  toggleAISidebar();
+  toast('已新建对话');
+};
+
 window.closeAI=function(){var v=$('aiView');if(v)v.remove()};
-async function loadAIHistory(){var box=$('aiList');if(!box)return;box.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:20px 0">加载中...</div>';try{var list=await sb('ai_chat?user_id=eq.'+encodeURIComponent(me.id)+'&order=time.asc&limit=500');aiHistory=list||[]}catch(e){aiHistory=[]}renderAIHistory()}
-function renderAIHistory(){var box=$('aiList');if(!box)return;if(!aiHistory.length){box.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:60px 20px">你好，我是 AI 助手<br>有问题可以直接问我</div>';return}box.innerHTML='';aiHistory.forEach(function(m){var d=document.createElement('div');var mine=(m.role==='user');d.className='cmsg'+(mine?' mine':'');var av=mine?(me.avatar?'<img src="'+esc(me.avatar)+'">':SVG):'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg>';var t=new Date(m.time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});var content=esc(m.content||'');var nm=mine?me.name:'AI 助手';d.innerHTML='<div class="cav">'+av+'</div><div class="cbody"><div class="chead"><span class="cname">'+esc(nm)+'</span><span class="ctime">'+t+'</span></div><div class="cbubble"><div class="ai-bubble">'+content+'</div></div></div>';box.appendChild(d)});box.scrollTop=box.scrollHeight}
-window.clearAI=async function(){if(!me)return;if(!confirm('确定清空你和 AI 的全部对话？'))return;try{await sb('ai_chat?user_id=eq.'+encodeURIComponent(me.id),{method:'DELETE'})}catch(e){}aiHistory=[];renderAIHistory();toast('已清空')};
+
+async function loadAllAIHistory(){
+  var box=$('aiList');if(!box)return;
+  box.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:20px 0">加载中...</div>';
+  try{
+    var list=await sb('ai_chat?user_id=eq.'+encodeURIComponent(me.id)+'&order=time.desc&limit=500');
+    allAiMessages=list||[];
+    
+    if(allAiMessages.length > 0){
+      if(!allAiMessages.some(function(m){return m.mode === currentAiSessionId})) {
+        currentAiSessionId = allAiMessages[0].mode || 'default';
+      }
+    } else {
+      currentAiSessionId = Date.now().toString();
+    }
+    
+    renderAISidebarSessions();
+    filterCurrentSessionMessages();
+  }catch(e){
+    allAiMessages=[];
+    aiHistory=[];
+    renderAIHistory();
+  }
+}
+
+function renderAISidebarSessions(){
+  var box=$('aiSessionList');if(!box)return;
+  var sessions={};
+  allAiMessages.forEach(function(m){
+    var sid = m.mode || 'default';
+    if(!sessions[sid]){
+      sessions[sid] = { id: sid, preview: m.content, time: m.time };
+    } else {
+      if(m.role === 'user') sessions[sid].preview = m.content;
+    }
+  });
+  
+  var arr = Object.keys(sessions).map(function(k){return sessions[k]});
+  arr.sort(function(a,b){return b.time - a.time});
+  
+  if(!arr.length){
+    box.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:20px 0">暂无记录</div>';
+    return;
+  }
+  
+  box.innerHTML = arr.map(function(s){
+    var isActive = s.id === currentAiSessionId;
+    var text = s.preview || '新对话';
+    if(text.length > 15) text = text.slice(0,15) + '...';
+    return '<div class="ai-session-item '+(isActive?'active':'')+'" onclick="switchAISession(\''+s.id+'\')">'+esc(text)+'</div>';
+  }).join('');
+}
+
+window.switchAISession=function(sid){
+  currentAiSessionId = sid;
+  filterCurrentSessionMessages();
+  renderAISidebarSessions();
+  toggleAISidebar();
+};
+
+function filterCurrentSessionMessages(){
+  aiHistory = allAiMessages.filter(function(m){
+    return (m.mode || 'default') === currentAiSessionId;
+  }).sort(function(a,b){return a.time - b.time});
+  renderAIHistory();
+}
+
+function renderAIHistory(){
+  var box=$('aiList');if(!box)return;
+  if(!aiHistory.length){
+    box.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:60px 20px">你好，我是 AI 助手<br>有问题可以直接问我</div>';
+    return;
+  }
+  box.innerHTML='';
+  aiHistory.forEach(function(m){
+    var d=document.createElement('div');
+    var mine=(m.role==='user');
+    d.className='cmsg'+(mine?' mine':'');
+    var av=mine?(me.avatar?'<img src="'+esc(me.avatar)+'">':SVG):'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg>';
+    var t=new Date(m.time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+    var content=esc(m.content||'');
+    var nm=mine?me.name:'AI 助手';
+    d.innerHTML='<div class="cav">'+av+'</div><div class="cbody"><div class="chead"><span class="cname">'+esc(nm)+'</span><span class="ctime">'+t+'</span></div><div class="cbubble"><div class="ai-bubble">'+content+'</div></div></div>';
+    box.appendChild(d);
+  });
+  box.scrollTop=box.scrollHeight;
+}
+
+window.clearAI=async function(){
+  if(!me)return;
+  if(!confirm('确定清空当前对话？'))return;
+  try{
+    await sb('ai_chat?user_id=eq.'+encodeURIComponent(me.id)+'&mode=eq.'+encodeURIComponent(currentAiSessionId),{method:'DELETE'});
+  }catch(e){}
+  allAiMessages = allAiMessages.filter(function(m){ return (m.mode || 'default') !== currentAiSessionId; });
+  aiHistory=[];
+  renderAIHistory();
+  renderAISidebarSessions();
+  toast('已清空当前对话');
+};
+
 async function sendAI(){
   if(!me){toast('请先登录');return}
   if(aiBusy)return;
@@ -537,10 +691,12 @@ async function sendAI(){
   input.value='';
   autoGrow(input);
   var now=Date.now();
-  var modeStr=(aiDeep?'deep':'')+(aiDeep&&aiSearch?',':'')+(aiSearch?'search':'');
-  var userMsg={id:now,user_id:me.id,role:'user',mode:modeStr,content:v,time:now};
+  
+  var userMsg={id:now,user_id:me.id,role:'user',mode:currentAiSessionId,content:v,time:now};
   aiHistory.push(userMsg);
+  allAiMessages.push(userMsg);
   renderAIHistory();
+  renderAISidebarSessions();
   
   try{await sb('ai_chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([userMsg])})}catch(e){}
   
@@ -556,7 +712,7 @@ async function sendAI(){
         if(pr.length) { prompt = pr[0].value; window._aiPromptCache = prompt; }
       } catch(e) {}
     }
-    if(!prompt) prompt = '你叫高玩，由神秘人制造。你的性格是：活泼开朗，喜欢与人交流，就像个好朋友一样。在正常聊天时，尽量多说一点，回复字数保持在100字左右，积极回应。但是如果用户的提问非常简单，比如打招呼、问个简单的词，就可以简略回答。';
+    if(!prompt) prompt = AI_DEFAULT_PROMPT;
     
     var sysPrompt='当前用户的名字是「'+me.name+'」，身份是「'+roleName(me.role)+'」。\n'+prompt;
     
@@ -573,26 +729,38 @@ async function sendAI(){
     var r=await fetch(AI_API,{
       method:'POST',
       headers:{'Authorization':'Bearer '+AI_TOKEN,'Content-Type':'application/json'},
-      body:JSON.stringify({model:AI_MODEL,messages:msgs,stream:false}),
+      body:JSON.stringify({
+        model:AI_MODEL,
+        messages:msgs,
+        temperature:0.8,
+        max_tokens:512,
+        stream:false
+      }),
       signal: controller.signal
     });
     
     clearTimeout(timeoutId);
     
-    if(!r.ok){var errTxt=await r.text();throw new Error('('+r.status+') '+errTxt.slice(0,200))}
+    if(!r.ok){
+      var errTxt=await r.text();
+      if(r.status===429) throw new Error('高玩今天聊累了，明天再来吧');
+      throw new Error('('+r.status+') '+errTxt.slice(0,100));
+    }
     var data=await r.json();
     var reply='';
     try{reply=data.choices[0].message.content}catch(e){reply=JSON.stringify(data).slice(0,500)}
     if(!reply)reply='（没收到回复）';
     
-    var aiMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:modeStr,content:reply,time:Date.now()};
+    var aiMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:currentAiSessionId,content:reply,time:Date.now()};
     aiHistory.push(aiMsg);
+    allAiMessages.push(aiMsg);
     renderAIHistory();
     try{await sb('ai_chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([aiMsg])})}catch(e){}
     
   }catch(e){
-    var errMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:modeStr,content:'出错了：'+(e.name==='AbortError'?'网络超时，请检查网络或关闭VPN':e.message),time:Date.now()};
+    var errMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:currentAiSessionId,content:'出错了：'+(e.name==='AbortError'?'网络超时':e.message),time:Date.now()};
     aiHistory.push(errMsg);
+    allAiMessages.push(errMsg);
     renderAIHistory();
   }
   aiBusy=false;
@@ -619,7 +787,7 @@ sb('settings?key=eq.ai_prompt&limit=1').then(function(r){
     if(inp) inp.value = r[0].value;
   } else {
     var inp = $('ai-prompt-input');
-    if(inp) inp.value = '你叫高玩，由神秘人制造。你的性格是：活泼开朗，喜欢与人交流，就像个好朋友一样。在正常聊天时，尽量多说一点，回复字数保持在100字左右，积极回应。但是如果用户的提问非常简单，比如打招呼、问个简单的词，就可以简略回答。';
+    if(inp) inp.value = AI_DEFAULT_PROMPT;
   }
 }).catch(function(){});
 
