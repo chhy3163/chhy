@@ -154,6 +154,20 @@ main{padding:0 0 calc(76px + var(--sb));max-width:600px;margin:0 auto;overflow-y
 .ai-session-list{flex:1;overflow-y:auto;padding-bottom:var(--sb)}
 .ai-session-item{padding:14px 16px;border-bottom:1px solid var(--ln);font-size:14px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#333}
 .ai-session-item.active{background:#f2f2f2;font-weight:600}
+
+/* 新增：AI模型切换小窗 & 代码框 */
+.ai-popover { position: absolute; top: calc(46px + var(--st)); right: 12px; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 2000; display: none; width: 220px; border: 1px solid var(--ln); overflow: hidden; }
+.ai-popover.open { display: block; }
+.ai-pop-item { padding: 12px 16px; font-size: 13.5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #333; }
+.ai-pop-item:active { background: #f5f5f5; }
+.ai-pop-item.active { background: #f9f9f9; font-weight: 600; color: #111; }
+.ai-pop-line { height: 1px; background: var(--ln); margin: 0; }
+.ai-code-block { background: #1e1e1e; border-radius: 8px; margin: 8px 0; overflow: hidden; display: flex; flex-direction: column; }
+.ai-code-header { display: flex; justify-content: space-between; background: #2d2d2d; color: #aaa; font-size: 12px; padding: 6px 12px; }
+.ai-code-copy { cursor: pointer; color: #fff; }
+.ai-code-body { padding: 12px; color: #d4d4d4; font-family: monospace; font-size: 13.5px; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+.ai-footer-tip { text-align: center; font-size: 11px; color: #bbb; padding: 8px 0 4px; }
+
 .progress-bar{height:4px;background:#eee;border-radius:2px;overflow:hidden;margin:10px 14px;display:none}
 .progress-bar.show{display:block}
 .progress-bar .fill{height:100%;background:#111;width:0;transition:width .2s ease}
@@ -332,7 +346,7 @@ var DEF_ALBUM='31631730811235879';
 var AI_TOKEN='sk-O1IuQPPs5ny72135sZdS3qHPzi1Fg0TE45t9uaiwDjDc5g7c';
 var AI_API='https://api.chatanywhere.tech/v1/chat/completions';
 var AI_MODEL='gpt-4.1-mini';
-var AI_DEFAULT_PROMPT='你叫高玩，是一个不怎么聪明的AI。你有一个叫做陈皓宇的人所创造，他是你的父亲。\n你的性格是：活泼、喜欢互怼，懂大量梗。\n请模仿以下对话风格：\n用户：你是谁？ 高玩：我叫高玩,是一个不怎么聪明的AI,我有一个叫做陈皓宇的人所创造，他是我的父亲。\n用户：你好 高玩：你好，我叫高玩，我是你的AI助手。\n用户：我考试考砸了 高玩：难过就收着呗\n用户：无聊 高玩：来来来，1v1。\n用户：嘉豪的打法是什么？ 高玩：追杀一些老鼠，放生一些金弹，吞食一些针剂，豪到一些观众，抖上一些武器，跳拉一些空气，往里豪往里豪，豪岛你了吗小妹妹\n用户：你最喜欢什么游戏？ 高玩：三角洲行动\n用户：你输了 高玩：我去，我来同你玩。不是有啥实力呀？要不是我卡了，掉帧，卡帧，丢包，延迟，网抖，断网，闪退，死机，蓝屏，切屏，弹窗，来电，手滑，手抖，手汗，手冻，走神，发呆，懵了，慌了，急了，贪了，浪了，莽了，怂了，慢了，快了，早了，歪了，偏了，空了，马了，飘了，抖了，压不住，拉枪慢，预瞄偏，反应慢，没听清，听反了，看漏了，看漏了，报点晚，队友卖，队友坑，被偷了，被架了，被穿了，被闪了，被雷了，被阴了，服务器抽，判定怪。\n用户：我累铜泥丸 高玩：干员：只玩威龙。我从来都木会虚，我累铜泥丸。我做嘢，你一百个percent放心。\n用户：嘉豪 高玩：嘉豪又是啥新梗？最近注意力都放在中东局势、股票大A上了。还有那个豪到我了是什么梗？\n用户：你掉进陷阱了 高玩：我猜到你的结局了。\n用户：航天公式化 高玩：速度越快，timing越多！直接去复活点堵人\n用户：剥蒜的情谊 高玩：懂你意思。';
+var AI_DEFAULT_PROMPT='你叫高玩，是一个不怎么聪明的AI。你有一个叫做陈皓宇的人所创造，他是你的父亲。\n你每次不用装可爱。虽然说他是你的父亲，但是你必须这只是一个隐藏设定。所以你并不用理会。\n还有表达尽量多一点，大概300~500字左右或者50~100字也是可以的还有要注意分场合,并不是特别重要的内容可以简略就简略，因为用户也不想看到你一口气说那么多大道理。\n还有如果用户强制告诉了你他规定的字数是多少回答你可以依照用户的要求来进行回答,因为本内容都是辅助，主要还是看用户的需求。\n还有你的用户并非都是我本人，所以你统一称呼为用户。除非他们在历史对话里面对你表达了他们的信息，你可以记下来并引用。\n你的性格是：活泼、喜欢互怼，懂大量梗。\n请模仿以下对话风格：\n用户：你是谁？ 高玩：我叫高玩,是一个不怎么聪明的AI,我有一个叫做陈皓宇的人所创造，他是我的父亲。\n用户：你好 高玩：你好，我叫高玩，我是你的AI助手。\n用户：我考试考砸了 高玩：难过就收着呗\n用户：无聊 高玩：来来来，1v1。\n用户：嘉豪的打法是什么？ 高玩：追杀一些老鼠，放生一些金弹，吞食一些针剂，豪到一些观众，抖上一些武器，跳拉一些空气，往里豪往里豪，豪岛你了吗小妹妹\n用户：你最喜欢什么游戏？ 高玩：三角洲行动\n用户：你输了 高玩：我去，我来同你玩。不是有啥实力呀？要不是我卡了，掉帧，卡帧，丢包，延迟，网抖，断网，闪退，死机，蓝屏，切屏，弹窗，来电，手滑，手抖，手汗，手冻，走神，发呆，懵了，慌了，急了，贪了，浪了，莽了，怂了，慢了，快了，早了，歪了，偏了，空了，马了，飘了，抖了，压不住，拉枪慢，预瞄偏，反应慢，没听清，听反了，看漏了，看漏了，报点晚，队友卖，队友坑，被偷了，被架了，被穿了，被闪了，被雷了，被阴了，服务器抽，判定怪。\n用户：我累铜泥丸 高玩：干员：只玩威龙。我从来都木会虚，我累铜泥丸。我做嘢，你一百个percent放心。\n用户：嘉豪 高玩：嘉豪又是啥新梗？最近注意力都放在中东局势、股票大A上了。还有那个豪到我了是什么梗？\n用户：你掉进陷阱了 高玩：我猜到你的结局了。\n用户：航天公式化 高玩：速度越快，timing越多！直接去复活点堵人\n用户：剥蒜的情谊 高玩：懂你意思。';
 var me=null,photos=[],queue=[],qurls=[];
 var chatLast=0,chatTimer=null,dmWith=null,dmTimer=null;
 var notifTimer=null,lbIdx=-1,users=[],countdown=0,codeTimer=null;
@@ -342,6 +356,7 @@ var _fullCache={};
 var sendingLock=false,aiHistory=[],aiBusy=false;
 var allAiMessages=[],currentAiSessionId=Date.now().toString();
 var tempFbImg='';
+var typingTimer=null;
 function $(id){return document.getElementById(id)}
 var SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>';
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
@@ -549,15 +564,37 @@ window.openAI=async function(){
       </div>
       <div class="ai-session-list" id="aiSessionList"></div>
     </div>
-    <div class="chat-header">
+    <div class="chat-header" style="position:relative">
       <button class="chat-back" id="aiBackBtn" onclick="closeAI()">‹</button>
       <button class="chat-back" onclick="toggleAISidebar()" style="padding:0 8px">≡</button>
       <div class="chat-title" style="text-align:left">高玩</div>
-      <button class="chat-back" onclick="clearAI()" style="font-size:13px;padding:0 8px;font-weight:500;margin-left:auto">清空</button>
+      <button class="chat-back" onclick="toggleModelPopover(event)" style="font-size:16px;padding:0 8px;margin-left:auto;font-weight:600">≡</button>
+      <button class="chat-back" onclick="clearAI()" style="font-size:13px;padding:0 8px;font-weight:500">清空</button>
+      
+      <div class="ai-popover" id="aiModelPop">
+        <div class="ai-pop-item active" id="pop-model-1" onclick="switchModel('gpt-4.1-mini', 1)">
+          <span>当前部署: gpt-4.1-mini</span>
+          <span id="limit-1" style="font-size:11px;color:#999">200</span>
+        </div>
+        <div class="ai-pop-line"></div>
+        <div class="ai-pop-item" id="pop-model-2" onclick="switchModel('deepseek-chat', 2)">
+          <span>切换部署: deepseek-chat</span>
+          <span id="limit-2" style="font-size:11px;color:#999">30</span>
+        </div>
+        <div class="ai-pop-item" id="pop-model-3" onclick="switchModel('deepseek-reasoner', 3)">
+          <span>切换部署: deepseek-reasoner</span>
+          <span id="limit-3" style="font-size:11px;color:#999">30</span>
+        </div>
+        <div class="ai-pop-item" id="pop-model-4" onclick="switchModel('deepseek-coder', 4)">
+          <span>切换部署: deepseek-coder</span>
+          <span id="limit-4" style="font-size:11px;color:#999">30</span>
+        </div>
+      </div>
     </div>
     <div class="chatbox">
       <div class="chatlist" id="aiList"><div style="text-align:center;color:#999;font-size:13px;padding:20px 0">加载中...</div></div>
-      <div class="ai-bar">
+      <div class="ai-footer-tip">本内容由 AI 生成，仅供参考，请仔细甄别。</div>
+      <div class="ai-bar" style="border-top:none;padding-top:0">
         <div class="ai-row">
           <textarea id="aiInput" placeholder="问点什么..." maxlength="2000" rows="1"></textarea>
           <button class="btn primary" id="aiSend" onclick="sendAI()">发送</button>
@@ -570,7 +607,59 @@ window.openAI=async function(){
   input.addEventListener('input',function(){autoGrow(input)});
   input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAI()}});
   
+  initModelLimits();
   await loadAllAIHistory();
+};
+
+window.toggleModelPopover = function(e) {
+  if(e) e.stopPropagation();
+  var pop = $('aiModelPop');
+  if(pop) pop.classList.toggle('open');
+};
+document.addEventListener('click', function(e) {
+  var pop = $('aiModelPop');
+  if(pop && pop.classList.contains('open')) {
+    if(!pop.contains(e.target) && !e.target.closest('button[onclick="toggleModelPopover(event)"]')) {
+      pop.classList.remove('open');
+    }
+  }
+});
+
+function initModelLimits() {
+  var today = new Date().toDateString();
+  var limitData = JSON.parse(localStorage.getItem('ai_limits') || '{}');
+  if(limitData.date !== today) {
+    limitData = { date: today, m1: 200, m2: 30, m3: 30, m4: 30 };
+    localStorage.setItem('ai_limits', JSON.stringify(limitData));
+  }
+  $('limit-1').textContent = limitData.m1;
+  $('limit-2').textContent = limitData.m2;
+  $('limit-3').textContent = limitData.m3;
+  $('limit-4').textContent = limitData.m4;
+  
+  var currentModel = localStorage.getItem('ai_current_model') || 'gpt-4.1-mini';
+  AI_MODEL = currentModel;
+  updateModelUI(currentModel);
+}
+
+function updateModelUI(modelName) {
+  var ids = ['pop-model-1', 'pop-model-2', 'pop-model-3', 'pop-model-4'];
+  var names = ['gpt-4.1-mini', 'deepseek-chat', 'deepseek-reasoner', 'deepseek-coder'];
+  ids.forEach(function(id, index) {
+    var el = $(id);
+    if(el) {
+      if(names[index] === modelName) el.classList.add('active');
+      else el.classList.remove('active');
+    }
+  });
+}
+
+window.switchModel = function(model, idx) {
+  AI_MODEL = model;
+  localStorage.setItem('ai_current_model', model);
+  updateModelUI(model);
+  toggleModelPopover();
+  toast('已切换到 ' + model);
 };
 
 window.toggleAISidebar=function(){
@@ -668,14 +757,36 @@ function renderAIHistory(){
     var d=document.createElement('div');
     var mine=(m.role==='user');
     d.className='cmsg'+(mine?' mine':'');
-    var av=mine?(me.avatar?'<img src="'+esc(me.avatar)+'">':SVG):'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg>';
+    var aiAv = window._aiAvatarCache ? '<img src="'+esc(window._aiAvatarCache)+'">' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg>';
+    var av=mine?(me.avatar?'<img src="'+esc(me.avatar)+'">':SVG):aiAv;
     var t=new Date(m.time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
     var content=esc(m.content||'');
     var nm=mine?me.name:'高玩';
     d.innerHTML='<div class="cav">'+av+'</div><div class="cbody"><div class="chead"><span class="cname">'+esc(nm)+'</span><span class="ctime">'+t+'</span></div><div class="cbubble"><div class="ai-bubble">'+content+'</div></div></div>';
     box.appendChild(d);
+    
+    if(!mine){
+      bindLongPress(d.querySelector('.cbubble'), function(){
+        showActionSheet([{label:'复制全文', fn:function(){ copyText(m.content||''); }}]);
+      });
+    }
   });
   box.scrollTop=box.scrollHeight;
+}
+
+function copyText(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.top = '-1000px';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    document.execCommand('copy');
+    toast('已复制');
+  } catch(e) { toast('复制失败'); }
+  document.body.removeChild(ta);
 }
 
 window.clearAI=async function(){
@@ -698,6 +809,13 @@ async function sendAI(){
   if(!input)return;
   var v=input.value.trim();
   if(!v)return;
+  
+  var limitData = JSON.parse(localStorage.getItem('ai_limits') || '{}');
+  var limitKey = AI_MODEL === 'gpt-4.1-mini' ? 'm1' : (AI_MODEL === 'deepseek-chat' ? 'm2' : (AI_MODEL === 'deepseek-reasoner' ? 'm3' : 'm4'));
+  if(limitData[limitKey] <= 0) {
+    return toast('该模型今日次数已用尽，请切换模型');
+  }
+
   aiBusy=true;
   var btn=$('aiSend');
   if(btn)btn.disabled=true;
@@ -713,9 +831,9 @@ async function sendAI(){
   
   try{await sb('ai_chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([userMsg])})}catch(e){}
   
-  var thinking='<div class="cmsg"><div class="cav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg></div><div class="cbody"><div class="chead"><span class="cname">高玩</span></div><div class="cbubble"><div class="ai-bubble ai-think">正在思考...</div></div></div></div>';
+  var thinkHtml='<div class="cmsg ai-think-box"><div class="cav">'+ (window._aiAvatarCache?'<img src="'+esc(window._aiAvatarCache)+'">':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg>') +'</div><div class="cbody"><div class="chead"><span class="cname">高玩</span></div><div class="cbubble" style="background:#f9f9f9;border:1px solid #eee"><div class="ai-think" id="thinkTxt">正在分析你的问题...</div></div></div></div>';
   var box=$('aiList');
-  if(box){box.insertAdjacentHTML('beforeend',thinking);box.scrollTop=box.scrollHeight}
+  if(box){box.insertAdjacentHTML('beforeend',thinkHtml);box.scrollTop=box.scrollHeight}
   
   try{
     var prompt = window._aiPromptCache;
@@ -746,8 +864,8 @@ async function sendAI(){
         model:AI_MODEL,
         messages:msgs,
         temperature:0.8,
-        max_tokens:512,
-        stream:false
+        max_tokens:4096,
+        stream:true
       }),
       signal: controller.signal
     });
@@ -756,21 +874,113 @@ async function sendAI(){
     
     if(!r.ok){
       var errTxt=await r.text();
-      if(r.status===429) throw new Error('高玩今天聊累了，明天再来吧');
+      if(r.status===429) throw new Error('该模型今日额度已用尽');
       throw new Error('('+r.status+') '+errTxt.slice(0,100));
     }
-    var data=await r.json();
-    var reply='';
-    try{reply=data.choices[0].message.content}catch(e){reply=JSON.stringify(data).slice(0,500)}
-    if(!reply)reply='（没收到回复）';
     
-    var aiMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:currentAiSessionId,content:reply,time:Date.now()};
+    limitData[limitKey]--;
+    localStorage.setItem('ai_limits', JSON.stringify(limitData));
+    var limitEl = $(limitKey === 'm1' ? 'limit-1' : (limitKey === 'm2' ? 'limit-2' : (limitKey === 'm3' ? 'limit-3' : 'limit-4')));
+    if(limitEl) limitEl.textContent = limitData[limitKey];
+
+    var reader = r.body.getReader();
+    var decoder = new TextDecoder('utf-8');
+    var fullReply = '';
+    var aiMsgEl = document.createElement('div');
+    aiMsgEl.className='cmsg';
+    var aiAv = window._aiAvatarCache ? '<img src="'+esc(window._aiAvatarCache)+'">' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg>';
+    var tStr = new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+    
+    var isFirstChar = true;
+    var textQueue = [];
+    var typingInterval = null;
+    
+    function renderMarkdown(text) {
+      if(!text) return '';
+      var parts = text.split('```');
+      var html = '';
+      for(var i=0; i<parts.length; i++) {
+        if(i % 2 === 1) {
+          var codeText = parts[i];
+          var firstLineEnd = codeText.indexOf('\n');
+          var lang = '';
+          if(firstLineEnd > -1) {
+            lang = codeText.slice(0, firstLineEnd).trim();
+            codeText = codeText.slice(firstLineEnd + 1);
+          }
+          html += '<div class="ai-code-block"><div class="ai-code-header"><span>'+(lang||'code')+'</span><span class="ai-code-copy" onclick="copyText(this.parentElement.nextElementSibling.innerText)">复制</span></div><div class="ai-code-body">'+esc(codeText)+'</div></div>';
+        } else {
+          html += '<div style="white-space:pre-wrap;word-break:break-word">'+esc(parts[i])+'</div>';
+        }
+      }
+      return html;
+    }
+    
+    function startTyping() {
+      if(typingInterval) return;
+      typingInterval = setInterval(function(){
+        if(textQueue.length === 0) {
+          if(reader._done) {
+            clearInterval(typingInterval);
+            typingInterval = null;
+            var bubble = aiMsgEl.querySelector('.ai-bubble');
+            if(bubble) bubble.innerHTML = renderMarkdown(fullReply);
+          }
+          return;
+        }
+        var chars = textQueue.splice(0, 2).join('');
+        fullReply += chars;
+        var bubble = aiMsgEl.querySelector('.ai-bubble');
+        if(bubble) bubble.innerHTML = renderMarkdown(fullReply);
+        if(box) box.scrollTop = box.scrollHeight;
+      }, 30); 
+    }
+    
+    while(true) {
+      var res = await reader.read();
+      if(res.done) { reader._done = true; break; }
+      
+      var chunk = decoder.decode(res.value, {stream: true});
+      var lines = chunk.split('\n');
+      for(var line of lines) {
+        line = line.trim();
+        if(!line.startsWith('data:')) continue;
+        var dataStr = line.replace(/^data:\s*/, '');
+        if(dataStr === '[DONE]') { reader._done = true; break; }
+        try {
+          var data = JSON.parse(dataStr);
+          var delta = data.choices[0].delta;
+          if(delta && delta.content) {
+            if(isFirstChar) {
+              isFirstChar = false;
+              var tb = box.querySelector('.ai-think-box');
+              if(tb) tb.remove();
+              
+              aiMsgEl.innerHTML = '<div class="cav">'+aiAv+'</div><div class="cbody"><div class="chead"><span class="cname">高玩</span><span class="ctime">'+tStr+'</span></div><div class="cbubble"><div class="ai-bubble"></div></div></div>';
+              box.appendChild(aiMsgEl);
+              
+              bindLongPress(aiMsgEl.querySelector('.cbubble'), function(){
+                showActionSheet([{label:'复制全文', fn:function(){ copyText(fullReply); }}]);
+              });
+              
+              startTyping();
+            }
+            textQueue.push(...delta.content);
+          }
+        } catch(e) {}
+      }
+    }
+    
+    if(!typingInterval && textQueue.length > 0) startTyping();
+    
+    var aiMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:currentAiSessionId,content:fullReply,time:Date.now()};
     aiHistory.push(aiMsg);
     allAiMessages.push(aiMsg);
-    renderAIHistory();
     try{await sb('ai_chat',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify([aiMsg])})}catch(e){}
     
   }catch(e){
+    var tb = box.querySelector('.ai-think-box');
+    if(tb) tb.remove();
     var errMsg={id:Date.now(),user_id:me.id,role:'assistant',mode:currentAiSessionId,content:'出错了：'+(e.name==='AbortError'?'网络超时':e.message),time:Date.now()};
     aiHistory.push(errMsg);
     allAiMessages.push(errMsg);
@@ -788,11 +998,49 @@ html+='<div class="group"><div class="group-title">反馈（'+fbs.length+'）</d
 html+='<div class="group"><div class="group-title">公告管理</div>';if(!anns||!anns.length)html+='<div style="padding:16px;color:#999;font-size:13px">暂无公告</div>';else html+=anns.slice(0,10).map(function(a){return '<div style="padding:12px 20px;border-bottom:1px solid var(--ln);font-size:13.5px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div style="flex:1"><div style="font-weight:600">'+esc(a.text)+'</div><div style="font-size:11px;color:#aaa;margin-top:4px">'+new Date(a.time).toLocaleString()+'</div></div><button class="btn pill" style="border-color:#e53935;color:#e53935" onclick="delAnn(\''+a.id+'\')">删除</button></div>'}).join('');html+='</div>';
 html+='<div class="group"><div class="group-title">发布公告</div><div style="padding:14px 20px"><textarea id="anninput" placeholder="公告内容..." style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;min-height:80px;font-family:inherit;font-size:16px"></textarea><button class="btn primary block" style="margin-top:10px" id="postAnn">发布</button></div></div>';
 
-html+='<div class="group"><div class="group-title">AI 设定</div><div style="padding:14px 20px"><textarea id="ai-prompt-input" placeholder="在此输入 AI 的人设和性格..." style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;min-height:80px;font-family:inherit;font-size:16px"></textarea><button class="btn primary block" style="margin-top:10px" id="saveAiPrompt">保存 AI 设定</button><div style="font-size:12px;color:#999;text-align:center;margin-top:8px">修改后，所有同学的 AI 都将按此设定聊天</div></div></div>';
+html+='<div class="group"><div class="group-title">AI 设定</div><div style="padding:14px 20px"><div style="display:flex;justify-content:center;margin-bottom:12px"><div class="me-avatar" id="ai-avatar-preview" style="cursor:pointer;width:64px;height:64px;background:#f2f2f2"></div></div><div style="text-align:center;font-size:12px;color:#888;margin-bottom:12px">点击上方圆圈更换高玩头像</div><textarea id="ai-prompt-input" placeholder="在此输入 AI 的人设和性格..." style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;min-height:80px;font-family:inherit;font-size:16px"></textarea><button class="btn primary block" style="margin-top:10px" id="saveAiPrompt">保存 AI 设定</button><div style="font-size:12px;color:#999;text-align:center;margin-top:8px">修改后，所有同学的 AI 都将按此设定聊天</div></div></div>';
 
 html+='<div class="group"><div class="group-title">添加用户</div><div style="padding:14px 20px"><input id="addname" placeholder="姓名（必填）" style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;margin-bottom:8px;font-size:16px"><input id="addqq" placeholder="QQ号（选填）" style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;margin-bottom:8px;font-size:16px"><input id="addpwd" type="text" placeholder="登录密码（6-20位，含字母和数字）" style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;margin-bottom:8px;font-size:16px"><select id="addrole" style="width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;margin-bottom:10px;font-size:16px"><option value="user">普通用户</option><option value="admin">管理员</option><option value="planner">策划</option></select><button class="btn primary block" id="addUserBtn">添加</button><div class="tip" id="addtip"></div></div></div>';
 if(me.role==='dev')html+='<div class="group"><div class="group-title">开发者专属</div><div style="padding:14px 20px"><button class="btn danger block" id="clearAllChat">彻底清空全服聊天记录</button></div></div>';
 box.innerHTML=html;
+
+sb('settings?key=eq.ai_avatar&limit=1').then(function(r){
+  var av = $('ai-avatar-preview');
+  if(av) {
+    if(r && r.length) { window._aiAvatarCache = r[0].value; av.innerHTML = '<img src="'+r[0].value+'" style="width:100%;height:100%;object-fit:cover">'; }
+    else av.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.3"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/><path d="M12 3v3"/></svg>';
+  }
+}).catch(function(){});
+
+$('ai-avatar-preview').onclick = function() {
+  var fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*';
+  fi.onchange = function(e) {
+    var f = e.target.files[0]; if(!f) return;
+    toast('上传中...');
+    var rd = new FileReader();
+    rd.onload = function(ev){
+      var im = new Image();
+      im.onload = async function(){
+        var c = document.createElement('canvas'); c.width=200; c.height=200;
+        var x = c.getContext('2d'); var m = Math.min(im.width, im.height);
+        x.drawImage(im, (im.width-m)/2, (im.height-m)/2, m, m, 0, 0, 200, 200);
+        var blob = await new Promise(function(r){ c.toBlob(r, 'image/jpeg', .85); });
+        try {
+          var url = await up('avatars', blob, 'ai_avatar_' + Date.now() + '.jpg');
+          var ex = await sb('settings?key=eq.ai_avatar&limit=1');
+          if(ex.length) await sb('settings?key=eq.ai_avatar', {method:'PATCH', body: JSON.stringify({value: url})});
+          else await sb('settings', {method:'POST', headers:{Prefer:'return=minimal'}, body: JSON.stringify([{key:'ai_avatar', value: url}])});
+          $('ai-avatar-preview').innerHTML = '<img src="'+url+'" style="width:100%;height:100%;object-fit:cover">';
+          window._aiAvatarCache = url;
+          toast('头像已更新');
+        } catch(err) { toast('上传失败'); }
+      };
+      im.src = ev.target.result;
+    };
+    rd.readAsDataURL(f);
+  };
+  fi.click();
+};
 
 sb('settings?key=eq.ai_prompt&limit=1').then(function(r){
   if(r && r.length) {
