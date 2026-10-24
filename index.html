@@ -69,8 +69,7 @@
 <div class="avatar-lb" id="avatarLb"><img id="avatarLbImg" alt=""></div>
 <div class="toast" id="toast"></div>
 <div class="action-sheet" id="actionSheet"></div>
-<input type="file" id="fb-img-input" accept="image/*" hidden>
-<script>
+<input type="file" id="fb-img-input" accept="image/*" hidden><script>
 (function(){
   var ok=false;
   try{ok=!!(window.crypto&&window.crypto.subtle&&window.Promise&&window.fetch&&window.TextEncoder&&String.prototype.padStart&&Object.assign&&String.prototype.includes);}catch(e){ok=false}
@@ -713,20 +712,17 @@ window.doAIAction = function(el, type, msgId) {
     var isLiked = el.classList.contains('liked');
     var isDisliked = el.classList.contains('disliked');
     
-    // 取消点赞
     if(type === 'like' && isLiked) {
       el.classList.remove('liked');
       toast('已取消点赞');
       return;
     }
-    // 取消点踩
     if(type === 'dislike' && isDisliked) {
       el.classList.remove('disliked');
       toast('已取消点踩');
       return;
     }
     
-    // 切换
     if (type === 'like') {
       el.classList.add('liked');
       if(parent.querySelector('.disliked')) parent.querySelector('.disliked').classList.remove('disliked');
