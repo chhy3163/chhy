@@ -9,6 +9,7 @@
 </style></head>
 <body>
 <div id="splash"></div>
+<script>setTimeout(function(){var s=document.getElementById('splash');if(s){s.style.transition='opacity .3s';s.style.opacity='0';setTimeout(function(){s.style.display='none'},350)}},800);</script>
 <div id="netbar">网络已断开，请检查网络</div>
 <div id="oldB"><h2>尊敬的用户</h2><p>您的浏览器内核版本过低</p><p>可能无法正常使用本网站的全部功能</p><p>建议升级系统浏览器，或使用较新的浏览器打开</p><a class="old-go" id="oldBGo">仍要继续使用</a></div>
 <header class="topbar">
@@ -67,7 +68,7 @@
 <script>
 (function(){var ok=false;try{ok=!!(window.crypto&&window.crypto.subtle&&window.Promise&&window.fetch&&window.TextEncoder&&String.prototype.padStart&&Object.assign&&String.prototype.includes);}catch(e){ok=false}if(!ok){var bypass=false;try{bypass=sessionStorage.getItem('bypass_old')==='1'}catch(e){}if(!bypass){var el=document.getElementById('oldB');if(el){el.style.display='flex';var go=document.getElementById('oldBGo');if(go)go.onclick=function(){try{sessionStorage.setItem('bypass_old','1')}catch(e){};el.style.display='none'}}}}})();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" async></script>
 <script>
 var SB='https://xodzjtzrfeecikirolwl.supabase.co';var KEY='sb_publishable_k0TN3WX_ztQClBiFniXhtg_a2vGX8VG';var DEF_ALBUM='31631730811235879';
 var _k1 = 'c2stTzFJdVFQUHM1bnk3MjEzNXNaZFMzcUhQemkxRmcwVEU0NXQ5dWFpd0RqRGM1Zzdj'; 
